@@ -2,10 +2,13 @@
 
 #Add -f (force flag) to script
 forceFlag=false
-while getopts ":f" opt; do
+refreshFlag=false
+while getopts ":fy" opt; do
   case $opt in
     f) forceFlag=true ;;
-    *) echo "Use -f to force installation" ;;
+    y) refreshFlag=true ;;
+    *) echo "-f to force installation"
+       echo "-y to refresh github tag" ;;
   esac
 done
 
@@ -14,7 +17,7 @@ OPTIND=1
 
 
 #Get latest tag_name
-if $forceFlag || [ ! -f /tmp/tag_name_pwsh ]
+if [ ! -f /tmp/tag_name_mesloLGS ] || $refreshFlag || $forceFlag
 then
   curl -s https://api.github.com/repos/PowerShell/PowerShell/releases/latest \
   | grep tag_name \
