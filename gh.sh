@@ -1,13 +1,18 @@
 #!/bin/sh
 
+program="Github-Cli"
+
 #Add -f (force flag) to script
+checkFlag=false
 forceFlag=false
 refreshFlag=false
-while getopts ":fy" opt; do
+while getopts ":cfy" opt; do
   case $opt in
+    c) checkFlag=true ;;
     f) forceFlag=true ;;
     y) refreshFlag=true ;;
-    *) echo "-f to force installation"
+    *) echo "-c to check available updates"
+       echo "-f to force installation"
        echo "-y to refresh github tag" ;;
   esac
 done
@@ -39,7 +44,7 @@ fi
 
 
 #Start installation if github version is not equal to installed version
-if $forceFlag || [ "$tag_name" != "$current_version" ]
+if [ "$tag_name" != "$current_version" ] && ! $checkFlag || $forceFlag
 then
   #Download binaries
   curl -s https://api.github.com/repos/cli/cli/releases/latest \
@@ -69,6 +74,15 @@ then
   #Add completions for zsh
   sudo mkdir -p /usr/share/zsh/site-functions
   gh completion -s zsh | sudo tee /usr/share/zsh/site-functions/_gh > /dev/null
+
+elif $checkFlag && [ "$tag_name" = "$current_version" ]
+then
+  echo "Update not found for $program"
+
+elif $checkFlag && [ "$tag_name" != "$current_version" ]
+then
+  echo "Update found for $program"
+
 else
-  echo "Github-Cli is up to date."
+  echo "$program is up to date"
 fi

@@ -1,13 +1,18 @@
 #!/bin/sh
 
+program="Meslo Nerd Fonts"
+
 #Add -f (force flag) to script
+checkFlag=false
 forceFlag=false
 refreshFlag=false
-while getopts ":fy" opt; do
+while getopts ":cfy" opt; do
   case $opt in
+    c) checkFlag=true ;;
     f) forceFlag=true ;;
     y) refreshFlag=true ;;
-    *) echo "-f to force installation"
+    *) echo "-c to check available updates"
+       echo "-f to force installation"
        echo "-y to refresh github tag" ;;
   esac
 done
@@ -39,9 +44,9 @@ fi
 
 
 #Start installation if github version is not equal to installed version
-if $forceFlag || [ "$tag_name" != "$current_version" ]
+if [ "$tag_name" != "$current_version" ] && ! $checkFlag || $forceFlag
 then
-  #Download Meslo Nerd Fonts
+  #Download fonts
   wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip -O /tmp/Meslo.zip
 
   #Remove fonts folder and older fonts if exist
@@ -51,9 +56,18 @@ then
   mkdir -p /tmp/Meslo
   unzip -q /tmp/Meslo.zip -d /tmp/Meslo
 
-  #Install fonts globally and add version inside the folder name
+  #Install fonts globally
   sudo mkdir -p "$installDir"
   sudo cp /tmp/Meslo/MesloLGSNerdFont-*.ttf "$installDir"
+
+elif $checkFlag && [ "$tag_name" = "$current_version" ]
+then
+  echo "Update not found for $program"
+
+elif $checkFlag && [ "$tag_name" != "$current_version" ]
+then
+  echo "Update found for $program"
+
 else
-  echo "Meslo Nerd Fonts are up to date."
+  echo "$program is up to date"
 fi

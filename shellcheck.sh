@@ -1,13 +1,18 @@
 #!/bin/sh
 
+program="Shellcheck"
+
 #Add -f (force flag) to script
+checkFlag=false
 forceFlag=false
 refreshFlag=false
-while getopts ":fy" opt; do
+while getopts ":cfy" opt; do
   case $opt in
+    c) checkFlag=true ;;
     f) forceFlag=true ;;
     y) refreshFlag=true ;;
-    *) echo "-f to force installation"
+    *) echo "-c to check available updates"
+       echo "-f to force installation"
        echo "-y to refresh github tag" ;;
   esac
 done
@@ -39,7 +44,7 @@ fi
 
 
 #Start installation if github version is not equal to installed version
-if $forceFlag || [ "$tag_name" != "$current_version" ]
+if [ "$tag_name" != "$current_version" ] && ! $checkFlag || $forceFlag
 then
   #Download binaries
   curl -s https://api.github.com/repos/koalaman/shellcheck/releases/latest \
@@ -61,6 +66,15 @@ then
 
   #Create symbolic link to bin folder
   sudo ln -sf "$installDir/shellcheck" /usr/bin
+
+elif $checkFlag && [ "$tag_name" = "$current_version" ]
+then
+  echo "Update not found for $program"
+
+elif $checkFlag && [ "$tag_name" != "$current_version" ]
+then
+  echo "Update found for $program"
+
 else
-  echo "Shellcheck is up to date."
+  echo "$program is up to date"
 fi
