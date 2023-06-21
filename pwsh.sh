@@ -81,13 +81,18 @@ else
 fi
 
 
-#Check if .desktop file exist
-if [ ! -f /usr/local/share/applications/pwsh.desktop ] && ! $checkFlag || $forceFlag
+#Check if .png file exist
+if [ ! -f /usr/local/share/pixmaps/pwsh.png ] && ! $checkFlag || $forceFlag
 then
   #Copy application image
   sudo mkdir -p /usr/local/share/pixmaps
   sudo curl -s https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png -o /usr/local/share/pixmaps/pwsh.png
+fi
 
+
+#Check if .desktop file exist
+if [ ! -f /usr/local/share/applications/pwsh.desktop ] && ! $checkFlag || $forceFlag
+then
   #Write application .desktop file
   sudo mkdir -p /usr/local/share/applications
   echo \

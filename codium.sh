@@ -76,6 +76,10 @@ then
   sudo mkdir -p /usr/local/share/zsh/site-functions
   sudo cp "$installDir/resources/completions/zsh/_codium" /usr/local/share/zsh/site-functions
 
+  #Copy application image
+  sudo mkdir -p /usr/local/share/pixmaps
+  sudo cp "$installDir/resources/app/resources/linux/code.png" /usr/local/share/pixmaps/codium.png
+
 elif $checkFlag && [ "$tag_name" = "$current_version" ]
 then
   echo "Update not found for $program"
@@ -92,10 +96,6 @@ fi
 #Check if .desktop file exist
 if [ ! -f /usr/local/share/applications/codium.desktop ] && ! $checkFlag || $forceFlag
 then
-  #Copy application image
-  sudo mkdir -p /usr/local/share/pixmaps
-  sudo cp /opt/codium\ */resources/app/resources/linux/code.png /usr/local/share/pixmaps/codium.png
-
   #Write application .desktop file
   sudo mkdir -p /usr/local/share/applications
   echo \
