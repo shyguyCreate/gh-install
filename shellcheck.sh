@@ -37,7 +37,7 @@ installDir="/opt/shellcheck $tag_name"
 
 
 #Get the current version of the program
-unset current_version; if [ -n "$(ls -d /opt/shellcheck\ *)" ]
+unset current_version; if (ls -d /opt/shellcheck\ *) >/dev/null 2>&1
 then
   current_version=$(basename /opt/shellcheck\ * | awk '{print $2}')
 fi
@@ -53,7 +53,7 @@ then
   | xargs curl -L -o /tmp/shellcheck.tar.xz
 
   #Remove contents if already installed
-  sudo rm -rf /opt/shellcheck\ *
+  find /opt -maxdepth 1 -type d -name "shellcheck *" -exec sudo rm -rf '{}' \+
 
   #Create folder for contents
   sudo mkdir -p "$installDir"

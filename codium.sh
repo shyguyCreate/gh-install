@@ -37,7 +37,7 @@ installDir="/opt/codium $tag_name"
 
 
 #Get the current version of the program
-unset current_version; if [ -n "$(ls -d /opt/codium\ *)" ]
+unset current_version; if (ls -d /opt/codium\ *) >/dev/null 2>&1
 then
   current_version=$(basename /opt/codium\ * | awk '{print $2}')
 fi
@@ -53,7 +53,7 @@ then
   | xargs curl -L -o /tmp/codium.tar.gz
 
   #Remove contents if already installed
-  sudo rm -rf /opt/codium\ *
+  find /opt -maxdepth 1 -type d -name "codium *" -exec sudo rm -rf '{}' \+
 
   #Create folder for contents
   sudo mkdir -p "$installDir"

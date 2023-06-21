@@ -37,7 +37,7 @@ installDir="/usr/local/share/fonts/mesloLGS $tag_name"
 
 
 #Get the current version that is appended inside the folder name
-unset current_version; if [ -n "$(ls -d /usr/local/share/fonts/mesloLGS\ *)" ]
+unset current_version; if (ls -d /usr/local/share/fonts/mesloLGS\ *) >/dev/null 2>&1
 then
   current_version=$(basename /usr/local/share/fonts/mesloLGS\ * | awk '{print $2}')
 fi
@@ -51,7 +51,7 @@ then
 
   #Remove fonts folder and older fonts if exist
   rm -rf /tmp/Meslo
-  sudo rm -rf /usr/local/share/fonts/mesloLGS\ *
+  find /usr/local/share/fonts -maxdepth 1 -type d -name "mesloLGS *" -exec sudo rm -rf '{}' \+
 
   #Extract fonts
   mkdir -p /tmp/Meslo

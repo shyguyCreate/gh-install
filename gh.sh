@@ -37,7 +37,7 @@ installDir="/opt/gh $tag_name"
 
 
 #Get the current version of the program
-unset current_version; if [ -n "$(ls -d /opt/gh\ *)" ]
+unset current_version; if (ls -d /opt/gh\ *) >/dev/null 2>&1
 then
   current_version=$(basename /opt/gh\ * | awk '{print $2}')
 fi
@@ -53,7 +53,7 @@ then
   | xargs curl -L -o /tmp/gh.tar.gz
 
   #Remove contents if already installed
-  sudo rm -rf /opt/gh\ *
+  find /opt -maxdepth 1 -type d -name "gh *" -exec sudo rm -rf '{}' \+
 
   #Create folder for contents
   sudo mkdir -p "$installDir"

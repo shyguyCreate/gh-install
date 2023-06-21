@@ -37,7 +37,7 @@ installDir="/opt/pwsh $tag_name"
 
 
 #Get the current version of the program
-unset current_version; if [ -n "$(ls -d /opt/pwsh\ *)" ]
+unset current_version; if (ls -d /opt/pwsh\ *) >/dev/null 2>&1
 then
   current_version=$(basename /opt/pwsh\ * | awk '{print $2}')
 fi
@@ -53,7 +53,7 @@ then
   | xargs curl -L -o /tmp/pwsh.tar.gz
 
   #Remove contents if already installed
-  sudo rm -rf /opt/pwsh\ *
+  find /opt -maxdepth 1 -type d -name "pwsh *" -exec sudo rm -rf '{}' \+
 
   #Create folder for contents
   sudo mkdir -p "$installDir"
