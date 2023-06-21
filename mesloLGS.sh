@@ -37,10 +37,7 @@ installDir="/usr/local/share/fonts/mesloLGS $tag_name"
 
 
 #Get the current version that is appended inside the folder name
-unset current_version; if (ls -d /usr/local/share/fonts/mesloLGS\ *) >/dev/null 2>&1
-then
-  current_version=$(basename /usr/local/share/fonts/mesloLGS\ * | awk '{print $2}')
-fi
+current_version=$(find /usr/local/share -maxdepth 2 -type d -path "/usr/local/share/fonts/mesloLGS *" -printf '%f' -quit | awk '{print $2}')
 
 
 #Start installation if github version is not equal to installed version
@@ -51,7 +48,7 @@ then
 
   #Remove fonts folder and older fonts if exist
   rm -rf /tmp/Meslo
-  find /usr/local/share/fonts -maxdepth 1 -type d -name "mesloLGS *" -exec sudo rm -rf '{}' \+
+  find /usr/local/share -maxdepth 2 -type d -path "/usr/local/share/fonts/mesloLGS *" -exec sudo rm -rf '{}' \+
 
   #Extract fonts
   mkdir -p /tmp/Meslo

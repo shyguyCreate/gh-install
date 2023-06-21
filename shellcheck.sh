@@ -37,10 +37,7 @@ installDir="/opt/shellcheck $tag_name"
 
 
 #Get the current version of the program
-unset current_version; if (ls -d /opt/shellcheck\ *) >/dev/null 2>&1
-then
-  current_version=$(basename /opt/shellcheck\ * | awk '{print $2}')
-fi
+current_version=$(find /opt -maxdepth 1 -type d -name "shellcheck *" -printf '%f' -quit | awk '{print $2}')
 
 
 #Start installation if github version is not equal to installed version
