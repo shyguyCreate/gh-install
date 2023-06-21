@@ -69,12 +69,12 @@ then
   sudo ln -sf "$installDir/bin/codium" /usr/local/bin
 
   #Add completions for bash
-  sudo mkdir -p /usr/share/bash-completion/completions
-  sudo cp "$installDir/resources/completions/bash/codium" /usr/share/bash-completion/completions
+  sudo mkdir -p /usr/local/share/bash-completion/completions
+  sudo cp "$installDir/resources/completions/bash/codium" /usr/local/share/bash-completion/completions
 
   #Add completions for zsh
-  sudo mkdir -p /usr/share/zsh/site-functions
-  sudo cp "$installDir/resources/completions/zsh/_codium" /usr/share/zsh/site-functions
+  sudo mkdir -p /usr/local/share/zsh/site-functions
+  sudo cp "$installDir/resources/completions/zsh/_codium" /usr/local/share/zsh/site-functions
 
 elif $checkFlag && [ "$tag_name" = "$current_version" ]
 then

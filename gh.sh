@@ -69,12 +69,12 @@ then
   sudo ln -sf "$installDir/bin/gh" /usr/local/bin
 
   #Add completions for bash
-  sudo mkdir -p /usr/share/bash-completion/completions
-  gh completion -s bash | sudo tee /usr/share/bash-completion/completions/gh > /dev/null
+  sudo mkdir -p /usr/local/share/bash-completion/completions
+  gh completion -s bash | sudo tee /usr/local/share/bash-completion/completions/gh > /dev/null
 
   #Add completions for zsh
-  sudo mkdir -p /usr/share/zsh/site-functions
-  gh completion -s zsh | sudo tee /usr/share/zsh/site-functions/_gh > /dev/null
+  sudo mkdir -p /usr/local/share/zsh/site-functions
+  gh completion -s zsh | sudo tee /usr/local/share/zsh/site-functions/_gh > /dev/null
 
 elif $checkFlag && [ "$tag_name" = "$current_version" ]
 then
