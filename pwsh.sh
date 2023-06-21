@@ -82,14 +82,14 @@ fi
 
 
 #Check if .desktop file exist
-if [ ! -f /usr/share/applications/pwsh.desktop ] && ! $checkFlag || $forceFlag
+if [ ! -f /usr/local/share/applications/pwsh.desktop ] && ! $checkFlag || $forceFlag
 then
   #Copy application image
   sudo mkdir -p /usr/share/pixmaps
   sudo curl -s https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png -o /usr/share/pixmaps/pwsh.png
 
   #Write application .desktop file
-  sudo mkdir -p /usr/share/applications
+  sudo mkdir -p /usr/local/share/applications
   echo \
   '[Desktop Entry]
   Name=Powershell
@@ -100,5 +100,5 @@ then
   Categories=Utility;Development;Shell
   Type=Application
   Terminal=true' \
-  | sed 's/^[ \t]*//' - | sudo tee /usr/share/applications/pwsh.desktop > /dev/null
+  | sed 's/^[ \t]*//' - | sudo tee /usr/local/share/applications/pwsh.desktop > /dev/null
 fi

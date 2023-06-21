@@ -90,14 +90,14 @@ fi
 
 
 #Check if .desktop file exist
-if [ ! -f /usr/share/applications/codium.desktop ] && ! $checkFlag || $forceFlag
+if [ ! -f /usr/local/share/applications/codium.desktop ] && ! $checkFlag || $forceFlag
 then
   #Copy application image
-  sudo mkdir -p /usr/share/applications
+  sudo mkdir -p /usr/share/pixmaps
   sudo cp /opt/codium\ */resources/app/resources/linux/code.png /usr/share/pixmaps/codium.png
 
   #Write application .desktop file
-  sudo mkdir -p /usr/share/pixmaps
+  sudo mkdir -p /usr/local/share/applications
   echo \
   '[Desktop Entry]
   Name=VSCodium
@@ -107,5 +107,5 @@ then
   Icon=/usr/share/pixmaps/codium.png
   Categories=Utility;TextEditor;Development;IDE
   Type=Application' \
-  | sed 's/^[ \t]*//' - | sudo tee /usr/share/applications/codium.desktop > /dev/null
+  | sed 's/^[ \t]*//' - | sudo tee /usr/local/share/applications/codium.desktop > /dev/null
 fi
