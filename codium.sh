@@ -93,8 +93,8 @@ fi
 if [ ! -f /usr/local/share/applications/codium.desktop ] && ! $checkFlag || $forceFlag
 then
   #Copy application image
-  sudo mkdir -p /usr/share/pixmaps
-  sudo cp /opt/codium\ */resources/app/resources/linux/code.png /usr/share/pixmaps/codium.png
+  sudo mkdir -p /usr/local/share/pixmaps
+  sudo cp /opt/codium\ */resources/app/resources/linux/code.png /usr/local/share/pixmaps/codium.png
 
   #Write application .desktop file
   sudo mkdir -p /usr/local/share/applications
@@ -104,7 +104,7 @@ then
   Comment=Free/Libre Open Source Software Binaries of VS Code
   GenericName=VSCodium
   Exec=/usr/local/bin/codium
-  Icon=/usr/share/pixmaps/codium.png
+  Icon=/usr/local/share/pixmaps/codium.png
   Categories=Utility;TextEditor;Development;IDE
   Type=Application' \
   | sed 's/^[ \t]*//' - | sudo tee /usr/local/share/applications/codium.desktop > /dev/null

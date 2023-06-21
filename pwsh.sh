@@ -85,8 +85,8 @@ fi
 if [ ! -f /usr/local/share/applications/pwsh.desktop ] && ! $checkFlag || $forceFlag
 then
   #Copy application image
-  sudo mkdir -p /usr/share/pixmaps
-  sudo curl -s https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png -o /usr/share/pixmaps/pwsh.png
+  sudo mkdir -p /usr/local/share/pixmaps
+  sudo curl -s https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png -o /usr/local/share/pixmaps/pwsh.png
 
   #Write application .desktop file
   sudo mkdir -p /usr/local/share/applications
@@ -96,7 +96,7 @@ then
   Comment=Powershell Core
   GenericName=Powershell
   Exec=/usr/local/bin/pwsh
-  Icon=/usr/share/pixmaps/pwsh.png
+  Icon=/usr/local/share/pixmaps/pwsh.png
   Categories=Utility;Development;Shell
   Type=Application
   Terminal=true' \
