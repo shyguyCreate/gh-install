@@ -65,7 +65,8 @@ then
   sudo chmod +x "$installDir/shellcheck"
 
   #Create symbolic link to bin folder
-  sudo ln -sf "$installDir/shellcheck" /usr/bin
+  sudo mkdir -p /usr/local/bin
+  sudo ln -sf "$installDir/shellcheck" /usr/local/bin
 
 elif $checkFlag && [ "$tag_name" = "$current_version" ]
 then

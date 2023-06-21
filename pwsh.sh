@@ -65,7 +65,8 @@ then
   sudo chmod +x "$installDir/pwsh"
 
   #Create symbolic link to bin folder
-  sudo ln -sf "$installDir/pwsh" /usr/bin
+  sudo mkdir -p /usr/local/bin
+  sudo ln -sf "$installDir/pwsh" /usr/local/bin
 
 elif $checkFlag && [ "$tag_name" = "$current_version" ]
 then
@@ -94,7 +95,7 @@ then
   Name=Powershell
   Comment=Powershell Core
   GenericName=Powershell
-  Exec=/usr/bin/pwsh
+  Exec=/usr/local/bin/pwsh
   Icon=/usr/share/pixmaps/pwsh.png
   Categories=Utility;Development;Shell
   Type=Application

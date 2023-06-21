@@ -65,7 +65,8 @@ then
   sudo chmod +x "$installDir/bin/codium"
 
   #Create symbolic link to bin folder
-  sudo ln -sf "$installDir/bin/codium" /usr/bin
+  sudo mkdir -p /usr/local/bin
+  sudo ln -sf "$installDir/bin/codium" /usr/local/bin
 
   #Add completions for bash
   sudo mkdir -p /usr/share/bash-completion/completions
@@ -102,7 +103,7 @@ then
   Name=VSCodium
   Comment=Free/Libre Open Source Software Binaries of VS Code
   GenericName=VSCodium
-  Exec=/usr/bin/codium
+  Exec=/usr/local/bin/codium
   Icon=/usr/share/pixmaps/codium.png
   Categories=Utility;TextEditor;Development;IDE
   Type=Application' \

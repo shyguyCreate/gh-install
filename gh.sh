@@ -65,7 +65,8 @@ then
   sudo chmod +x "$installDir/bin/gh"
 
   #Create symbolic link to bin folder
-  sudo ln -sf "$installDir/bin/gh" /usr/bin
+  sudo mkdir -p /usr/local/bin
+  sudo ln -sf "$installDir/bin/gh" /usr/local/bin
 
   #Add completions for bash
   sudo mkdir -p /usr/share/bash-completion/completions
