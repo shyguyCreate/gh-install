@@ -33,13 +33,13 @@ fi
 #Save tag_name to variable
 tag_name=$(cat /tmp/tag_name_mesloLGS)
 #Set the install directory with github tag added to its name
-installDir="/usr/share/fonts/mesloLGS $tag_name"
+installDir="/usr/local/share/fonts/mesloLGS $tag_name"
 
 
 #Get the current version that is appended inside the folder name
-unset current_version; if [ -n "$(ls -d /usr/share/fonts/mesloLGS\ *)" ]
+unset current_version; if [ -n "$(ls -d /usr/local/share/fonts/mesloLGS\ *)" ]
 then
-  current_version=$(basename /usr/share/fonts/mesloLGS\ * | awk '{print $2}')
+  current_version=$(basename /usr/local/share/fonts/mesloLGS\ * | awk '{print $2}')
 fi
 
 
@@ -50,7 +50,8 @@ then
   wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip -O /tmp/Meslo.zip
 
   #Remove fonts folder and older fonts if exist
-  sudo rm -rf /tmp/Meslo /usr/share/fonts/mesloLGS\ *
+  rm -rf /tmp/Meslo
+  sudo rm -rf /usr/local/share/fonts/mesloLGS\ *
 
   #Extract fonts
   mkdir -p /tmp/Meslo
