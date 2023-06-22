@@ -22,16 +22,17 @@ OPTIND=1
 
 
 #Get latest tag_name
-if [ ! -f /tmp/tag_name_mesloLGS ] || $refreshFlag || $forceFlag
+tag_tmp_file="/tmp/tag_name_pwsh"
+if [ ! -f "$tag_tmp_file" ] || $refreshFlag || $forceFlag
 then
   curl -s https://api.github.com/repos/PowerShell/PowerShell/releases/latest \
   | grep tag_name \
   | cut -d \" -f 4 \
-  | xargs > /tmp/tag_name_pwsh
+  | xargs > "$tag_tmp_file"
 fi
 
 #Save tag_name to variable
-tag_name=$(cat /tmp/tag_name_pwsh)
+tag_name=$(cat "$tag_tmp_file")
 #Set the install directory with github tag added to its name
 installDir="/opt/pwsh $tag_name"
 
