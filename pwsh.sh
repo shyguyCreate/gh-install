@@ -2,7 +2,7 @@
 
 program="Powershell"
 
-#Add -f (force flag) to script
+#Add flags to script
 checkFlag=false
 forceFlag=false
 refreshFlag=false
@@ -23,7 +23,7 @@ OPTIND=1
 
 #Get latest tag_name
 tag_tmp_file="/tmp/tag_name_pwsh"
-if [ ! -f "$tag_tmp_file" ] || $refreshFlag || $forceFlag
+if [ ! -f "$tag_tmp_file" ] || [ $refreshFlag = true ] || [ $forceFlag = true ]
 then
   curl -s https://api.github.com/repos/PowerShell/PowerShell/releases/latest \
   | grep tag_name \
@@ -42,7 +42,7 @@ current_version=$(find /opt -maxdepth 1 -type d -name "pwsh *" -printf '%f' -qui
 
 
 #Start installation if github version is not equal to installed version
-if [ "$tag_name" != "$current_version" ] && ! $checkFlag || $forceFlag
+if [ "$tag_name" != "$current_version" ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
   #Download binaries
   curl -s https://api.github.com/repos/PowerShell/PowerShell/releases/latest \
@@ -66,11 +66,11 @@ then
   sudo mkdir -p /usr/local/bin
   sudo ln -sf "$installDir/pwsh" /usr/local/bin
 
-elif $checkFlag && [ "$tag_name" = "$current_version" ]
+elif [ $checkFlag = true ] && [ "$tag_name" = "$current_version" ]
 then
   echo "Update not found for $program"
 
-elif $checkFlag && [ "$tag_name" != "$current_version" ]
+elif [ $checkFlag = true ] && [ "$tag_name" != "$current_version" ]
 then
   echo "Update found for $program"
 
@@ -80,7 +80,7 @@ fi
 
 
 #Check if .png file exist
-if [ ! -f /usr/local/share/pixmaps/pwsh.png ] && ! $checkFlag || $forceFlag
+if [ ! -f /usr/local/share/pixmaps/pwsh.png ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
   #Copy application image
   sudo mkdir -p /usr/local/share/pixmaps
@@ -89,7 +89,7 @@ fi
 
 
 #Check if .desktop file exist
-if [ ! -f /usr/local/share/applications/pwsh.desktop ] && ! $checkFlag || $forceFlag
+if [ ! -f /usr/local/share/applications/pwsh.desktop ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
   #Write application .desktop file
   sudo mkdir -p /usr/local/share/applications

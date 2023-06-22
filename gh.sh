@@ -2,7 +2,7 @@
 
 program="Github-Cli"
 
-#Add -f (force flag) to script
+#Add flags to script
 checkFlag=false
 forceFlag=false
 refreshFlag=false
@@ -23,7 +23,7 @@ OPTIND=1
 
 #Get latest tag_name
 tag_tmp_file="/tmp/tag_name_gh"
-if [ ! -f "$tag_tmp_file" ] || $refreshFlag || $forceFlag
+if [ ! -f "$tag_tmp_file" ] || [ $refreshFlag = true ] || [ $forceFlag = true ]
 then
   curl -s https://api.github.com/repos/cli/cli/releases/latest \
   | grep tag_name \
@@ -42,7 +42,7 @@ current_version=$(find /opt -maxdepth 1 -type d -name "gh *" -printf '%f' -quit 
 
 
 #Start installation if github version is not equal to installed version
-if [ "$tag_name" != "$current_version" ] && ! $checkFlag || $forceFlag
+if [ "$tag_name" != "$current_version" ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
   #Download binaries
   curl -s https://api.github.com/repos/cli/cli/releases/latest \
@@ -74,11 +74,11 @@ then
   sudo mkdir -p /usr/local/share/zsh/site-functions
   gh completion -s zsh | sudo tee /usr/local/share/zsh/site-functions/_gh > /dev/null
 
-elif $checkFlag && [ "$tag_name" = "$current_version" ]
+elif [ $checkFlag = true ] && [ "$tag_name" = "$current_version" ]
 then
   echo "Update not found for $program"
 
-elif $checkFlag && [ "$tag_name" != "$current_version" ]
+elif [ $checkFlag = true ] && [ "$tag_name" != "$current_version" ]
 then
   echo "Update found for $program"
 

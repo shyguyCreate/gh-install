@@ -2,7 +2,7 @@
 
 program="Meslo Nerd Fonts"
 
-#Add -f (force flag) to script
+#Add flags to script
 checkFlag=false
 forceFlag=false
 refreshFlag=false
@@ -23,7 +23,7 @@ OPTIND=1
 
 #Get latest tag_name
 tag_tmp_file="/tmp/tag_name_mesloLGS"
-if [ ! -f "$tag_tmp_file" ] || $refreshFlag || $forceFlag
+if [ ! -f "$tag_tmp_file" ] || [ $refreshFlag = true ] || [ $forceFlag = true ]
 then
   curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest \
   | grep tag_name \
@@ -42,7 +42,7 @@ current_version=$(find /usr/local/share -maxdepth 2 -type d -path "/usr/local/sh
 
 
 #Start installation if github version is not equal to installed version
-if [ "$tag_name" != "$current_version" ] && ! $checkFlag || $forceFlag
+if [ "$tag_name" != "$current_version" ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
   #Download fonts
   wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip -O /tmp/Meslo.zip
@@ -59,11 +59,11 @@ then
   sudo mkdir -p "$installDir"
   sudo cp /tmp/Meslo/MesloLGSNerdFont-*.ttf "$installDir"
 
-elif $checkFlag && [ "$tag_name" = "$current_version" ]
+elif [ $checkFlag = true ] && [ "$tag_name" = "$current_version" ]
 then
   echo "Update not found for $program"
 
-elif $checkFlag && [ "$tag_name" != "$current_version" ]
+elif [ $checkFlag = true ] && [ "$tag_name" != "$current_version" ]
 then
   echo "Update found for $program"
 

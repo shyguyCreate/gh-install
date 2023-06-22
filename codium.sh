@@ -2,7 +2,7 @@
 
 program="VSCodium"
 
-#Add -f (force flag) to script
+#Add flags to script
 checkFlag=false
 forceFlag=false
 refreshFlag=false
@@ -23,7 +23,7 @@ OPTIND=1
 
 #Get latest tag_name
 tag_tmp_file="/tmp/tag_name_codium"
-if [ ! -f "$tag_tmp_file" ] || $refreshFlag || $forceFlag
+if [ ! -f "$tag_tmp_file" ] || [ $refreshFlag = true ] || [ $forceFlag = true ]
 then
   curl -s https://api.github.com/repos/VSCodium/vscodium/releases/latest \
   | grep tag_name \
@@ -42,7 +42,7 @@ current_version=$(find /opt -maxdepth 1 -type d -name "codium *" -printf '%f' -q
 
 
 #Start installation if github version is not equal to installed version
-if [ "$tag_name" != "$current_version" ] && ! $checkFlag || $forceFlag
+if [ "$tag_name" != "$current_version" ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
   #Download binaries
   curl -s https://api.github.com/repos/VSCodium/vscodium/releases/latest \
@@ -78,11 +78,11 @@ then
   sudo mkdir -p /usr/local/share/pixmaps
   sudo cp "$installDir/resources/app/resources/linux/code.png" /usr/local/share/pixmaps/codium.png
 
-elif $checkFlag && [ "$tag_name" = "$current_version" ]
+elif [ $checkFlag = true ] && [ "$tag_name" = "$current_version" ]
 then
   echo "Update not found for $program"
 
-elif $checkFlag && [ "$tag_name" != "$current_version" ]
+elif [ $checkFlag = true ] && [ "$tag_name" != "$current_version" ]
 then
   echo "Update found for $program"
 
@@ -92,7 +92,7 @@ fi
 
 
 #Check if .desktop file exist
-if [ ! -f /usr/local/share/applications/codium.desktop ] && ! $checkFlag || $forceFlag
+if [ ! -f /usr/local/share/applications/codium.desktop ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
   #Write application .desktop file
   sudo mkdir -p /usr/local/share/applications
