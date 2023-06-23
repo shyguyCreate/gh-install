@@ -68,11 +68,15 @@ then
 
   #Add completions for bash
   sudo mkdir -p /usr/local/share/bash-completion/completions
-  oh-my-posh completion -s bash | sudo tee /usr/local/share/bash-completion/completions/oh-my-posh > /dev/null
+  oh-my-posh completion bash | sudo tee /usr/local/share/bash-completion/completions/oh-my-posh > /dev/null
 
   #Add completions for zsh
   sudo mkdir -p /usr/local/share/zsh/site-functions
-  oh-my-posh completion -s zsh | sudo tee /usr/local/share/zsh/site-functions/_oh-my-posh > /dev/null
+  oh-my-posh completion zsh | sudo tee /usr/local/share/zsh/site-functions/_oh-my-posh > /dev/null
+
+  #Add completions for fish
+  sudo mkdir -p /usr/local/share/fish/vendor_completions.d
+  oh-my-posh completion fish | sudo tee /usr/local/share/fish/vendor_completions.d/oh-my-posh.fish > /dev/null
 
 elif [ $checkFlag = true ] && [ "$tag_name" = "$current_version" ]
 then

@@ -74,6 +74,10 @@ then
   sudo mkdir -p /usr/local/share/zsh/site-functions
   gh completion -s zsh | sudo tee /usr/local/share/zsh/site-functions/_gh > /dev/null
 
+  #Add completions for fish
+  sudo mkdir -p /usr/local/share/fish/vendor_completions.d
+  gh completion -s fish | sudo tee /usr/local/share/fish/vendor_completions.d/gh.fish > /dev/null
+
 elif [ $checkFlag = true ] && [ "$tag_name" = "$current_version" ]
 then
   echo "Update not found for $program"
