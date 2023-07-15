@@ -38,54 +38,51 @@ installDir="/opt/oh-my-posh $tag_name"
 
 
 #Get the current version of the program
-current_version=$(find /opt -maxdepth 1 -type d -name "oh-my-posh *" -printf '%f' -quit | awk '{print $2}')
+current_version=$(find /opt -maxdepth 1 -mindepth 1 -type d -name "oh-my-posh *" -printf '%f' -quit | awk '{print $2}')
 
 
 #Start installation if github version is not equal to installed version
 if [ "$tag_name" != "$current_version" ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
-  printf "Begin %s installation..." "$program"
+  echo "Downloading $program"
 
   #Download binaries
   curl -s https://api.github.com/repos/JanDeDobbeleer/oh-my-posh/releases/latest \
   | grep "browser_download_url.*posh-linux-amd64\"" \
   | cut -d \" -f 4 \
-  | xargs curl -Lsf -o /tmp/oh-my-posh
+  | xargs curl -Lf --progress-bar -o /tmp/oh-my-posh
 
-  if [ $? = 0 ]
-  then
-    #Remove contents if already installed
-    find /opt -maxdepth 1 -type d -name "oh-my-posh *" -exec sudo rm -rf '{}' \+
+  #Remove contents if already installed
+  find /opt -maxdepth 1 -mindepth 1 -type d -name "oh-my-posh *" -exec sudo rm -rf '{}' \+
 
-    #Create folder for contents
-    sudo mkdir -p "$installDir"
+  #Create folder for contents
+  sudo mkdir -p "$installDir"
 
-    #Copy binary file to folder
-    sudo cp /tmp/oh-my-posh "$installDir"
+  printf "Begin %s installation..." "$program"
 
-    #Change execute permissions
-    sudo chmod +x "$installDir/oh-my-posh"
+  #Copy binary file to folder
+  sudo cp /tmp/oh-my-posh "$installDir"
 
-    #Create symbolic link to bin folder
-    sudo mkdir -p /usr/local/bin
-    sudo ln -sf "$installDir/oh-my-posh" /usr/local/bin
+  #Change execute permissions
+  sudo chmod +x "$installDir/oh-my-posh"
 
-    #Add completions for bash
-    sudo mkdir -p /usr/local/share/bash-completion/completions
-    oh-my-posh completion bash | sudo tee /usr/local/share/bash-completion/completions/oh-my-posh > /dev/null
+  #Create symbolic link to bin folder
+  sudo mkdir -p /usr/local/bin
+  sudo ln -sf "$installDir/oh-my-posh" /usr/local/bin
 
-    #Add completions for zsh
-    sudo mkdir -p /usr/local/share/zsh/site-functions
-    oh-my-posh completion zsh | sudo tee /usr/local/share/zsh/site-functions/_oh-my-posh > /dev/null
+  #Add completions for bash
+  sudo mkdir -p /usr/local/share/bash-completion/completions
+  oh-my-posh completion bash | sudo tee /usr/local/share/bash-completion/completions/oh-my-posh > /dev/null
 
-    #Add completions for fish
-    sudo mkdir -p /usr/local/share/fish/vendor_completions.d
-    oh-my-posh completion fish | sudo tee /usr/local/share/fish/vendor_completions.d/oh-my-posh.fish > /dev/null
+  #Add completions for zsh
+  sudo mkdir -p /usr/local/share/zsh/site-functions
+  oh-my-posh completion zsh | sudo tee /usr/local/share/zsh/site-functions/_oh-my-posh > /dev/null
 
-    printf "Finished\n"
-  else
-    printf "Failed\n"
-  fi
+  #Add completions for fish
+  sudo mkdir -p /usr/local/share/fish/vendor_completions.d
+  oh-my-posh completion fish | sudo tee /usr/local/share/fish/vendor_completions.d/oh-my-posh.fish > /dev/null
+
+  [ -d "$installDir" ] && [ -n "$(ls "$installDir")" ] && printf "Finished\n" || printf "Failed\n"
 
 elif [ $checkFlag = true ] && [ "$tag_name" = "$current_version" ]
 then

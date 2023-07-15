@@ -38,42 +38,39 @@ installDir="/opt/pwsh $tag_name"
 
 
 #Get the current version of the program
-current_version=$(find /opt -maxdepth 1 -type d -name "pwsh *" -printf '%f' -quit | awk '{print $2}')
+current_version=$(find /opt -maxdepth 1 -mindepth 1 -type d -name "pwsh *" -printf '%f' -quit | awk '{print $2}')
 
 
 #Start installation if github version is not equal to installed version
 if [ "$tag_name" != "$current_version" ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
-  printf "Begin %s installation..." "$program"
+  echo "Downloading $program"
 
   #Download binaries
   curl -s https://api.github.com/repos/PowerShell/PowerShell/releases/latest \
   | grep "browser_download_url.*linux-x64.tar.gz\"" \
   | cut -d \" -f 4 \
-  | xargs curl -Lsf -o /tmp/pwsh.tar.gz
+  | xargs curl -Lf --progress-bar -o /tmp/pwsh.tar.gz
 
-  if [ $? = 0 ]
-  then
-    #Remove contents if already installed
-    find /opt -maxdepth 1 -type d -name "pwsh *" -exec sudo rm -rf '{}' \+
+  #Remove contents if already installed
+  find /opt -maxdepth 1 -mindepth 1 -type d -name "pwsh *" -exec sudo rm -rf '{}' \+
 
-    #Create folder for contents
-    sudo mkdir -p "$installDir"
+  #Create folder for contents
+  sudo mkdir -p "$installDir"
 
-    #Expand tar file to folder
-    sudo tar zxf /tmp/pwsh.tar.gz -C "$installDir"
+  printf "Begin %s installation..." "$program"
 
-    #Change execute permissions
-    sudo chmod +x "$installDir/pwsh"
+  #Expand tar file to folder
+  sudo tar zxf /tmp/pwsh.tar.gz -C "$installDir"
 
-    #Create symbolic link to bin folder
-    sudo mkdir -p /usr/local/bin
-    sudo ln -sf "$installDir/pwsh" /usr/local/bin
+  #Change execute permissions
+  sudo chmod +x "$installDir/pwsh"
 
-    printf "Finished\n"
-  else
-    printf "Failed\n"
-  fi
+  #Create symbolic link to bin folder
+  sudo mkdir -p /usr/local/bin
+  sudo ln -sf "$installDir/pwsh" /usr/local/bin
+
+  [ -d "$installDir" ] && [ -n "$(ls "$installDir")" ] && printf "Finished\n" || printf "Failed\n"
 
 elif [ $checkFlag = true ] && [ "$tag_name" = "$current_version" ]
 then

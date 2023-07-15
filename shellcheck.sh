@@ -38,38 +38,40 @@ installDir="/opt/shellcheck $tag_name"
 
 
 #Get the current version of the program
-current_version=$(find /opt -maxdepth 1 -type d -name "shellcheck *" -printf '%f' -quit | awk '{print $2}')
+current_version=$(find /opt -maxdepth 1 -mindepth 1 -type d -name "shellcheck *" -printf '%f' -quit | awk '{print $2}')
 
 
 #Start installation if github version is not equal to installed version
 if [ "$tag_name" != "$current_version" ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
-  printf "Begin %s installation..." "$program"
+  echo "Downloading $program"
 
   #Download binaries
   curl -s https://api.github.com/repos/koalaman/shellcheck/releases/latest \
   | grep "browser_download_url.*linux.x86_64.tar.xz\"" \
   | cut -d \" -f 4 \
-  | xargs curl -Lsf -o /tmp/shellcheck.tar.xz
+  | xargs curl -Lf --progress-bar -o /tmp/shellcheck.tar.xz
 
-  if [ $? = 0 ]
+  #Remove contents if already installed
+  find /opt -maxdepth 1 -mindepth 1 -type d -name "shellcheck *" -exec sudo rm -rf '{}' \+
+
+  #Create folder for contents
+  sudo mkdir -p "$installDir"
+
+  printf "Begin %s installation..." "$program"
+
+  #Expand tar file to folder
+  sudo tar Jxf /tmp/shellcheck.tar.xz --strip-components=1 -C "$installDir"
+
+  #Change execute permissions
+  sudo chmod +x "$installDir/shellcheck"
+
+  #Create symbolic link to bin folder
+  sudo mkdir -p /usr/local/bin
+  sudo ln -sf "$installDir/shellcheck" /usr/local/bin
+
+  if [ -d "$installDir" ] && [ -n "$(ls "$installDir")" ]
   then
-    #Remove contents if already installed
-    find /opt -maxdepth 1 -type d -name "shellcheck *" -exec sudo rm -rf '{}' \+
-
-    #Create folder for contents
-    sudo mkdir -p "$installDir"
-
-    #Expand tar file to folder
-    sudo tar Jxf /tmp/shellcheck.tar.xz --strip-components=1 -C "$installDir"
-
-    #Change execute permissions
-    sudo chmod +x "$installDir/shellcheck"
-
-    #Create symbolic link to bin folder
-    sudo mkdir -p /usr/local/bin
-    sudo ln -sf "$installDir/shellcheck" /usr/local/bin
-
     printf "Finished\n"
   else
     printf "Failed\n"

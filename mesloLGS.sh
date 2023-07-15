@@ -38,35 +38,34 @@ installDir="/usr/local/share/fonts/mesloLGS $tag_name"
 
 
 #Get the current version that is appended inside the folder name
-current_version=$(find /usr/local/share -maxdepth 2 -type d -path "/usr/local/share/fonts/mesloLGS *" -printf '%f' -quit | awk '{print $2}')
+current_version=$(find /usr/local/share -maxdepth 2 -mindepth 2 -type d -path "/usr/local/share/fonts/mesloLGS *" -printf '%f' -quit | awk '{print $2}')
 
 
 #Start installation if github version is not equal to installed version
 if [ "$tag_name" != "$current_version" ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
-  printf "Begin %s installation..." "$program"
+  echo "Downloading $program"
 
   #Download fonts
-  curl -Lsf https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip -o /tmp/Meslo.zip
+  curl -Lf --progress-bar https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip -o /tmp/Meslo.zip
 
-  if [ $? = 0 ]
-  then
-    #Remove fonts folder and older fonts if exist
-    rm -rf /tmp/Meslo
-    find /usr/local/share -maxdepth 2 -type d -path "/usr/local/share/fonts/mesloLGS *" -exec sudo rm -rf '{}' \+
+  #Remove fonts folder and older fonts if exist
+  rm -rf /tmp/Meslo
+  find /usr/local/share -maxdepth 2 -mindepth 2 -type d -path "/usr/local/share/fonts/mesloLGS *" -exec sudo rm -rf '{}' \+
 
-    #Extract fonts
-    mkdir -p /tmp/Meslo
-    unzip -q /tmp/Meslo.zip -d /tmp/Meslo
+  #Create folder for contents
+  sudo mkdir -p "$installDir"
 
-    #Install fonts globally
-    sudo mkdir -p "$installDir"
-    sudo cp /tmp/Meslo/MesloLGSNerdFont-*.ttf "$installDir"
+  printf "Begin %s installation..." "$program"
 
-    printf "Finished\n"
-  else
-    printf "Failed\n"
-  fi
+  #Extract fonts
+  mkdir -p /tmp/Meslo
+  unzip -q /tmp/Meslo.zip -d /tmp/Meslo
+
+  #Install fonts globally
+  sudo cp /tmp/Meslo/MesloLGSNerdFont-*.ttf "$installDir"
+
+  [ -d "$installDir" ] && [ -n "$(ls "$installDir")" ] && printf "Finished\n" || printf "Failed\n"
 
 elif [ $checkFlag = true ] && [ "$tag_name" = "$current_version" ]
 then
