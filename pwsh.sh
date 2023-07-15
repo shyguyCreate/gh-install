@@ -44,31 +44,40 @@ current_version=$(find /opt -maxdepth 1 -type d -name "pwsh *" -printf '%f' -qui
 #Start installation if github version is not equal to installed version
 if [ "$tag_name" != "$current_version" ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
+  printf "Begin %s installation..." "$program"
+
   #Download binaries
   curl -s https://api.github.com/repos/PowerShell/PowerShell/releases/latest \
   | grep "browser_download_url.*linux-x64.tar.gz\"" \
   | cut -d \" -f 4 \
-  | xargs curl -L -o /tmp/pwsh.tar.gz
+  | xargs curl -Lsf -o /tmp/pwsh.tar.gz
 
-  #Remove contents if already installed
-  find /opt -maxdepth 1 -type d -name "pwsh *" -exec sudo rm -rf '{}' \+
+  if [ $? = 0 ]
+  then
+    #Remove contents if already installed
+    find /opt -maxdepth 1 -type d -name "pwsh *" -exec sudo rm -rf '{}' \+
 
-  #Create folder for contents
-  sudo mkdir -p "$installDir"
+    #Create folder for contents
+    sudo mkdir -p "$installDir"
 
-  #Expand tar file to folder
-  sudo tar zxf /tmp/pwsh.tar.gz -C "$installDir"
+    #Expand tar file to folder
+    sudo tar zxf /tmp/pwsh.tar.gz -C "$installDir"
 
-  #Change execute permissions
-  sudo chmod +x "$installDir/pwsh"
+    #Change execute permissions
+    sudo chmod +x "$installDir/pwsh"
 
-  #Create symbolic link to bin folder
-  sudo mkdir -p /usr/local/bin
-  sudo ln -sf "$installDir/pwsh" /usr/local/bin
+    #Create symbolic link to bin folder
+    sudo mkdir -p /usr/local/bin
+    sudo ln -sf "$installDir/pwsh" /usr/local/bin
+
+    printf "Finished\n"
+  else
+    printf "Failed\n"
+  fi
 
 elif [ $checkFlag = true ] && [ "$tag_name" = "$current_version" ]
 then
-  echo "Update not found for $program"
+  echo "No update found for $program"
 
 elif [ $checkFlag = true ] && [ "$tag_name" != "$current_version" ]
 then

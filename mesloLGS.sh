@@ -1,6 +1,6 @@
 #!/bin/sh
 
-program="Meslo Nerd Fonts"
+program="MesloLGS-NF"
 
 #Add flags to script
 checkFlag=false
@@ -44,24 +44,33 @@ current_version=$(find /usr/local/share -maxdepth 2 -type d -path "/usr/local/sh
 #Start installation if github version is not equal to installed version
 if [ "$tag_name" != "$current_version" ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
+  printf "Begin %s installation..." "$program"
+
   #Download fonts
-  wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip -O /tmp/Meslo.zip
+  curl -Lsf https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip -o /tmp/Meslo.zip
 
-  #Remove fonts folder and older fonts if exist
-  rm -rf /tmp/Meslo
-  find /usr/local/share -maxdepth 2 -type d -path "/usr/local/share/fonts/mesloLGS *" -exec sudo rm -rf '{}' \+
+  if [ $? = 0 ]
+  then
+    #Remove fonts folder and older fonts if exist
+    rm -rf /tmp/Meslo
+    find /usr/local/share -maxdepth 2 -type d -path "/usr/local/share/fonts/mesloLGS *" -exec sudo rm -rf '{}' \+
 
-  #Extract fonts
-  mkdir -p /tmp/Meslo
-  unzip -q /tmp/Meslo.zip -d /tmp/Meslo
+    #Extract fonts
+    mkdir -p /tmp/Meslo
+    unzip -q /tmp/Meslo.zip -d /tmp/Meslo
 
-  #Install fonts globally
-  sudo mkdir -p "$installDir"
-  sudo cp /tmp/Meslo/MesloLGSNerdFont-*.ttf "$installDir"
+    #Install fonts globally
+    sudo mkdir -p "$installDir"
+    sudo cp /tmp/Meslo/MesloLGSNerdFont-*.ttf "$installDir"
+
+    printf "Finished\n"
+  else
+    printf "Failed\n"
+  fi
 
 elif [ $checkFlag = true ] && [ "$tag_name" = "$current_version" ]
 then
-  echo "Update not found for $program"
+  echo "No update found for $program"
 
 elif [ $checkFlag = true ] && [ "$tag_name" != "$current_version" ]
 then

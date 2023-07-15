@@ -44,43 +44,52 @@ current_version=$(find /opt -maxdepth 1 -type d -name "gh *" -printf '%f' -quit 
 #Start installation if github version is not equal to installed version
 if [ "$tag_name" != "$current_version" ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
-  #Download binaries
-  curl -s https://api.github.com/repos/cli/cli/releases/latest \
-  | grep "browser_download_url.*linux_amd64.tar.gz\"" \
-  | cut -d \" -f 4 \
-  | xargs curl -L -o /tmp/gh.tar.gz
+  printf "Begin %s installation..." "$program"
 
-  #Remove contents if already installed
-  find /opt -maxdepth 1 -type d -name "gh *" -exec sudo rm -rf '{}' \+
+  if [ $? = 0 ]
+  then
+    #Download binaries
+    curl -s https://api.github.com/repos/cli/cli/releases/latest \
+    | grep "browser_download_url.*linux_amd64.tar.gz\"" \
+    | cut -d \" -f 4 \
+    | xargs curl -Lsf -o /tmp/gh.tar.gz
 
-  #Create folder for contents
-  sudo mkdir -p "$installDir"
+    #Remove contents if already installed
+    find /opt -maxdepth 1 -type d -name "gh *" -exec sudo rm -rf '{}' \+
 
-  #Expand tar file to folder
-  sudo tar zxf /tmp/gh.tar.gz --strip-components=1 -C "$installDir"
+    #Create folder for contents
+    sudo mkdir -p "$installDir"
 
-  #Change execute permissions
-  sudo chmod +x "$installDir/bin/gh"
+    #Expand tar file to folder
+    sudo tar zxf /tmp/gh.tar.gz --strip-components=1 -C "$installDir"
 
-  #Create symbolic link to bin folder
-  sudo mkdir -p /usr/local/bin
-  sudo ln -sf "$installDir/bin/gh" /usr/local/bin
+    #Change execute permissions
+    sudo chmod +x "$installDir/bin/gh"
 
-  #Add completions for bash
-  sudo mkdir -p /usr/local/share/bash-completion/completions
-  gh completion -s bash | sudo tee /usr/local/share/bash-completion/completions/gh > /dev/null
+    #Create symbolic link to bin folder
+    sudo mkdir -p /usr/local/bin
+    sudo ln -sf "$installDir/bin/gh" /usr/local/bin
 
-  #Add completions for zsh
-  sudo mkdir -p /usr/local/share/zsh/site-functions
-  gh completion -s zsh | sudo tee /usr/local/share/zsh/site-functions/_gh > /dev/null
+    #Add completions for bash
+    sudo mkdir -p /usr/local/share/bash-completion/completions
+    gh completion -s bash | sudo tee /usr/local/share/bash-completion/completions/gh > /dev/null
 
-  #Add completions for fish
-  sudo mkdir -p /usr/local/share/fish/vendor_completions.d
-  gh completion -s fish | sudo tee /usr/local/share/fish/vendor_completions.d/gh.fish > /dev/null
+    #Add completions for zsh
+    sudo mkdir -p /usr/local/share/zsh/site-functions
+    gh completion -s zsh | sudo tee /usr/local/share/zsh/site-functions/_gh > /dev/null
+
+    #Add completions for fish
+    sudo mkdir -p /usr/local/share/fish/vendor_completions.d
+    gh completion -s fish | sudo tee /usr/local/share/fish/vendor_completions.d/gh.fish > /dev/null
+
+    printf "Finished\n"
+  else
+    printf "Failed\n"
+  fi
 
 elif [ $checkFlag = true ] && [ "$tag_name" = "$current_version" ]
 then
-  echo "Update not found for $program"
+  echo "No update found for $program"
 
 elif [ $checkFlag = true ] && [ "$tag_name" != "$current_version" ]
 then

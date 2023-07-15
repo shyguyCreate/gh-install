@@ -44,43 +44,52 @@ current_version=$(find /opt -maxdepth 1 -type d -name "codium *" -printf '%f' -q
 #Start installation if github version is not equal to installed version
 if [ "$tag_name" != "$current_version" ] && [ $checkFlag = false ] || [ $forceFlag = true ]
 then
+  printf "Begin %s installation..." "$program"
+
   #Download binaries
   curl -s https://api.github.com/repos/VSCodium/vscodium/releases/latest \
   | grep "browser_download_url.*VSCodium-linux-x64-.*.tar.gz\"" \
   | cut -d \" -f 4 \
-  | xargs curl -L -o /tmp/codium.tar.gz
+  | xargs curl -Lsf -o /tmp/codium.tar.gz
 
-  #Remove contents if already installed
-  find /opt -maxdepth 1 -type d -name "codium *" -exec sudo rm -rf '{}' \+
+  if [ $? = 0 ]
+  then
+    #Remove contents if already installed
+    find /opt -maxdepth 1 -type d -name "codium *" -exec sudo rm -rf '{}' \+
 
-  #Create folder for contents
-  sudo mkdir -p "$installDir"
+    #Create folder for contents
+    sudo mkdir -p "$installDir"
 
-  #Expand tar file to folder
-  sudo tar zxf /tmp/codium.tar.gz -C "$installDir"
+    #Expand tar file to folder
+    sudo tar zxf /tmp/codium.tar.gz -C "$installDir"
 
-  #Change execute permissions
-  sudo chmod +x "$installDir/bin/codium"
+    #Change execute permissions
+    sudo chmod +x "$installDir/bin/codium"
 
-  #Create symbolic link to bin folder
-  sudo mkdir -p /usr/local/bin
-  sudo ln -sf "$installDir/bin/codium" /usr/local/bin
+    #Create symbolic link to bin folder
+    sudo mkdir -p /usr/local/bin
+    sudo ln -sf "$installDir/bin/codium" /usr/local/bin
 
-  #Add completions for bash
-  sudo mkdir -p /usr/local/share/bash-completion/completions
-  sudo cp "$installDir/resources/completions/bash/codium" /usr/local/share/bash-completion/completions
+    #Add completions for bash
+    sudo mkdir -p /usr/local/share/bash-completion/completions
+    sudo cp "$installDir/resources/completions/bash/codium" /usr/local/share/bash-completion/completions
 
-  #Add completions for zsh
-  sudo mkdir -p /usr/local/share/zsh/site-functions
-  sudo cp "$installDir/resources/completions/zsh/_codium" /usr/local/share/zsh/site-functions
+    #Add completions for zsh
+    sudo mkdir -p /usr/local/share/zsh/site-functions
+    sudo cp "$installDir/resources/completions/zsh/_codium" /usr/local/share/zsh/site-functions
 
-  #Copy application image
-  sudo mkdir -p /usr/local/share/pixmaps
-  sudo cp "$installDir/resources/app/resources/linux/code.png" /usr/local/share/pixmaps/codium.png
+    #Copy application image
+    sudo mkdir -p /usr/local/share/pixmaps
+    sudo cp "$installDir/resources/app/resources/linux/code.png" /usr/local/share/pixmaps/codium.png
+
+    printf "Finished\n"
+  else
+    printf "Failed\n"
+  fi
 
 elif [ $checkFlag = true ] && [ "$tag_name" = "$current_version" ]
 then
-  echo "Update not found for $program"
+  echo "No update found for $program"
 
 elif [ $checkFlag = true ] && [ "$tag_name" != "$current_version" ]
 then
