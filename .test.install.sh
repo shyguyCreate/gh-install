@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #Source file with functions
-. ./.install.sh
+. "$(dirname "$0")/.install.sh"
 
 test()
 {
