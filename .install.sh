@@ -83,7 +83,7 @@ extract_program()
 {
     #Expand tar file to folder installation
     sudo mkdir -p "$installDir"
-    eval "sudo tar zxf $program_tmp_file -C $installDir $1"
+    eval "sudo tar $1 $program_tmp_file -C $installDir $2"
 }
 
 copy_program()

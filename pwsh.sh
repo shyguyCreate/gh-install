@@ -14,7 +14,7 @@ program_tmp_file="/tmp/$program_file.tar.gz"
 program_binary="$installDir/$program_file"
 
 #Install and uninstall
-extract_program ""
+extract_program "zxf" ""
 change_program_permission
 install_program
 add_new_Cobra_completions

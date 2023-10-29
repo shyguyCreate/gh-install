@@ -14,7 +14,7 @@ program_tmp_file="/tmp/$program_file.tar.gz"
 program_binary="$installDir/bin/$program_file"
 
 #Start program installation
-extract_program ""
+extract_program "zxf" ""
 change_program_permission
 install_program
 add_bash_completion "$installDir/resources/completions/bash/$program_file"
