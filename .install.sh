@@ -73,15 +73,19 @@ uninstall_old_version()
     printf "Finished\n"
 }
 
-install_program()
+extract_program()
 {
     #Create folder for contents
     sudo mkdir -p "$installDir"
 
-    printf "Begin %s installation..." "$program_name"
-
     #Expand tar file to folder
-    sudo tar zxf "$program_tmp_file" -C "$installDir"
+    echo "sudo tar zxf $program_tmp_file -C $installDir $1"
+    eval "sudo tar zxf $program_tmp_file -C $installDir $1"
+}
+
+install_program()
+{
+    printf "Begin %s installation..." "$program_name"
 
     #Change execute permissions
     sudo chmod +x "$installDir/bin/$program_file"
@@ -90,19 +94,50 @@ install_program()
     sudo mkdir -p /usr/local/bin
     sudo ln -sf "$installDir/bin/$program_file" /usr/local/bin
 
+    [ -d "$installDir" ] && [ -n "$(ls "$installDir")" ] && printf "Finished\n" || printf "Failed\n"
+}
+
+add_bash_completion()
+{
     #Add completions for bash
     sudo mkdir -p /usr/local/share/bash-completion/completions
-    sudo cp "$installDir/resources/completions/bash/$program_file" /usr/local/share/bash-completion/completions
+    sudo cp "$completion_bash" /usr/local/share/bash-completion/completions
+}
+
+add_zsh_completion()
+{
+    #Add completions for zsh
+    sudo mkdir -p /usr/local/share/zsh/site-functions
+    sudo cp "$completion_zsh" /usr/local/share/zsh/site-functions
+}
+
+add_fish_completion()
+{
+    #Add completions for fish
+    sudo mkdir -p /usr/local/share/fish/vendor_completions.d
+    sudo cp "$completion_fish" /usr/local/share/fish/vendor_completions.d
+}
+
+add_image()
+{
+    #Add application image file
+    sudo mkdir -p /usr/local/share/pixmaps
+    sudo cp "$program_image" /usr/local/share/pixmaps
+}
+
+add_Cobra_completions()
+{
+    #Add completions for bash
+    sudo mkdir -p /usr/local/share/bash-completion/completions
+    eval "$program_file completion -s bash | sudo tee /usr/local/share/bash-completion/completions/$program_file > /dev/null"
 
     #Add completions for zsh
     sudo mkdir -p /usr/local/share/zsh/site-functions
-    sudo cp "$installDir/resources/completions/zsh/_$program_file" /usr/local/share/zsh/site-functions
+    eval "$program_file completion -s zsh | sudo tee /usr/local/share/zsh/site-functions/_$program_file > /dev/null"
 
-    #Copy application image
-    sudo mkdir -p /usr/local/share/pixmaps
-    sudo cp "$installDir/resources/app/resources/linux/code.png" "/usr/local/share/pixmaps/$program_file.png"
-
-    [ -d "$installDir" ] && [ -n "$(ls "$installDir")" ] && printf "Finished\n" || printf "Failed\n"
+    #Add completions for fish
+    sudo mkdir -p /usr/local/share/fish/vendor_completions.d
+    eval "$program_file completion -s fish | sudo tee /usr/local/share/fish/vendor_completions.d/$program_file.fish > /dev/null"
 }
 
 set_desktop_file()
@@ -130,19 +165,8 @@ get_current_version
 #Start installation if github version is not equal to installed version
 if [ "$tag_name" != "$current_version" ] && [ "$checkFlag" = false ] || [ "$forceFlag" = true ]; then
 
-    #Check if program is already downloaded
-    if [ ! -f "$program_tmp_file" ] || [ "$forceFlag" = true ]; then
-        downlaod_program
-    fi
-
-    #Install and uninstall
-    install_program
-    uninstall_old_version
-
-    #Check if .desktop file exist
-    if [ ! -f "$program_desktop_file" ] || [ $forceFlag = true ]; then
-        set_desktop_file
-    fi
+    #Continue in parent script
+    return
 
 elif [ "$checkFlag" = true ] && [ "$tag_name" = "$current_version" ]; then
     echo "No update found for $program_name"
@@ -153,3 +177,6 @@ elif [ "$checkFlag" = true ] && [ "$tag_name" != "$current_version" ]; then
 else
     echo "$program_name is up to date"
 fi
+
+#End this and parent script
+exit
