@@ -113,29 +113,41 @@ install_program()
 add_bash_completion()
 {
     #Add completions for bash
+    completion_file="$1"
     sudo mkdir -p /usr/local/share/bash-completion/completions
-    sudo cp "$completion_bash" /usr/local/share/bash-completion/completions
+    sudo cp "$completion_file" /usr/local/share/bash-completion/completions
 }
 
 add_zsh_completion()
 {
     #Add completions for zsh
+    completion_file="$1"
     sudo mkdir -p /usr/local/share/zsh/site-functions
-    sudo cp "$completion_zsh" /usr/local/share/zsh/site-functions
+    sudo cp "$completion_file" /usr/local/share/zsh/site-functions
 }
 
 add_fish_completion()
 {
     #Add completions for fish
+    completion_file="$1"
     sudo mkdir -p /usr/local/share/fish/vendor_completions.d
-    sudo cp "$completion_fish" /usr/local/share/fish/vendor_completions.d
+    sudo cp "$completion_file" /usr/local/share/fish/vendor_completions.d
 }
 
 add_image()
 {
     #Add application image file
+    image_file="$1"
     sudo mkdir -p /usr/local/share/pixmaps
-    sudo cp "$program_image" /usr/local/share/pixmaps
+    sudo cp "$image_file" /usr/local/share/pixmaps
+}
+
+add_internet_image()
+{
+    #Add application image file
+    url="$1"
+    sudo mkdir -p $(dirname "$program_image_file")
+    sudo curl -s "$url" -o "$program_image_file"
 }
 
 add_old_Cobra_completions()
@@ -168,17 +180,11 @@ add_new_Cobra_completions()
     eval "$program_file completion fish | sudo tee /usr/local/share/fish/vendor_completions.d/$program_file.fish > /dev/null"
 }
 
-set_desktop_file()
+add_desktop_file()
 {
-    #Create applications folder
-    sudo mkdir -p /usr/local/share/applications
-
-    printf "Writing %s desktop file..." "$program_name"
-
-    #Write application .desktop file
+    #Add application .desktop file
+    sudo mkdir -p $(dirname "$program_desktop_file")
     echo "$desktop_file_content" | sudo tee "$program_desktop_file" > /dev/null
-
-    printf "Finished\n"
 }
 
 ###############################################################

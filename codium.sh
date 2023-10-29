@@ -5,6 +5,7 @@ program_file="codium"
 repo="VSCodium/vscodium"
 
 download_match='VSCodium-linux-x64-.*\.tar\.gz'
+download_file=''
 program_tmp_file="/tmp/$program_file.tar.gz"
 
 #Source file with functions
@@ -12,17 +13,13 @@ program_tmp_file="/tmp/$program_file.tar.gz"
 
 program_binary="$installDir/bin/$program_file"
 
-completion_bash="$installDir/resources/completions/bash/$program_file"
-completion_zsh="$installDir/resources/completions/zsh/_$program_file"
-program_image="$installDir/resources/app/resources/linux/code.png"
-
 #Start program installation
 extract_program ""
 change_program_permission
 install_program
-add_bash_completion
-add_zsh_completion
-add_image
+add_bash_completion "$installDir/resources/completions/bash/$program_file"
+add_zsh_completion "$installDir/resources/completions/zsh/_$program_file"
+add_image "$installDir/resources/app/resources/linux/code.png"
 uninstall_old_version
 
 program_desktop_file="/usr/local/share/applications/$program_file.desktop"
@@ -41,5 +38,5 @@ EOF
 
 #Check if .desktop file exist
 if [ ! -f "$program_desktop_file" ] || [ $forceFlag = true ]; then
-    set_desktop_file
+    add_desktop_file
 fi

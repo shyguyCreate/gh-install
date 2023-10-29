@@ -5,6 +5,7 @@ program_file="gh"
 repo="cli/cli"
 
 download_match='gh_.*_linux_amd64\.tar\.gz'
+download_file=''
 program_tmp_file="/tmp/$program_file.tar.gz"
 
 #Source file with functions

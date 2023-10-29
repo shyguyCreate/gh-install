@@ -4,6 +4,7 @@ program_name="Oh-My-Posh"
 program_file="oh-my-posh"
 repo="JanDeDobbeleer/oh-my-posh"
 
+download_match=''
 download_file='posh-linux-amd64'
 program_tmp_file="/tmp/$program_file"
 

@@ -1,11 +1,12 @@
 #!/bin/sh
 
-program_name="Oh-My-Posh"
-program_file="oh-my-posh"
-repo="JanDeDobbeleer/oh-my-posh"
+program_name="Powershell"
+program_file="pwsh"
+repo="PowerShell/PowerShell"
 
-download_file='posh-linux-amd64'
-program_tmp_file="/tmp/$program_file"
+download_match='powershell-.*-linux-x64\.tar\.gz'
+download_file=''
+program_tmp_file="/tmp/$program_file.tar.gz"
 
 #Source file with functions
 . "$(dirname "$0")/.install.sh"
@@ -13,8 +14,35 @@ program_tmp_file="/tmp/$program_file"
 program_binary="$installDir/$program_file"
 
 #Install and uninstall
-copy_program
+extract_program ""
 change_program_permission
 install_program
 add_new_Cobra_completions
 uninstall_old_version
+
+program_image_file="/usr/local/share/pixmaps/$program_file.png"
+
+#Check if pixmaps image file exist
+if [ ! -f "$program_image_file" ] || [ $forceFlag = true ]; then
+    add_internet_image https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png
+fi
+
+program_desktop_file="/usr/local/share/applications/$program_file.desktop"
+desktop_file_content=$(
+    cat << EOF
+[Desktop Entry]
+Name=Powershell
+Comment=Powershell Core
+GenericName=Powershell
+Exec=/usr/local/bin/pwsh
+Icon=/usr/local/share/pixmaps/pwsh.png
+Categories=Utility;Development;Shell
+Type=Application
+Terminal=true
+EOF
+)
+
+#Check if .desktop file exist
+if [ ! -f "$program_desktop_file" ] || [ $forceFlag = true ]; then
+    add_desktop_file
+fi
