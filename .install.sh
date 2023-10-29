@@ -40,7 +40,7 @@ get_latest_tag()
     tag_name=$(cat "$tag_tmp_file")
 }
 
-get_install_dir()
+set_install_dir()
 {
     #Set the install directory with github tag added to its name
     installDir="/opt/${program_file}-${tag_name}"
@@ -56,11 +56,17 @@ downlaod_program()
 {
     echo "Downloading $program_name"
 
-    #Download binaries
-    curl -s "https://api.github.com/repos/$repo/releases/latest" \
-        | grep "\"browser_download_url.*/$download_match\"" \
-        | cut -d \" -f 4 \
-        | xargs curl -Lf --progress-bar -o "$program_tmp_file"
+    if [ -n "$download_match" ]; then
+        #Download binaries
+        curl -s "https://api.github.com/repos/$repo/releases/latest" \
+            | grep "\"browser_download_url.*/$download_match\"" \
+            | cut -d \" -f 4 \
+            | xargs curl -Lf --progress-bar -o "$program_tmp_file"
+    elif [ -n "$download_file" ]; then
+        curl -Lf --progress-bar "https://github.com/$repo/releases/latest/download/$download_file" -o "/tmp/$program_file"
+    else
+        echo "Download match or file not specified"
+    fi
 }
 
 uninstall_old_version()
@@ -75,26 +81,33 @@ uninstall_old_version()
 
 extract_program()
 {
-    #Create folder for contents
+    #Expand tar file to folder installation
     sudo mkdir -p "$installDir"
-
-    #Expand tar file to folder
-    echo "sudo tar zxf $program_tmp_file -C $installDir $1"
     eval "sudo tar zxf $program_tmp_file -C $installDir $1"
+}
+
+copy_program()
+{
+    #Copy program file to folder installation
+    sudo mkdir -p "$installDir"
+    sudo cp "$program_tmp_file" "$installDir"
+}
+
+change_program_permission()
+{
+    #Change execute permissions
+    sudo chmod +x "$program_binary"
 }
 
 install_program()
 {
     printf "Begin %s installation..." "$program_name"
 
-    #Change execute permissions
-    sudo chmod +x "$installDir/bin/$program_file"
-
     #Create symbolic link to bin folder
     sudo mkdir -p /usr/local/bin
-    sudo ln -sf "$installDir/bin/$program_file" /usr/local/bin
+    sudo ln -sf "$program_binary" /usr/local/bin
 
-    [ -d "$installDir" ] && [ -n "$(ls "$installDir")" ] && printf "Finished\n" || printf "Failed\n"
+    [ -f "/usr/local/bin/$program_file" ] && printf "Finished\n" || printf "Failed\n"
 }
 
 add_bash_completion()
@@ -125,7 +138,7 @@ add_image()
     sudo cp "$program_image" /usr/local/share/pixmaps
 }
 
-add_Cobra_completions()
+add_old_Cobra_completions()
 {
     #Add completions for bash
     sudo mkdir -p /usr/local/share/bash-completion/completions
@@ -138,6 +151,21 @@ add_Cobra_completions()
     #Add completions for fish
     sudo mkdir -p /usr/local/share/fish/vendor_completions.d
     eval "$program_file completion -s fish | sudo tee /usr/local/share/fish/vendor_completions.d/$program_file.fish > /dev/null"
+}
+
+add_new_Cobra_completions()
+{
+    #Add completions for bash
+    sudo mkdir -p /usr/local/share/bash-completion/completions
+    eval "$program_file completion bash | sudo tee /usr/local/share/bash-completion/completions/$program_file > /dev/null"
+
+    #Add completions for zsh
+    sudo mkdir -p /usr/local/share/zsh/site-functions
+    eval "$program_file completion zsh | sudo tee /usr/local/share/zsh/site-functions/_$program_file > /dev/null"
+
+    #Add completions for fish
+    sudo mkdir -p /usr/local/share/fish/vendor_completions.d
+    eval "$program_file completion fish | sudo tee /usr/local/share/fish/vendor_completions.d/$program_file.fish > /dev/null"
 }
 
 set_desktop_file()
@@ -159,11 +187,16 @@ set_desktop_file()
 
 save_latest_tag
 get_latest_tag
-get_install_dir
+set_install_dir
 get_current_version
 
 #Start installation if github version is not equal to installed version
 if [ "$tag_name" != "$current_version" ] && [ "$checkFlag" = false ] || [ "$forceFlag" = true ]; then
+
+    #Check if program is already downloaded
+    if [ ! -f "$program_tmp_file" ] || [ "$forceFlag" = true ]; then
+        downlaod_program
+    fi
 
     #Continue in parent script
     return

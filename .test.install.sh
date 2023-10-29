@@ -1,22 +1,20 @@
 #!/bin/sh
 
-program_name="Github-Cli"
-program_file="gh"
-repo="cli/cli"
+program_name="Oh-My-Posh"
+program_file="oh-my-posh"
+repo="JanDeDobbeleer/oh-my-posh"
+
+download_file='posh-linux-amd64'
+program_tmp_file="/tmp/$program_file"
 
 #Source file with functions
 . "$(dirname "$0")/.install.sh"
 
-download_match='gh_.*_linux_amd64\.tar\.gz'
-program_tmp_file="/tmp/$program_file.tar.gz"
-
-#Check if program is already downloaded
-if [ ! -f "$program_tmp_file" ] || [ "$forceFlag" = true ]; then
-    downlaod_program
-fi
+program_binary="$installDir/$program_file"
 
 #Install and uninstall
-extract_program "--strip-components=1"
+copy_program
+change_program_permission
 install_program
-add_Cobra_completions
+add_new_Cobra_completions
 uninstall_old_version
