@@ -1,57 +1,5 @@
 #!/bin/sh
 
-#Add flags to script
-checkFlag=false
-forceFlag=false
-refreshFlag=false
-while getopts ":cfy" opt; do
-    case $opt in
-        c) checkFlag=true ;;
-        f) forceFlag=true ;;
-        y) refreshFlag=true ;;
-        *)
-            echo "-c to check available updates"
-            echo "-f to force installation"
-            echo "-y to refresh github tag"
-            ;;
-    esac
-done
-
-#Reset getopts automatic variable
-OPTIND=1
-
-save_latest_tag()
-{
-    #File to save the tag_name
-    tag_tmp_file="/tmp/tag_name_$program_file"
-
-    #Get latest tag_name from github api
-    if [ ! -f "$tag_tmp_file" ] || [ "$refreshFlag" = true ] || [ "$forceFlag" = true ]; then
-        curl -s "https://api.github.com/repos/$repo/releases/latest" \
-            | grep tag_name \
-            | cut -d \" -f 4 \
-            | xargs > "$tag_tmp_file"
-    fi
-}
-
-get_latest_tag()
-{
-    #Save tag_name to variable
-    online_tag=$(cat "$tag_tmp_file")
-}
-
-set_install_dir()
-{
-    #Set the install directory with github tag added to its name
-    installDir="$installDir/${program_file}-${online_tag}"
-}
-
-get_current_version()
-{
-    #Get the current version of the program
-    current_version=$(find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -printf '%f' -quit | sed "s,${program_file}-,,g")
-}
-
 downlaod_program()
 {
     #Check if program is already downloaded
@@ -93,29 +41,128 @@ copy_program()
     sudo cp "$program_tmp_file" "$installDir"
 }
 
-uninstall_old_version()
+bash_completion_dir="/usr/local/share/bash-completion/completions"
+zsh_completion_dir="/usr/local/share/zsh/site-functions"
+fish_completion_dir="/usr/local/share/fish/vendor_completions.d"
+image_dir="/usr/local/share/pixmaps"
+desktop_file="/usr/local/share/applications/$program_file.desktop"
+
+add_bash_completion()
 {
-    printf "Uninstalling old %s version..." "$program_name"
-
-    #Remove contents if already installed
-    find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \+
-
-    printf "Finished\n"
+    #Add completions for bash
+    completion_file="$1"
+    sudo mkdir -p "$bash_completion_dir"
+    sudo cp "$completion_file" "$bash_completion_dir"
 }
 
-should_install()
+add_zsh_completion()
 {
-    #Start installation if github version is not equal to installed version
-    if [ "$online_tag" != "$current_version" ] && [ "$checkFlag" = false ] || [ "$forceFlag" = true ]; then
-        printf "Begin %s installation..." "$program_name"
-    elif [ "$checkFlag" = true ] && [ "$online_tag" = "$current_version" ]; then
-        echo "No update found for $program_name"
-        exit
-    elif [ "$checkFlag" = true ] && [ "$online_tag" != "$current_version" ]; then
-        echo "Update found for $program_name"
-        exit
-    else
-        echo "$program_name is up to date"
-        exit
+    #Add completions for zsh
+    completion_file="$1"
+    sudo mkdir -p "$zsh_completion_dir"
+    sudo cp "$completion_file" "$zsh_completion_dir"
+}
+
+add_fish_completion()
+{
+    #Add completions for fish
+    completion_file="$1"
+    sudo mkdir -p "$fish_completion_dir"
+    sudo cp "$completion_file" "$fish_completion_dir"
+}
+
+add_local_image()
+{
+    #Add application image file
+    local_image_dir="$2"
+    sudo mkdir -p "$image_dir"
+    sudo cp "$local_image_dir" "$image_dir/$image_name"
+}
+
+add_internet_image()
+{
+    #Check if pixmaps image file exist
+    if [ ! -f "$image_dir/$image_name" ] || [ $forceFlag = true ]; then
+        #Add application image file
+        url="$1"
+        sudo mkdir -p "$image_dir"
+        sudo curl -s "$url" -o "$image_dir/$image_name"
     fi
+}
+
+add_old_Cobra_completions()
+{
+    #Add completions for bash
+    sudo mkdir -p "$bash_completion_dir"
+    eval "$program_file completion -s bash | sudo tee $bash_completion_dir/$program_file > /dev/null"
+
+    #Add completions for zsh
+    sudo mkdir -p "$zsh_completion_dir"
+    eval "$program_file completion -s zsh | sudo tee $zsh_completion_dir/_$program_file > /dev/null"
+
+    #Add completions for fish
+    sudo mkdir -p "$fish_completion_dir"
+    eval "$program_file completion -s fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
+}
+
+add_new_Cobra_completions()
+{
+    #Add completions for bash
+    sudo mkdir -p "$bash_completion_dir"
+    eval "$program_file completion bash | sudo tee $bash_completion_dir/$program_file > /dev/null"
+
+    #Add completions for zsh
+    sudo mkdir -p "$zsh_completion_dir"
+    eval "$program_file completion zsh | sudo tee $zsh_completion_dir/_$program_file > /dev/null"
+
+    #Add completions for fish
+    sudo mkdir -p "$fish_completion_dir"
+    eval "$program_file completion fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
+}
+
+add_desktop_file()
+{
+    #Check if .desktop file exist
+    if [ ! -f "$desktop_file" ] || [ $forceFlag = true ]; then
+        #Add application .desktop file
+        sudo mkdir -p "$(dirname "$desktop_file")"
+        desktop_file_content=$(
+            cat << EOF
+[Desktop Entry]
+Type=Application
+Name=$program_name
+GenericName=$program_name
+Exec=/usr/local/bin/$program_file
+Icon=$image_dir/$image_name
+Categories=Utility;Development
+Terminal=$1
+EOF
+        )
+        echo "$desktop_file_content" | sudo tee "$desktop_file" > /dev/null
+    fi
+}
+
+change_bin_permissions()
+{
+    #Change execute permissions
+    sudo chmod +x "$bin_program"
+}
+
+install_program()
+{
+    #Create symbolic link to bin folder
+    sudo mkdir -p /usr/local/bin
+    sudo ln -sf "$bin_program" /usr/local/bin
+}
+
+install_font()
+{
+    #Install fonts globally
+    find "$1" -maxdepth 1 -mindepth 1 -type f -name "$2" -exec sudo cp '{}' "$installDir" \;
+}
+
+uninstall_old_version()
+{
+    #Remove contents if already installed
+    find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \+
 }

@@ -10,17 +10,10 @@ download_file='Meslo.tar.xz'
 program_tmp_file="/tmp/$program_file.tar.xz"
 
 #Source file with functions
-. "$(dirname "$0")/.install.sh"
-
-save_latest_tag
-get_latest_tag
-set_install_dir
-get_current_version
-
-should_install
+. "$(dirname "$0")/.check-install.sh"
 
 #Source file with functions
-. "$(dirname "$0")/.font.sh"
+. "$(dirname "$0")/.install.sh"
 
 #Install and uninstall
 downlaod_program

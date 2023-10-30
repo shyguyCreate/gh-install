@@ -10,19 +10,12 @@ download_file=''
 program_tmp_file="/tmp/$program_file.tar.gz"
 
 #Source file with functions
-. "$(dirname "$0")/.install.sh"
+. "$(dirname "$0")/.check-install.sh"
 
 bin_program="$installDir/$program_file"
 
-save_latest_tag
-get_latest_tag
-set_install_dir
-get_current_version
-
-should_install
-
 #Source file with functions
-. "$(dirname "$0")/.bin.sh"
+. "$(dirname "$0")/.install.sh"
 
 #Install and uninstall
 downlaod_program
@@ -32,7 +25,7 @@ install_program
 add_new_Cobra_completions
 uninstall_old_version
 
-image_name="$program_name.png"
+image_name="$program_file.png"
 add_internet_image "https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"
 
 add_desktop_file true

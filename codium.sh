@@ -10,19 +10,12 @@ download_file=''
 program_tmp_file="/tmp/$program_file.tar.gz"
 
 #Source file with functions
-. "$(dirname "$0")/.install.sh"
+. "$(dirname "$0")/.check-install.sh"
 
 bin_program="$installDir/bin/$program_file"
 
-save_latest_tag
-get_latest_tag
-set_install_dir
-get_current_version
-
-should_install
-
 #Source file with functions
-. "$(dirname "$0")/.bin.sh"
+. "$(dirname "$0")/.install.sh"
 
 #Install and uninstall
 downlaod_program
@@ -32,7 +25,7 @@ install_program
 add_bash_completion "$installDir/resources/completions/bash/$program_file"
 add_zsh_completion "$installDir/resources/completions/zsh/_$program_file"
 
-image_name="$program_name.png"
+image_name="$program_file.png"
 add_local_image "$installDir/resources/app/resources/linux/code.png"
 
 uninstall_old_version
