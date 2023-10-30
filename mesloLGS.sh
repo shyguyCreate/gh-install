@@ -1,5 +1,7 @@
 #!/bin/sh
 
+type="font"
+
 program_name="MesloLGS-NF"
 program_file="mesloLGS"
 repo="ryanoasis/nerd-fonts"
@@ -14,6 +16,6 @@ program_tmp_file="/tmp/$program_file.tar.xz"
 
 #Install and uninstall
 mkdir -p "/tmp/$program_file"
-extract_program "Jxf $program_tmp_file -C /tmp/$program_file"
+extract_xz ""
 install_font "/tmp/$program_file" "MesloLGSNerdFont-*.ttf"
 uninstall_old_version

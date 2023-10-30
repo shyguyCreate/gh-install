@@ -1,5 +1,7 @@
 #!/bin/sh
 
+type="bin"
+
 program_name="Shfmt"
 program_file="shfmt"
 repo="mvdan/sh"
@@ -12,7 +14,7 @@ program_tmp_file="/tmp/$program_file"
 #Source file with functions
 . "$(dirname "$0")/.install.sh"
 
-program_binary="$installDir/$program_file"
+bin_program="$installDir/$program_file"
 
 #Install and uninstall
 copy_program

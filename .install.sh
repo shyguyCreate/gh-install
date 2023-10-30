@@ -37,13 +37,13 @@ save_latest_tag()
 get_latest_tag()
 {
     #Save tag_name to variable
-    tag_name=$(cat "$tag_tmp_file")
+    online_tag=$(cat "$tag_tmp_file")
 }
 
 set_install_dir()
 {
     #Set the install directory with github tag added to its name
-    installDir="$installDir/${program_file}-${tag_name}"
+    installDir="$installDir/${program_file}-${online_tag}"
 }
 
 get_current_version()
@@ -69,11 +69,18 @@ downlaod_program()
     fi
 }
 
-extract_program()
+extract_gz()
 {
     #Expand tar file to folder installation
     sudo mkdir -p "$installDir"
-    eval "sudo tar $1"
+    eval "sudo tar zxf $program_tmp_file -C $installDir $1"
+}
+
+extract_xz()
+{
+    #Expand tar file to folder installation
+    sudo mkdir -p "$installDir"
+    eval "sudo tar Jxf $program_tmp_file -C $installDir $1"
 }
 
 copy_program()
@@ -81,33 +88,6 @@ copy_program()
     #Copy program file to folder installation
     sudo mkdir -p "$installDir"
     sudo cp "$program_tmp_file" "$installDir"
-}
-
-change_program_permission()
-{
-    #Change execute permissions
-    sudo chmod +x "$program_binary"
-}
-
-install_program()
-{
-    printf "Begin %s installation..." "$program_name"
-
-    #Create symbolic link to bin folder
-    sudo mkdir -p /usr/local/bin
-    sudo ln -sf "$program_binary" /usr/local/bin
-
-    [ -f "/usr/local/bin/$program_file" ] && printf "Finished\n" || printf "Failed\n"
-}
-
-install_font()
-{
-    printf "Begin %s installation..." "$program_name"
-
-    #Install fonts globally
-    find "$1" -maxdepth 1 -mindepth 1 -type f -name "$2" -exec sudo cp '{}' "$installDir" \;
-
-    [ -d "$installDir" ] && [ -n "$(ls "$installDir")" ] && printf "Finished\n" || printf "Failed\n"
 }
 
 uninstall_old_version()
@@ -120,82 +100,11 @@ uninstall_old_version()
     printf "Finished\n"
 }
 
-add_bash_completion()
-{
-    #Add completions for bash
-    completion_file="$1"
-    sudo mkdir -p /usr/local/share/bash-completion/completions
-    sudo cp "$completion_file" /usr/local/share/bash-completion/completions
-}
-
-add_zsh_completion()
-{
-    #Add completions for zsh
-    completion_file="$1"
-    sudo mkdir -p /usr/local/share/zsh/site-functions
-    sudo cp "$completion_file" /usr/local/share/zsh/site-functions
-}
-
-add_fish_completion()
-{
-    #Add completions for fish
-    completion_file="$1"
-    sudo mkdir -p /usr/local/share/fish/vendor_completions.d
-    sudo cp "$completion_file" /usr/local/share/fish/vendor_completions.d
-}
-
-add_image()
-{
-    #Add application image file
-    image_file="$1"
-    sudo mkdir -p /usr/local/share/pixmaps
-    sudo cp "$image_file" /usr/local/share/pixmaps
-}
-
-add_internet_image()
-{
-    #Add application image file
-    url="$1"
-    sudo mkdir -p "$(dirname "$program_image_file")"
-    sudo curl -s "$url" -o "$program_image_file"
-}
-
-add_old_Cobra_completions()
-{
-    #Add completions for bash
-    sudo mkdir -p /usr/local/share/bash-completion/completions
-    eval "$program_file completion -s bash | sudo tee /usr/local/share/bash-completion/completions/$program_file > /dev/null"
-
-    #Add completions for zsh
-    sudo mkdir -p /usr/local/share/zsh/site-functions
-    eval "$program_file completion -s zsh | sudo tee /usr/local/share/zsh/site-functions/_$program_file > /dev/null"
-
-    #Add completions for fish
-    sudo mkdir -p /usr/local/share/fish/vendor_completions.d
-    eval "$program_file completion -s fish | sudo tee /usr/local/share/fish/vendor_completions.d/$program_file.fish > /dev/null"
-}
-
-add_new_Cobra_completions()
-{
-    #Add completions for bash
-    sudo mkdir -p /usr/local/share/bash-completion/completions
-    eval "$program_file completion bash | sudo tee /usr/local/share/bash-completion/completions/$program_file > /dev/null"
-
-    #Add completions for zsh
-    sudo mkdir -p /usr/local/share/zsh/site-functions
-    eval "$program_file completion zsh | sudo tee /usr/local/share/zsh/site-functions/_$program_file > /dev/null"
-
-    #Add completions for fish
-    sudo mkdir -p /usr/local/share/fish/vendor_completions.d
-    eval "$program_file completion fish | sudo tee /usr/local/share/fish/vendor_completions.d/$program_file.fish > /dev/null"
-}
-
-add_desktop_file()
-{
-    #Add application .desktop file
-    sudo mkdir -p "$(dirname "$program_desktop_file")"
-    echo "$desktop_file_content" | sudo tee "$program_desktop_file" > /dev/null
-}
+#Source file with functions based on type
+case "$type" in
+    "bin") . "$(dirname "$0")/.bin.sh" ;;
+    "font") . "$(dirname "$0")/.font.sh" ;;
+esac
 
 ###############################################################
 ############################ START ############################
@@ -207,7 +116,7 @@ set_install_dir
 get_current_version
 
 #Start installation if github version is not equal to installed version
-if [ "$tag_name" != "$current_version" ] && [ "$checkFlag" = false ] || [ "$forceFlag" = true ]; then
+if [ "$online_tag" != "$current_version" ] && [ "$checkFlag" = false ] || [ "$forceFlag" = true ]; then
 
     #Check if program is already downloaded
     if [ ! -f "$program_tmp_file" ] || [ "$forceFlag" = true ]; then
@@ -217,10 +126,10 @@ if [ "$tag_name" != "$current_version" ] && [ "$checkFlag" = false ] || [ "$forc
     #Continue in parent script
     return
 
-elif [ "$checkFlag" = true ] && [ "$tag_name" = "$current_version" ]; then
+elif [ "$checkFlag" = true ] && [ "$online_tag" = "$current_version" ]; then
     echo "No update found for $program_name"
 
-elif [ "$checkFlag" = true ] && [ "$tag_name" != "$current_version" ]; then
+elif [ "$checkFlag" = true ] && [ "$online_tag" != "$current_version" ]; then
     echo "Update found for $program_name"
 
 else

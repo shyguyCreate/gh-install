@@ -1,5 +1,7 @@
 #!/bin/sh
 
+type="bin"
+
 program_name="VSCodium"
 program_file="codium"
 repo="VSCodium/vscodium"
@@ -12,10 +14,10 @@ program_tmp_file="/tmp/$program_file.tar.gz"
 #Source file with functions
 . "$(dirname "$0")/.install.sh"
 
-program_binary="$installDir/bin/$program_file"
+bin_program="$installDir/bin/$program_file"
 
 #Start program installation
-extract_program "zxf $program_tmp_file -C $installDir"
+extract_gz ""
 change_program_permission
 install_program
 add_bash_completion "$installDir/resources/completions/bash/$program_file"

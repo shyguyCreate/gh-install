@@ -1,5 +1,7 @@
 #!/bin/sh
 
+type="bin"
+
 program_name="Powershell"
 program_file="pwsh"
 repo="PowerShell/PowerShell"
@@ -12,10 +14,10 @@ program_tmp_file="/tmp/$program_file.tar.gz"
 #Source file with functions
 . "$(dirname "$0")/.install.sh"
 
-program_binary="$installDir/$program_file"
+bin_program="$installDir/$program_file"
 
 #Install and uninstall
-extract_program "zxf $program_tmp_file -C $installDir"
+extract_gz ""
 change_program_permission
 install_program
 add_new_Cobra_completions
