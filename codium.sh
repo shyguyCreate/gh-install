@@ -22,7 +22,7 @@ change_program_permission
 install_program
 add_bash_completion "$installDir/resources/completions/bash/$program_file"
 add_zsh_completion "$installDir/resources/completions/zsh/_$program_file"
-add_image "$installDir/resources/app/resources/linux/code.png"
+add_local_image "codium.png" "$installDir/resources/app/resources/linux/code.png"
 uninstall_old_version
 
 program_desktop_file="/usr/local/share/applications/$program_file.desktop"
@@ -33,7 +33,7 @@ Name=VSCodium
 Comment=Free/Libre Open Source Software Binaries of VS Code
 GenericName=VSCodium
 Exec=/usr/local/bin/codium
-Icon=/usr/local/share/pixmaps/code.png
+Icon=/usr/local/share/pixmaps/codium.png
 Categories=Utility;TextEditor;Development;IDE
 Type=Application
 EOF

@@ -23,11 +23,9 @@ install_program
 add_new_Cobra_completions
 uninstall_old_version
 
-program_image_file="/usr/local/share/pixmaps/$program_file.png"
-
 #Check if pixmaps image file exist
 if [ ! -f "$program_image_file" ] || [ $forceFlag = true ]; then
-    add_internet_image https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png
+    add_internet_image "pwsh.png" "https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"
 fi
 
 program_desktop_file="/usr/local/share/applications/$program_file.desktop"
