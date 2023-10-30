@@ -69,14 +69,14 @@ downlaod_program()
     fi
 }
 
-extract_gz()
+extract_tar_gz()
 {
     #Expand tar file to folder installation
     sudo mkdir -p "$installDir"
     eval "sudo tar zxf $program_tmp_file -C $installDir $1"
 }
 
-extract_xz()
+extract_tar_xz()
 {
     #Expand tar file to folder installation
     sudo mkdir -p "$installDir"

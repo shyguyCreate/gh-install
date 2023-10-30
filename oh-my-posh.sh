@@ -18,7 +18,7 @@ bin_program="$installDir/$program_file"
 
 #Install and uninstall
 copy_program
-change_program_permission
+change_bin_permissions
 install_program
 add_new_Cobra_completions
 uninstall_old_version

@@ -17,8 +17,8 @@ program_tmp_file="/tmp/$program_file.tar.gz"
 bin_program="$installDir/bin/$program_file"
 
 #Install and uninstall
-extract_gz "--strip-components=1"
-change_program_permission
+extract_tar_gz "--strip-components=1"
+change_bin_permissions
 install_program
 add_old_Cobra_completions
 uninstall_old_version

@@ -17,7 +17,7 @@ program_tmp_file="/tmp/$program_file.tar.xz"
 bin_program="$installDir/$program_file"
 
 #Install and uninstall
-extract_xz "--strip-components=1"
-change_program_permission
+extract_tar_xz "--strip-components=1"
+change_bin_permissions
 install_program
 uninstall_old_version

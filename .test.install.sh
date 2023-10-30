@@ -30,7 +30,7 @@ font_install_dir="installDir with file name"
 
 #Install and uninstall
 mkdir -p "/tmp/$program_file"
-extract_gz ""
-extract_xz ""
+extract_tar_gz ""
+extract_tar_xz ""
 install_font "/tmp/$program_file" "MesloLGSNerdFont-*.ttf"
 uninstall_old_version
