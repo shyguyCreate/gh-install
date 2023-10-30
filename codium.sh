@@ -3,6 +3,7 @@
 program_name="VSCodium"
 program_file="codium"
 repo="VSCodium/vscodium"
+installDir="/opt"
 
 download_match='VSCodium-linux-x64-.*\.tar\.gz'
 download_file=''
@@ -14,7 +15,7 @@ program_tmp_file="/tmp/$program_file.tar.gz"
 program_binary="$installDir/bin/$program_file"
 
 #Start program installation
-extract_program "zxf" ""
+extract_program "zxf $program_tmp_file -C $installDir"
 change_program_permission
 install_program
 add_bash_completion "$installDir/resources/completions/bash/$program_file"

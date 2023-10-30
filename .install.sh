@@ -43,13 +43,13 @@ get_latest_tag()
 set_install_dir()
 {
     #Set the install directory with github tag added to its name
-    installDir="/opt/${program_file}-${tag_name}"
+    installDir="$installDir/${program_file}-${tag_name}"
 }
 
 get_current_version()
 {
     #Get the current version of the program
-    current_version=$(find /opt -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -printf '%f' -quit | sed "s,${program_file}-,,g")
+    current_version=$(find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -printf '%f' -quit | sed "s,${program_file}-,,g")
 }
 
 downlaod_program()
@@ -63,27 +63,17 @@ downlaod_program()
             | cut -d \" -f 4 \
             | xargs curl -Lf --progress-bar -o "$program_tmp_file"
     elif [ -n "$download_file" ]; then
-        curl -Lf --progress-bar "https://github.com/$repo/releases/latest/download/$download_file" -o "/tmp/$program_file"
+        curl -Lf --progress-bar "https://github.com/$repo/releases/latest/download/$download_file" -o "$program_tmp_file"
     else
         echo "Download match or file not specified"
     fi
-}
-
-uninstall_old_version()
-{
-    printf "Uninstalling old %s version..." "$program_name"
-
-    #Remove contents if already installed
-    find /opt -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \+
-
-    printf "Finished\n"
 }
 
 extract_program()
 {
     #Expand tar file to folder installation
     sudo mkdir -p "$installDir"
-    eval "sudo tar $1 $program_tmp_file -C $installDir $2"
+    eval "sudo tar $1"
 }
 
 copy_program()
@@ -108,6 +98,26 @@ install_program()
     sudo ln -sf "$program_binary" /usr/local/bin
 
     [ -f "/usr/local/bin/$program_file" ] && printf "Finished\n" || printf "Failed\n"
+}
+
+install_font()
+{
+    printf "Begin %s installation..." "$program_name"
+
+    #Install fonts globally
+    find "$1" -maxdepth 1 -mindepth 1 -type f -name "$2" -exec sudo cp '{}' "$installDir" \;
+
+    [ -d "$installDir" ] && [ -n "$(ls "$installDir")" ] && printf "Finished\n" || printf "Failed\n"
+}
+
+uninstall_old_version()
+{
+    printf "Uninstalling old %s version..." "$program_name"
+
+    #Remove contents if already installed
+    find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \+
+
+    printf "Finished\n"
 }
 
 add_bash_completion()
@@ -146,7 +156,7 @@ add_internet_image()
 {
     #Add application image file
     url="$1"
-    sudo mkdir -p $(dirname "$program_image_file")
+    sudo mkdir -p "$(dirname "$program_image_file")"
     sudo curl -s "$url" -o "$program_image_file"
 }
 
@@ -183,7 +193,7 @@ add_new_Cobra_completions()
 add_desktop_file()
 {
     #Add application .desktop file
-    sudo mkdir -p $(dirname "$program_desktop_file")
+    sudo mkdir -p "$(dirname "$program_desktop_file")"
     echo "$desktop_file_content" | sudo tee "$program_desktop_file" > /dev/null
 }
 

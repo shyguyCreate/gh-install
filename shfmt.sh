@@ -3,6 +3,7 @@
 program_name="Shfmt"
 program_file="shfmt"
 repo="mvdan/sh"
+installDir="/opt"
 
 download_match='shfmt_.*_linux_amd64'
 download_file=''

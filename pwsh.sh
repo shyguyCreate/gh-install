@@ -3,6 +3,7 @@
 program_name="Powershell"
 program_file="pwsh"
 repo="PowerShell/PowerShell"
+installDir="/opt"
 
 download_match='powershell-.*-linux-x64\.tar\.gz'
 download_file=''
@@ -14,7 +15,7 @@ program_tmp_file="/tmp/$program_file.tar.gz"
 program_binary="$installDir/$program_file"
 
 #Install and uninstall
-extract_program "zxf" ""
+extract_program "zxf $program_tmp_file -C $installDir"
 change_program_permission
 install_program
 add_new_Cobra_completions

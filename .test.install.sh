@@ -1,20 +1,19 @@
 #!/bin/sh
 
-program_name="Shfmt"
-program_file="shfmt"
-repo="mvdan/sh"
+program_name="MesloLGS-NF"
+program_file="mesloLGS"
+repo="ryanoasis/nerd-fonts"
+installDir="/usr/local/share/fonts"
 
-download_match='shfmt_.*_linux_amd64'
-download_file=''
-program_tmp_file="/tmp/$program_file"
+download_match=''
+download_file='Meslo.tar.xz'
+program_tmp_file="/tmp/$program_file.tar.xz"
 
 #Source file with functions
 . "$(dirname "$0")/.install.sh"
 
-program_binary="$installDir/$program_file"
-
 #Install and uninstall
-copy_program
-change_program_permission
-install_program
+mkdir -p "/tmp/$program_file"
+extract_program "Jxf $program_tmp_file -C /tmp/$program_file"
+install_font "/tmp/$program_file" "MesloLGSNerdFont-*.ttf"
 uninstall_old_version

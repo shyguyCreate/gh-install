@@ -3,6 +3,7 @@
 program_name="Oh-My-Posh"
 program_file="oh-my-posh"
 repo="JanDeDobbeleer/oh-my-posh"
+installDir="/opt"
 
 download_match=''
 download_file='posh-linux-amd64'
