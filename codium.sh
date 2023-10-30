@@ -1,7 +1,5 @@
 #!/bin/sh
 
-type="bin"
-
 program_name="VSCodium"
 program_file="codium"
 repo="VSCodium/vscodium"
@@ -16,7 +14,18 @@ program_tmp_file="/tmp/$program_file.tar.gz"
 
 bin_program="$installDir/bin/$program_file"
 
-#Start program installation
+save_latest_tag
+get_latest_tag
+set_install_dir
+get_current_version
+
+should_install
+
+#Source file with functions
+. "$(dirname "$0")/.bin.sh"
+
+#Install and uninstall
+downlaod_program
 extract_tar_gz ""
 change_bin_permissions
 install_program

@@ -1,8 +1,5 @@
 #!/bin/sh
 
-type="bin"
-type="font"
-
 script_variables()
 {
     tag_tmp_file="dir to tag file in tmp"
@@ -28,7 +25,19 @@ bin_program="installDir with file name"
 bin_install_dir="installDir with file name"
 font_install_dir="installDir with file name"
 
+save_latest_tag
+get_latest_tag
+set_install_dir
+get_current_version
+
+should_install
+
+#Source file with functions
+. "$(dirname "$0")/.bin.sh"
+. "$(dirname "$0")/.font.sh"
+
 #Install and uninstall
+downlaod_program
 mkdir -p "/tmp/$program_file"
 extract_tar_gz ""
 extract_tar_xz ""

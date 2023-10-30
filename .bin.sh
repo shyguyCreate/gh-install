@@ -109,8 +109,6 @@ change_bin_permissions()
 
 install_program()
 {
-    printf "Begin %s installation..." "$program_name"
-
     #Create symbolic link to bin folder
     sudo mkdir -p /usr/local/bin
     sudo ln -sf "$bin_program" /usr/local/bin

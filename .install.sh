@@ -54,18 +54,21 @@ get_current_version()
 
 downlaod_program()
 {
-    echo "Downloading $program_name"
+    #Check if program is already downloaded
+    if [ ! -f "$program_tmp_file" ] || [ "$forceFlag" = true ]; then
+        echo "Downloading $program_name"
 
-    if [ -n "$download_match" ]; then
-        #Download binaries
-        curl -s "https://api.github.com/repos/$repo/releases/latest" \
-            | grep "\"browser_download_url.*/$download_match\"" \
-            | cut -d \" -f 4 \
-            | xargs curl -Lf --progress-bar -o "$program_tmp_file"
-    elif [ -n "$download_file" ]; then
-        curl -Lf --progress-bar "https://github.com/$repo/releases/latest/download/$download_file" -o "$program_tmp_file"
-    else
-        echo "Download match or file not specified"
+        if [ -n "$download_match" ]; then
+            #Download binaries
+            curl -s "https://api.github.com/repos/$repo/releases/latest" \
+                | grep "\"browser_download_url.*/$download_match\"" \
+                | cut -d \" -f 4 \
+                | xargs curl -Lf --progress-bar -o "$program_tmp_file"
+        elif [ -n "$download_file" ]; then
+            curl -Lf --progress-bar "https://github.com/$repo/releases/latest/download/$download_file" -o "$program_tmp_file"
+        else
+            echo "Download match or file not specified"
+        fi
     fi
 }
 
@@ -100,41 +103,19 @@ uninstall_old_version()
     printf "Finished\n"
 }
 
-#Source file with functions based on type
-case "$type" in
-    "bin") . "$(dirname "$0")/.bin.sh" ;;
-    "font") . "$(dirname "$0")/.font.sh" ;;
-esac
-
-###############################################################
-############################ START ############################
-###############################################################
-
-save_latest_tag
-get_latest_tag
-set_install_dir
-get_current_version
-
-#Start installation if github version is not equal to installed version
-if [ "$online_tag" != "$current_version" ] && [ "$checkFlag" = false ] || [ "$forceFlag" = true ]; then
-
-    #Check if program is already downloaded
-    if [ ! -f "$program_tmp_file" ] || [ "$forceFlag" = true ]; then
-        downlaod_program
+should_install()
+{
+    #Start installation if github version is not equal to installed version
+    if [ "$online_tag" != "$current_version" ] && [ "$checkFlag" = false ] || [ "$forceFlag" = true ]; then
+        printf "Begin %s installation..." "$program_name"
+    elif [ "$checkFlag" = true ] && [ "$online_tag" = "$current_version" ]; then
+        echo "No update found for $program_name"
+        exit
+    elif [ "$checkFlag" = true ] && [ "$online_tag" != "$current_version" ]; then
+        echo "Update found for $program_name"
+        exit
+    else
+        echo "$program_name is up to date"
+        exit
     fi
-
-    #Continue in parent script
-    return
-
-elif [ "$checkFlag" = true ] && [ "$online_tag" = "$current_version" ]; then
-    echo "No update found for $program_name"
-
-elif [ "$checkFlag" = true ] && [ "$online_tag" != "$current_version" ]; then
-    echo "Update found for $program_name"
-
-else
-    echo "$program_name is up to date"
-fi
-
-#End this and parent script
-exit
+}
