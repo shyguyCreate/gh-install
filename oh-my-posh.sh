@@ -17,8 +17,7 @@ bin_program="$installDir/$program_file"
 
 #Install and uninstall
 download_from_literal 'posh-linux-amd64'
-copy_program
-change_bin_permissions
-install_program
+copy_to_install_dir
+install_bin
 uninstall_old_version
 add_new_Cobra_completions

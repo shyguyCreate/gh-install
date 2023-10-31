@@ -18,8 +18,8 @@ bin_program="$installDir/$program_file"
 #Install and uninstall
 download_from_match 'powershell-.*-linux-x64\.tar\.gz'
 extract_tar_gz ""
-change_bin_permissions
-install_program
+copy_to_install_dir
+install_bin
 uninstall_old_version
 add_new_Cobra_completions
 add_internet_image "https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"

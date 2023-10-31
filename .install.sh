@@ -23,48 +23,56 @@ download_from_literal()
 
 #### Section 2 ####
 
+#Set the extract directory with github tag added to its name
+extractDir="/tmp/${program_file}-${online_tag}"
+
 extract_tar_gz()
 {
     #Expand tar file to folder installation
-    sudo mkdir -p "$installDir"
-    eval "sudo tar zxf $program_tmp_file -C $installDir $1"
+    sudo mkdir -p "$extractDir"
+    eval "sudo tar zxf $program_tmp_file -C $extractDir $1"
 }
 
 extract_tar_xz()
 {
     #Expand tar file to folder installation
-    sudo mkdir -p "$installDir"
-    eval "sudo tar Jxf $program_tmp_file -C $installDir $1"
-}
-
-copy_program()
-{
-    #Copy program file to folder installation
-    sudo mkdir -p "$installDir"
-    sudo cp "$program_tmp_file" "$installDir"
+    sudo mkdir -p "$extractDir"
+    eval "sudo tar Jxf $program_tmp_file -C $extractDir $1"
 }
 
 #### Section 3 ####
 
-change_bin_permissions()
+copy_to_install_dir()
 {
-    #Change execute permissions
-    sudo chmod +x "$bin_program"
+    sudo mkdir -p "$installDir"
+    if [ -d "$extractDir" ] && [ -n "$(ls "$extractDir")" ]; then
+        #Copy files extracted to folder installation
+        sudo cp -r "$extractDir"/* "$installDir"
+    else
+        #Copy program file to folder installation
+        sudo cp "$program_tmp_file" "$installDir"
+    fi
 }
 
 #### Section 4 ####
 
-install_program()
+bin_directory="/usr/local/bin"
+
+install_bin()
 {
+    #Change execute permissions
+    sudo chmod +x "$bin_program"
+
     #Create symbolic link to bin folder
-    sudo mkdir -p /usr/local/bin
-    sudo ln -sf "$bin_program" /usr/local/bin
+    sudo mkdir -p "$bin_directory"
+    sudo ln -sf "$bin_program" "$bin_directory"
 }
 
 install_font()
 {
-    #Install fonts globally
-    find "$1" -maxdepth 1 -mindepth 1 -type f -name "$2" -exec sudo cp '{}' "$installDir" \;
+    #Copy fonts to install directory
+    font_name="${1:-*}"
+    find "$extractDir" -maxdepth 1 -mindepth 1 -type f -name "$font_name" -exec sudo cp '{}' "$installDir" \;
 }
 
 #### Section 5 ####
@@ -180,7 +188,7 @@ add_desktop_file()
         Type=Application
         Name=$program_name
         GenericName=$program_name
-        Exec=/usr/local/bin/$program_file
+        Exec="$bin_directory"/$program_file
         Icon=$image_dir/$image_name
         Categories=Utility;Development
         Terminal=$1" \

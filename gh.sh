@@ -18,7 +18,7 @@ bin_program="$installDir/bin/$program_file"
 #Install and uninstall
 download_from_match 'gh_.*_linux_amd64\.tar\.gz'
 extract_tar_gz "--strip-components=1"
-change_bin_permissions
-install_program
+copy_to_install_dir
+install_bin
 uninstall_old_version
 add_old_Cobra_completions

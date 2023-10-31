@@ -17,9 +17,9 @@ bin_program="$installDir/bin/$program_file"
 
 #Install and uninstall
 download_from_match 'VSCodium-linux-x64-.*\.tar\.gz'
-extract_tar_gz ""
-change_bin_permissions
-install_program
+extract_tar_gz
+copy_to_install_dir
+install_bin
 uninstall_old_version
 add_bash_completion "$installDir/resources/completions/bash/$program_file"
 add_zsh_completion "$installDir/resources/completions/zsh/_$program_file"

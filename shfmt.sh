@@ -17,7 +17,6 @@ bin_program="$installDir/$program_file"
 
 #Install and uninstall
 download_from_match 'shfmt_.*_linux_amd64'
-copy_program
-change_bin_permissions
-install_program
+copy_to_install_dir
+install_bin
 uninstall_old_version

@@ -15,7 +15,7 @@ program_tmp_file="/tmp/$program_file.tar.xz"
 
 #Install and uninstall
 download_from_literal 'Meslo.tar.xz'
-mkdir -p "/tmp/$program_file"
 extract_tar_xz ""
-install_font "/tmp/$program_file" "MesloLGSNerdFont-*.ttf"
+copy_to_install_dir
+install_font "MesloLGSNerdFont-*.ttf"
 uninstall_old_version

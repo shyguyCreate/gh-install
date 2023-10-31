@@ -18,6 +18,6 @@ bin_program="$installDir/$program_file"
 #Install and uninstall
 download_from_match 'shellcheck.*linux\.x86_64\.tar\.xz'
 extract_tar_xz "--strip-components=1"
-change_bin_permissions
-install_program
+copy_to_install_dir
+install_bin
 uninstall_old_version
