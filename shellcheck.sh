@@ -5,8 +5,6 @@ program_file="shellcheck"
 repo="koalaman/shellcheck"
 installDir="/opt"
 
-download_match='shellcheck.*linux\.x86_64\.tar\.xz'
-download_file=''
 program_tmp_file="/tmp/$program_file.tar.xz"
 
 #Source file with functions
@@ -18,7 +16,7 @@ bin_program="$installDir/$program_file"
 . "$(dirname "$0")/.install.sh"
 
 #Install and uninstall
-downlaod_program
+download_from_match 'shellcheck.*linux\.x86_64\.tar\.xz'
 extract_tar_xz "--strip-components=1"
 change_bin_permissions
 install_program

@@ -38,16 +38,16 @@ online_tag=$(cat "$tag_tmp_file")
 installDir="$installDir/${program_file}-${online_tag}"
 
 #Get the current version of the program
-current_version=$(find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -printf '%f' -quit | sed "s,${program_file}-,,g")
+local_tag=$(find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -printf '%f' -quit | sed "s,${program_file}-,,g")
 
 #Start installation if github version is not equal to installed version
-if [ "$online_tag" != "$current_version" ] && [ "$checkFlag" = false ] || [ "$forceFlag" = true ]; then
+if [ "$online_tag" != "$local_tag" ] && [ "$checkFlag" = false ] || [ "$forceFlag" = true ]; then
     echo "Begin $program_name installation..."
 
-elif [ "$checkFlag" = true ] && [ "$online_tag" = "$current_version" ]; then
+elif [ "$checkFlag" = true ] && [ "$online_tag" = "$local_tag" ]; then
     echo "No update found for $program_name"
     exit
-elif [ "$checkFlag" = true ] && [ "$online_tag" != "$current_version" ]; then
+elif [ "$checkFlag" = true ] && [ "$online_tag" != "$local_tag" ]; then
     echo "Update found for $program_name"
     exit
 else

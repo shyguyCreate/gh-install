@@ -1,23 +1,22 @@
 #!/bin/sh
 
-downlaod_program()
+download_from_match()
 {
-    #Check if program is already downloaded
-    if [ ! -f "$program_tmp_file" ] || [ "$forceFlag" = true ]; then
-        echo "Downloading $program_name"
+    echo "Downloading $program_name"
+    #Download program with regex match
+    download_match="$1"
+    curl -s "https://api.github.com/repos/$repo/releases/latest" \
+        | grep "\"browser_download_url.*/$download_match\"" \
+        | cut -d \" -f 4 \
+        | xargs curl -Lf --progress-bar -o "$program_tmp_file"
+}
 
-        if [ -n "$download_match" ]; then
-            #Download binaries
-            curl -s "https://api.github.com/repos/$repo/releases/latest" \
-                | grep "\"browser_download_url.*/$download_match\"" \
-                | cut -d \" -f 4 \
-                | xargs curl -Lf --progress-bar -o "$program_tmp_file"
-        elif [ -n "$download_file" ]; then
-            curl -Lf --progress-bar "https://github.com/$repo/releases/latest/download/$download_file" -o "$program_tmp_file"
-        else
-            echo "Download match or file not specified"
-        fi
-    fi
+download_from_literal()
+{
+    echo "Downloading $program_name"
+    #Download program with literal name
+    download_file="$1"
+    curl -Lf --progress-bar "https://github.com/$repo/releases/latest/download/$download_file" -o "$program_tmp_file"
 }
 
 extract_tar_gz()
@@ -71,25 +70,6 @@ add_fish_completion()
     sudo cp "$completion_file" "$fish_completion_dir"
 }
 
-add_local_image()
-{
-    #Add application image file
-    local_image_dir="$2"
-    sudo mkdir -p "$image_dir"
-    sudo cp "$local_image_dir" "$image_dir/$image_name"
-}
-
-add_internet_image()
-{
-    #Check if pixmaps image file exist
-    if [ ! -f "$image_dir/$image_name" ] || [ $forceFlag = true ]; then
-        #Add application image file
-        url="$1"
-        sudo mkdir -p "$image_dir"
-        sudo curl -s "$url" -o "$image_dir/$image_name"
-    fi
-}
-
 add_old_Cobra_completions()
 {
     #Add completions for bash
@@ -120,26 +100,49 @@ add_new_Cobra_completions()
     eval "$program_file completion fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
 }
 
+add_local_image()
+{
+    #Check if pixmaps image file exist
+    if [ -f "$image_dir/$image_name" ] && [ $forceFlag = false ]; then
+        return
+    fi
+    #Add application image file
+    local_image_dir="$2"
+    sudo mkdir -p "$image_dir"
+    sudo cp "$local_image_dir" "$image_dir/$image_name"
+}
+
+add_internet_image()
+{
+    #Check if pixmaps image file exist
+    if [ -f "$image_dir/$image_name" ] && [ $forceFlag = false ]; then
+        return
+    fi
+    #Add application image file
+    url="$1"
+    sudo mkdir -p "$image_dir"
+    sudo curl -s "$url" -o "$image_dir/$image_name"
+}
+
 add_desktop_file()
 {
     #Check if .desktop file exist
-    if [ ! -f "$desktop_file" ] || [ $forceFlag = true ]; then
-        #Add application .desktop file
-        sudo mkdir -p "$(dirname "$desktop_file")"
-        desktop_file_content=$(
-            cat << EOF
-[Desktop Entry]
-Type=Application
-Name=$program_name
-GenericName=$program_name
-Exec=/usr/local/bin/$program_file
-Icon=$image_dir/$image_name
-Categories=Utility;Development
-Terminal=$1
-EOF
-        )
-        echo "$desktop_file_content" | sudo tee "$desktop_file" > /dev/null
+    if [ -f "$desktop_file" ] && [ $forceFlag = false ]; then
+        return
     fi
+    #Add application .desktop file
+    sudo mkdir -p "$(dirname "$desktop_file")"
+    echo \
+        "[Desktop Entry]
+        Type=Application
+        Name=$program_name
+        GenericName=$program_name
+        Exec=/usr/local/bin/$program_file
+        Icon=$image_dir/$image_name
+        Categories=Utility;Development
+        Terminal=$1" \
+        | sed 's/^[ \t]*//' - \
+        | sudo tee "$desktop_file" > /dev/null
 }
 
 change_bin_permissions()

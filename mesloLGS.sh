@@ -5,8 +5,6 @@ program_file="mesloLGS"
 repo="ryanoasis/nerd-fonts"
 installDir="/usr/local/share/fonts"
 
-download_match=''
-download_file='Meslo.tar.xz'
 program_tmp_file="/tmp/$program_file.tar.xz"
 
 #Source file with functions
@@ -16,7 +14,7 @@ program_tmp_file="/tmp/$program_file.tar.xz"
 . "$(dirname "$0")/.install.sh"
 
 #Install and uninstall
-downlaod_program
+download_from_literal 'Meslo.tar.xz'
 mkdir -p "/tmp/$program_file"
 extract_tar_xz ""
 install_font "/tmp/$program_file" "MesloLGSNerdFont-*.ttf"

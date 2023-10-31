@@ -5,8 +5,6 @@ program_file="pwsh"
 repo="PowerShell/PowerShell"
 installDir="/opt"
 
-download_match='powershell-.*-linux-x64\.tar\.gz'
-download_file=''
 program_tmp_file="/tmp/$program_file.tar.gz"
 
 #Source file with functions
@@ -18,7 +16,7 @@ bin_program="$installDir/$program_file"
 . "$(dirname "$0")/.install.sh"
 
 #Install and uninstall
-downlaod_program
+download_from_match 'powershell-.*-linux-x64\.tar\.gz'
 extract_tar_gz ""
 change_bin_permissions
 install_program

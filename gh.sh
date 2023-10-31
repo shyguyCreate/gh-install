@@ -5,8 +5,6 @@ program_file="gh"
 repo="cli/cli"
 installDir="/opt"
 
-download_match='gh_.*_linux_amd64\.tar\.gz'
-download_file=''
 program_tmp_file="/tmp/$program_file.tar.gz"
 
 #Source file with functions
@@ -18,7 +16,7 @@ bin_program="$installDir/bin/$program_file"
 . "$(dirname "$0")/.install.sh"
 
 #Install and uninstall
-downlaod_program
+download_from_match 'gh_.*_linux_amd64\.tar\.gz'
 extract_tar_gz "--strip-components=1"
 change_bin_permissions
 install_program
