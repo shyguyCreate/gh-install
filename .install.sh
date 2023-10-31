@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#### Section 1 ####
+
 download_from_match()
 {
     echo "Downloading $program_name"
@@ -18,6 +20,8 @@ download_from_literal()
     download_file="$1"
     curl -Lf --progress-bar "https://github.com/$repo/releases/latest/download/$download_file" -o "$program_tmp_file"
 }
+
+#### Section 2 ####
 
 extract_tar_gz()
 {
@@ -39,6 +43,39 @@ copy_program()
     sudo mkdir -p "$installDir"
     sudo cp "$program_tmp_file" "$installDir"
 }
+
+#### Section 3 ####
+
+change_bin_permissions()
+{
+    #Change execute permissions
+    sudo chmod +x "$bin_program"
+}
+
+#### Section 4 ####
+
+install_program()
+{
+    #Create symbolic link to bin folder
+    sudo mkdir -p /usr/local/bin
+    sudo ln -sf "$bin_program" /usr/local/bin
+}
+
+install_font()
+{
+    #Install fonts globally
+    find "$1" -maxdepth 1 -mindepth 1 -type f -name "$2" -exec sudo cp '{}' "$installDir" \;
+}
+
+#### Section 5 ####
+
+uninstall_old_version()
+{
+    #Remove contents if already installed
+    find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \+
+}
+
+#### Section 6 ####
 
 bash_completion_dir="/usr/local/share/bash-completion/completions"
 zsh_completion_dir="/usr/local/share/zsh/site-functions"
@@ -100,6 +137,8 @@ add_new_Cobra_completions()
     eval "$program_file completion fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
 }
 
+#### Section 7 ####
+
 add_local_image()
 {
     #Check if pixmaps image file exist
@@ -107,7 +146,8 @@ add_local_image()
         return
     fi
     #Add application image file
-    local_image_dir="$2"
+    image_name="$program_file.${1##*.}"
+    local_image_dir="$1"
     sudo mkdir -p "$image_dir"
     sudo cp "$local_image_dir" "$image_dir/$image_name"
 }
@@ -119,10 +159,13 @@ add_internet_image()
         return
     fi
     #Add application image file
+    image_name="$program_file.${1##*.}"
     url="$1"
     sudo mkdir -p "$image_dir"
     sudo curl -s "$url" -o "$image_dir/$image_name"
 }
+
+#### Section 8 ####
 
 add_desktop_file()
 {
@@ -143,29 +186,4 @@ add_desktop_file()
         Terminal=$1" \
         | sed 's/^[ \t]*//' - \
         | sudo tee "$desktop_file" > /dev/null
-}
-
-change_bin_permissions()
-{
-    #Change execute permissions
-    sudo chmod +x "$bin_program"
-}
-
-install_program()
-{
-    #Create symbolic link to bin folder
-    sudo mkdir -p /usr/local/bin
-    sudo ln -sf "$bin_program" /usr/local/bin
-}
-
-install_font()
-{
-    #Install fonts globally
-    find "$1" -maxdepth 1 -mindepth 1 -type f -name "$2" -exec sudo cp '{}' "$installDir" \;
-}
-
-uninstall_old_version()
-{
-    #Remove contents if already installed
-    find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \+
 }

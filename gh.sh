@@ -20,5 +20,5 @@ download_from_match 'gh_.*_linux_amd64\.tar\.gz'
 extract_tar_gz "--strip-components=1"
 change_bin_permissions
 install_program
-add_old_Cobra_completions
 uninstall_old_version
+add_old_Cobra_completions

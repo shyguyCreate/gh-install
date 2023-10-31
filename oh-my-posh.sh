@@ -20,5 +20,5 @@ download_from_literal 'posh-linux-amd64'
 copy_program
 change_bin_permissions
 install_program
-add_new_Cobra_completions
 uninstall_old_version
+add_new_Cobra_completions

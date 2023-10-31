@@ -20,10 +20,7 @@ download_from_match 'powershell-.*-linux-x64\.tar\.gz'
 extract_tar_gz ""
 change_bin_permissions
 install_program
-add_new_Cobra_completions
 uninstall_old_version
-
-image_name="$program_file.png"
+add_new_Cobra_completions
 add_internet_image "https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"
-
 add_desktop_file true
