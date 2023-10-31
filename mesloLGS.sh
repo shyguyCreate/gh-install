@@ -5,8 +5,6 @@ program_file="mesloLGS"
 repo="ryanoasis/nerd-fonts"
 program_type="font"
 
-program_tmp_file="/tmp/$program_file.tar.xz"
-
 #Source file with functions
 . "$(dirname "$0")/.check-install.sh"
 

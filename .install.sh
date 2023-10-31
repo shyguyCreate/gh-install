@@ -4,20 +4,25 @@
 
 download_from_match()
 {
-    echo "Downloading $program_name"
     #Download program with regex match
+    echo "Downloading $program_name"
     download_match="$1"
-    curl -s "https://api.github.com/repos/$repo/releases/latest" \
-        | grep "\"browser_download_url.*/$download_match\"" \
-        | cut -d \" -f 4 \
-        | xargs curl -Lf --progress-bar -o "$program_tmp_file"
+    url=$(curl -s "https://api.github.com/repos/$repo/releases/latest" \
+            | grep "\"browser_download_url.*/$download_match\"" \
+            | cut -d \" -f 4)
+    #Save dir to save download with the extension get from the program in the url
+    download_file="${url##*/}"
+    program_tmp_file="/tmp/$download_file"
+    curl -Lf --progress-bar "$url" -o "$program_tmp_file"
 }
 
 download_from_literal()
 {
-    echo "Downloading $program_name"
     #Download program with literal name
+    echo "Downloading $program_name"
+    #Save dir to save download with the extension get from the program in the url
     download_file="$1"
+    program_tmp_file="/tmp/$download_file"
     curl -Lf --progress-bar "https://github.com/$repo/releases/latest/download/$download_file" -o "$program_tmp_file"
 }
 
@@ -70,8 +75,9 @@ install_bin()
 
 install_font()
 {
-    #Copy fonts to install directory
+    #If no parameter pass, set wildcard to match all files
     font_name="${1:-*}"
+    #Copy fonts to install directory
     find "$extractDir" -maxdepth 1 -mindepth 1 -type f -name "$font_name" -exec sudo cp '{}' "$installDir" \;
 }
 
@@ -153,8 +159,9 @@ add_local_image()
     if [ -f "$image_dir/$image_name" ] && [ $forceFlag = false ]; then
         return
     fi
+    #Get extension of image parameter
+    image_name="${program_file}.${1##*.}"
     #Add application image file
-    image_name="$program_file.${1##*.}"
     local_image_dir="$1"
     sudo mkdir -p "$image_dir"
     sudo cp "$local_image_dir" "$image_dir/$image_name"
@@ -166,8 +173,9 @@ add_internet_image()
     if [ -f "$image_dir/$image_name" ] && [ $forceFlag = false ]; then
         return
     fi
+    #Get extension of image parameter
+    image_name="${program_file}.${1##*.}"
     #Add application image file
-    image_name="$program_file.${1##*.}"
     url="$1"
     sudo mkdir -p "$image_dir"
     sudo curl -s "$url" -o "$image_dir/$image_name"

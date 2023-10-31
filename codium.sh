@@ -5,8 +5,6 @@ program_file="codium"
 repo="VSCodium/vscodium"
 program_type="bin"
 
-program_tmp_file="/tmp/$program_file.tar.gz"
-
 #Source file with functions
 . "$(dirname "$0")/.check-install.sh"
 

@@ -5,8 +5,6 @@ program_file="shfmt"
 repo="mvdan/sh"
 program_type="bin"
 
-program_tmp_file="/tmp/$program_file"
-
 #Source file with functions
 . "$(dirname "$0")/.check-install.sh"
 

@@ -5,8 +5,6 @@ program_file="shellcheck"
 repo="koalaman/shellcheck"
 program_type="bin"
 
-program_tmp_file="/tmp/$program_file.tar.xz"
-
 #Source file with functions
 . "$(dirname "$0")/.check-install.sh"
 
