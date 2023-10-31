@@ -3,7 +3,7 @@
 program_name="MesloLGS-NF"
 program_file="mesloLGS"
 repo="ryanoasis/nerd-fonts"
-installDir="/usr/local/share/fonts"
+program_type="font"
 
 program_tmp_file="/tmp/$program_file.tar.xz"
 

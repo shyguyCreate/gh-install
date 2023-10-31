@@ -34,6 +34,12 @@ fi
 #Save tag_name to variable
 online_tag=$(cat "$tag_tmp_file")
 
+#Set the root of the install directory based on type of program
+case "$program_type" in
+    "bin") installDir="/opt" ;;
+    "font") installDir="/usr/local/share/fonts" ;;
+esac
+
 #Set the install directory with github tag added to its name
 installDir="$installDir/${program_file}-${online_tag}"
 

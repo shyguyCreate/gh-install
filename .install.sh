@@ -56,14 +56,14 @@ copy_to_install_dir()
 
 #### Section 4 ####
 
-bin_directory="/usr/local/bin"
-
 install_bin()
 {
     #Change execute permissions
+    bin_program="$1"
     sudo chmod +x "$bin_program"
 
     #Create symbolic link to bin folder
+    bin_directory="/usr/local/bin"
     sudo mkdir -p "$bin_directory"
     sudo ln -sf "$bin_program" "$bin_directory"
 }
@@ -88,8 +88,6 @@ uninstall_old_version()
 bash_completion_dir="/usr/local/share/bash-completion/completions"
 zsh_completion_dir="/usr/local/share/zsh/site-functions"
 fish_completion_dir="/usr/local/share/fish/vendor_completions.d"
-image_dir="/usr/local/share/pixmaps"
-desktop_file="/usr/local/share/applications/$program_file.desktop"
 
 add_bash_completion()
 {
@@ -147,6 +145,8 @@ add_new_Cobra_completions()
 
 #### Section 7 ####
 
+image_dir="/usr/local/share/pixmaps"
+
 add_local_image()
 {
     #Check if pixmaps image file exist
@@ -174,6 +174,8 @@ add_internet_image()
 }
 
 #### Section 8 ####
+
+desktop_file="/usr/local/share/applications/$program_file.desktop"
 
 add_desktop_file()
 {
