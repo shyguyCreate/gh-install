@@ -11,8 +11,10 @@ program_type="bin"
 #Source file with functions
 . "$(dirname "$0")/.install.sh"
 
+#Specify regex match to the right
+download_program 'posh-linux-amd64'
+
 #Install and uninstall
-download_from_literal 'posh-linux-amd64'
 copy_to_install_dir
 install_bin "$installDir/$program_file"
 uninstall_old_version

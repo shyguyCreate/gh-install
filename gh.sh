@@ -11,8 +11,10 @@ program_type="bin"
 #Source file with functions
 . "$(dirname "$0")/.install.sh"
 
+#Specify regex match to the right
+download_program 'gh_.*_linux_amd64\.tar\.gz'
+
 #Install and uninstall
-download_from_match 'gh_.*_linux_amd64\.tar\.gz'
 extract_tar_gz "--strip-components=1"
 copy_to_install_dir
 install_bin "$installDir/bin/$program_file"

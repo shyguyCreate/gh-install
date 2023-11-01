@@ -11,8 +11,10 @@ program_type="bin"
 #Source file with functions
 . "$(dirname "$0")/.install.sh"
 
+#Specify regex match to the right
+download_program 'shellcheck.*linux\.x86_64\.tar\.xz'
+
 #Install and uninstall
-download_from_match 'shellcheck.*linux\.x86_64\.tar\.xz'
 extract_tar_xz "--strip-components=1"
 copy_to_install_dir
 install_bin "$installDir/$program_file"

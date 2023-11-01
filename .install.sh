@@ -2,28 +2,17 @@
 
 #### Section 1 ####
 
-download_from_match()
+download_program()
 {
-    #Download program with regex match
     echo "Downloading $program_name"
-    download_match="$1"
-    url=$(curl -s "https://api.github.com/repos/$repo/releases/latest" \
-            | grep "\"browser_download_url.*/$download_match\"" \
-            | cut -d \" -f 4)
-    #Save dir to save download with the extension get from the program in the url
-    download_file="${url##*/}"
-    program_tmp_file="/tmp/$download_file"
-    curl -Lf --progress-bar "$url" -o "$program_tmp_file"
-}
 
-download_from_literal()
-{
-    #Download program with literal name
-    echo "Downloading $program_name"
-    #Save dir to save download with the extension get from the program in the url
-    download_file="$1"
-    program_tmp_file="/tmp/$download_file"
-    curl -Lf --progress-bar "https://github.com/$repo/releases/latest/download/$download_file" -o "$program_tmp_file"
+    #Get the download url by opening the .api.json file and searching with regex
+    url=$(grep "\"browser_download_url.*/$1\"" "$api_response" | cut -d \" -f 4)
+
+    #Set path to download file with the name found in the url
+    download_file="/tmp/${url##*/}"
+    #Start download
+    curl -Lf --progress-bar "$url" -o "$download_file"
 }
 
 #### Section 2 ####
@@ -35,14 +24,14 @@ extract_tar_gz()
 {
     #Expand tar file to folder installation
     sudo mkdir -p "$extractDir"
-    eval "sudo tar zxf $program_tmp_file -C $extractDir $1"
+    eval "sudo tar zxf $download_file -C $extractDir $1"
 }
 
 extract_tar_xz()
 {
     #Expand tar file to folder installation
     sudo mkdir -p "$extractDir"
-    eval "sudo tar Jxf $program_tmp_file -C $extractDir $1"
+    eval "sudo tar Jxf $download_file -C $extractDir $1"
 }
 
 #### Section 3 ####
@@ -55,7 +44,7 @@ copy_to_install_dir()
         sudo cp -r "$extractDir"/* "$installDir"
     else
         #Copy program file to folder installation
-        sudo cp "$program_tmp_file" "$installDir"
+        sudo cp "$download_file" "$installDir"
     fi
 }
 

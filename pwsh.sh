@@ -11,8 +11,10 @@ program_type="bin"
 #Source file with functions
 . "$(dirname "$0")/.install.sh"
 
+#Specify regex match to the right
+download_program 'powershell-.*-linux-x64\.tar\.gz'
+
 #Install and uninstall
-download_from_match 'powershell-.*-linux-x64\.tar\.gz'
 extract_tar_gz ""
 copy_to_install_dir
 install_bin "$installDir/$program_file"

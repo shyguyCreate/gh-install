@@ -21,18 +21,15 @@ done
 OPTIND=1
 
 #File to save the tag_name
-tag_tmp_file="/tmp/tag_name_$program_file"
+api_response="/tmp/${program_file}.api.json"
 
-#Get latest tag_name from github api
-if [ ! -f "$tag_tmp_file" ] || [ "$refreshFlag" = true ] || [ "$forceFlag" = true ]; then
-    curl -s "https://api.github.com/repos/$repo/releases/latest" \
-        | grep tag_name \
-        | cut -d \" -f 4 \
-        | xargs > "$tag_tmp_file"
+#Get latest release from the github api response
+if [ ! -f "$api_response" ] || [ "$refreshFlag" = true ] || [ "$forceFlag" = true ]; then
+    curl -s "https://api.github.com/repos/$repo/releases/latest" > "$api_response"
 fi
 
 #Save tag_name to variable
-online_tag=$(cat "$tag_tmp_file")
+online_tag=$(grep tag_name "$api_response" | cut -d \" -f 4)
 
 #Set the root of the install directory based on type of program
 case "$program_type" in

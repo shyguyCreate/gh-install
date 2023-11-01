@@ -11,8 +11,10 @@ program_type="font"
 #Source file with functions
 . "$(dirname "$0")/.install.sh"
 
+#Specify regex match to the right
+download_program 'Meslo.tar.xz'
+
 #Install and uninstall
-download_from_literal 'Meslo.tar.xz'
 extract_tar_xz ""
 copy_to_install_dir
 install_font "MesloLGSNerdFont-*.ttf"
