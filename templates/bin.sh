@@ -1,8 +1,8 @@
 #!/bin/sh
 
-program_name="Github-Cli"
-program_file="gh"
-repo="cli/cli"
+program_name="Name"
+program_file="name"
+repo="owner/repo-name"
 program_type="bin"
 
 #Source file with functions
@@ -12,18 +12,16 @@ program_type="bin"
 . "$(dirname "$0")/.install.sh"
 
 #Download release file based on match to the right (regex enabled)
-download_program 'gh_.*_linux_amd64\.tar\.gz'
+download_program 'release-filename'
 
 #Extract download archive (options to the right)
-extract_tar_gz "--strip-components=1"
+extract_tar_gz || extract_tar_xz
 
 #Copy download file to install directory
 copy_to_install_dir
 
 #Link binary to bin folder (specify binary location)
-install_bin "$installDir/bin/$program_file"
+install_bin "install-directory/binary"
 
 #Uninstall old program version
 uninstall_old_version
-
-add_old_Cobra_completions
