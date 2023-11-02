@@ -31,24 +31,33 @@ send_to_install_dir()
 
 #### Section 3 ####
 
-install_bin()
+install_program()
 {
-    #Change execute permissions
-    bin_program="$1"
-    sudo chmod +x "$bin_program"
+    install_bin()
+    {
+        #Change execute permissions
+        bin_program="$1"
+        sudo chmod +x "$bin_program"
 
-    #Create symbolic link to bin folder
-    bin_directory="/usr/local/bin"
-    sudo mkdir -p "$bin_directory"
-    sudo ln -sf "$bin_program" "$bin_directory"
-}
+        #Create symbolic link to bin folder
+        bin_directory="/usr/local/bin"
+        sudo mkdir -p "$bin_directory"
+        sudo ln -sf "$bin_program" "$bin_directory"
+    }
 
-install_font()
-{
-    #If no parameter pass, set wildcard to match all files
-    font_name="${1:-*}"
-    #Copy fonts to install directory
-    find "$installDir" -maxdepth 1 -mindepth 1 -type f -name "$font_name" -exec sudo cp '{}' "$installDir" \;
+    install_font()
+    {
+        #If no parameter pass, set wildcard to match all files
+        font_name="${1:-*}"
+        #Copy fonts to install directory
+        find "$installDir" -maxdepth 1 -mindepth 1 -type f -not -name "$font_name" -exec sudo rm -rf '{}' \;
+    }
+
+    #Choose which function to pick
+    case "$program_type" in
+        "bin") install_bin "$1" ;;
+        "font") install_font "$1" ;;
+    esac
 }
 
 #### Section 4 ####
@@ -56,7 +65,7 @@ install_font()
 uninstall_old_version()
 {
     #Remove contents if already installed
-    find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \+
+    find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \;
 }
 
 #### Section 5 ####
@@ -117,7 +126,7 @@ add_completions()
         eval "$program_file completion fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
     }
 
-    #Choose with function to pick
+    #Choose which function to pick
     case "$1" in
         "bash") add_bash_completion "$2" ;;
         "zsh") add_zsh_completion "$2" ;;
@@ -157,7 +166,7 @@ add_image_file()
         sudo curl -s "$url" -o "$image_dir/$image_name"
     }
 
-    #Choose with function to pick
+    #Choose which function to pick
     case "$1" in
         "local") add_local_image "$2" ;;
         "online") add_online_image "$2" ;;

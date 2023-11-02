@@ -17,8 +17,9 @@ download_program 'release-filename'
 #Send downloaded file or archive contents to install directory (options to the right)
 send_to_install_dir
 
-#Copy fonts to font directory (optionally specify font name)
-install_font "font-name"
+#BIN: Specify the program binary location
+#FONT: Specify which fonts should be kept
+install_program "font-name"
 
 #Uninstall old program version
 uninstall_old_version

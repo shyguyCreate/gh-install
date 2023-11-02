@@ -17,8 +17,9 @@ download_program 'release-filename'
 #Send downloaded file or archive contents to install directory (options to the right)
 send_to_install_dir
 
-#Link binary to bin folder (specify binary location)
-install_bin "install-directory/binary"
+#BIN: Specify the program binary location
+#FONT: Specify which fonts should be kept
+install_program "install-directory/binary"
 
 #Uninstall old program version
 uninstall_old_version

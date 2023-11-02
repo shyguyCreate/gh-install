@@ -17,8 +17,9 @@ download_program 'shellcheck.*linux\.x86_64\.tar\.xz'
 #Send downloaded file or archive contents to install directory (options to the right)
 send_to_install_dir "--strip-components=1"
 
-#Link binary to bin folder (specify binary location)
-install_bin "$installDir/$program_file"
+#BIN: Specify the program binary location
+#FONT: Specify which fonts should be kept
+install_program "$installDir/$program_file"
 
 #Uninstall old program version
 uninstall_old_version
