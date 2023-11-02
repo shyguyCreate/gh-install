@@ -6,10 +6,10 @@ repo="VSCodium/vscodium"
 program_type="bin"
 
 #Source file with functions
-. "$(dirname "$0")/.check-install.sh"
+. "$(dirname "$0")/../.check-install.sh"
 
 #Source file with functions
-. "$(dirname "$0")/.install.sh"
+. "$(dirname "$0")/../.install.sh"
 
 #Download release file based on match to the right (regex enabled)
 download_program 'VSCodium-linux-x64-.*\.tar\.gz'
