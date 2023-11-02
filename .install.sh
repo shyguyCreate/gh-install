@@ -63,62 +63,70 @@ uninstall_old_version()
 
 #### Section 5 ####
 
-bash_completion_dir="/usr/local/share/bash-completion/completions"
-zsh_completion_dir="/usr/local/share/zsh/site-functions"
-fish_completion_dir="/usr/local/share/fish/vendor_completions.d"
-
-add_bash_completion()
+add_completion()
 {
-    #Add completions for bash
-    completion_file="$1"
-    sudo mkdir -p "$bash_completion_dir"
-    sudo cp "$completion_file" "$bash_completion_dir"
-}
+    bash_completion_dir="/usr/local/share/bash-completion/completions"
+    zsh_completion_dir="/usr/local/share/zsh/site-functions"
+    fish_completion_dir="/usr/local/share/fish/vendor_completions.d"
 
-add_zsh_completion()
-{
-    #Add completions for zsh
-    completion_file="$1"
-    sudo mkdir -p "$zsh_completion_dir"
-    sudo cp "$completion_file" "$zsh_completion_dir"
-}
+    #Create completion directory if not exists
+    [ ! -d "$bash_completion_dir" ] && sudo mkdir -p "$bash_completion_dir"
+    [ ! -d "$zsh_completion_dir" ] && sudo mkdir -p "$zsh_completion_dir"
+    [ ! -d "$fish_completion_dir" ] && sudo mkdir -p "$fish_completion_dir"
 
-add_fish_completion()
-{
-    #Add completions for fish
-    completion_file="$1"
-    sudo mkdir -p "$fish_completion_dir"
-    sudo cp "$completion_file" "$fish_completion_dir"
-}
+    add_bash_completion()
+    {
+        #Add completions for bash
+        completion_file="$1"
+        sudo cp "$completion_file" "$bash_completion_dir"
+    }
 
-add_old_Cobra_completions()
-{
-    #Add completions for bash
-    sudo mkdir -p "$bash_completion_dir"
-    eval "$program_file completion -s bash | sudo tee $bash_completion_dir/$program_file > /dev/null"
+    add_zsh_completion()
+    {
+        #Add completions for zsh
+        completion_file="$1"
+        sudo cp "$completion_file" "$zsh_completion_dir"
+    }
 
-    #Add completions for zsh
-    sudo mkdir -p "$zsh_completion_dir"
-    eval "$program_file completion -s zsh | sudo tee $zsh_completion_dir/_$program_file > /dev/null"
+    add_fish_completion()
+    {
+        #Add completions for fish
+        completion_file="$1"
+        sudo cp "$completion_file" "$fish_completion_dir"
+    }
 
-    #Add completions for fish
-    sudo mkdir -p "$fish_completion_dir"
-    eval "$program_file completion -s fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
-}
+    add_old_Cobra_completion()
+    {
+        #Add completions for bash
+        eval "$program_file completion -s bash | sudo tee $bash_completion_dir/$program_file > /dev/null"
 
-add_new_Cobra_completions()
-{
-    #Add completions for bash
-    sudo mkdir -p "$bash_completion_dir"
-    eval "$program_file completion bash | sudo tee $bash_completion_dir/$program_file > /dev/null"
+        #Add completions for zsh
+        eval "$program_file completion -s zsh | sudo tee $zsh_completion_dir/_$program_file > /dev/null"
 
-    #Add completions for zsh
-    sudo mkdir -p "$zsh_completion_dir"
-    eval "$program_file completion zsh | sudo tee $zsh_completion_dir/_$program_file > /dev/null"
+        #Add completions for fish
+        eval "$program_file completion -s fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
+    }
 
-    #Add completions for fish
-    sudo mkdir -p "$fish_completion_dir"
-    eval "$program_file completion fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
+    add_new_Cobra_completion()
+    {
+        #Add completions for bash
+        eval "$program_file completion bash | sudo tee $bash_completion_dir/$program_file > /dev/null"
+
+        #Add completions for zsh
+        eval "$program_file completion zsh | sudo tee $zsh_completion_dir/_$program_file > /dev/null"
+
+        #Add completions for fish
+        eval "$program_file completion fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
+    }
+
+    #Choose with function to pick
+    case "$1" in
+        "bash") add_bash_completion "$2" ;;
+        "zsh") add_zsh_completion "$2" ;;
+        "fish") add_fish_completion "$2" ;;
+        "old-Cobra") add_old_Cobra_completion ;;
+        "new-Cobra") add_new_Cobra_completion ;;
+    esac
 }
 
 #### Section 6 ####
@@ -131,8 +139,8 @@ add_image_file()
     image_name="${program_file}.${2##*.}"
 
     #Check if pixmaps image file exist
-        if [ -f "$image_dir/$image_name" ] && [ "$forceFlag" = false ]; then
-            return
+    if [ -f "$image_dir/$image_name" ] && [ "$forceFlag" = false ]; then
+        return
     fi
 
     add_local_image()
@@ -151,7 +159,8 @@ add_image_file()
         sudo curl -s "$url" -o "$image_dir/$image_name"
     }
 
-    case $1 in
+    #Choose with function to pick
+    case "$1" in
         "local") add_local_image "$2" ;;
         "online") add_online_image "$2" ;;
     esac

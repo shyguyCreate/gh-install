@@ -23,4 +23,4 @@ install_bin "$installDir/bin/$program_file"
 #Uninstall old program version
 uninstall_old_version
 
-add_old_Cobra_completions
+add_completion "old-Cobra"

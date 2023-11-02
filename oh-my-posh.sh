@@ -20,4 +20,4 @@ install_bin "$installDir/$program_file"
 #Uninstall old program version
 uninstall_old_version
 
-add_new_Cobra_completions
+add_completion "new-Cobra"

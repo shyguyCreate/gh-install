@@ -23,6 +23,5 @@ install_bin "$installDir/$program_file"
 #Uninstall old program version
 uninstall_old_version
 
-add_new_Cobra_completions
 add_image_file "online" "https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"
 add_desktop_file true
