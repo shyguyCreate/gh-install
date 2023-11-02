@@ -4,8 +4,6 @@
 
 download_program()
 {
-    echo "Downloading $program_name"
-
     #Get the download url by opening the .api.json file and searching with regex
     url=$(grep "\"browser_download_url.*/$1\"" "$api_response" | cut -d \" -f 4)
 
@@ -63,7 +61,7 @@ uninstall_old_version()
 
 #### Section 5 ####
 
-add_completion()
+add_completions()
 {
     bash_completion_dir="/usr/local/share/bash-completion/completions"
     zsh_completion_dir="/usr/local/share/zsh/site-functions"
@@ -176,6 +174,10 @@ add_desktop_file()
     if [ -f "$desktop_file" ] && [ "$forceFlag" = false ]; then
         return
     fi
+
+    #Set if application should be run on the terminal
+    is_terminal="${1:-false}"
+
     #Add application .desktop file
     sudo mkdir -p "$(dirname "$desktop_file")"
     echo \
@@ -186,7 +188,7 @@ add_desktop_file()
         Exec=$bin_directory/$program_file
         Icon=$image_dir/$image_name
         Categories=Utility;Development
-        Terminal=$1" \
+        Terminal=$is_terminal" \
         | sed 's/^[ \t]*//' - \
         | sudo tee "$desktop_file" > /dev/null
 }

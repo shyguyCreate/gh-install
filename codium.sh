@@ -23,7 +23,12 @@ install_bin "$installDir/bin/$program_file"
 #Uninstall old program version
 uninstall_old_version
 
-add_completion "bash" "$installDir/resources/completions/bash/$program_file"
-add_completion "zsh" "$installDir/resources/completions/zsh/_$program_file"
+#Add completion file for bash/zsh/fish
+add_completions "bash" "$installDir/resources/completions/bash/$program_file"
+add_completions "zsh" "$installDir/resources/completions/zsh/_$program_file"
+
+#Add image file to system (local/onine) (image-location/url)
 add_image_file "local" "$installDir/resources/app/resources/linux/code.png"
+
+#Add image file to system (true/false for terminal application)
 add_desktop_file false

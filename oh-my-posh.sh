@@ -20,4 +20,5 @@ install_bin "$installDir/$program_file"
 #Uninstall old program version
 uninstall_old_version
 
-add_completion "new-Cobra"
+#Add completion file for bash/zsh/fish
+add_completions "new-Cobra"
