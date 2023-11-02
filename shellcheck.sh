@@ -14,11 +14,8 @@ program_type="bin"
 #Download release file based on match to the right (regex enabled)
 download_program 'shellcheck.*linux\.x86_64\.tar\.xz'
 
-#Extract download archive (options to the right)
-extract_download "--strip-components=1"
-
-#Copy download file to install directory
-copy_to_install_dir
+#Send downloaded file or archive contents to install directory (options to the right)
+send_to_install_dir "--strip-components=1"
 
 #Link binary to bin folder (specify binary location)
 install_bin "$installDir/$program_file"

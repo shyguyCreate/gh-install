@@ -14,11 +14,8 @@ program_type="bin"
 #Download release file based on match to the right (regex enabled)
 download_program 'powershell-.*-linux-x64\.tar\.gz'
 
-#Extract download archive (options to the right)
-extract_download
-
-#Copy download file to install directory
-copy_to_install_dir
+#Send downloaded file or archive contents to install directory (options to the right)
+send_to_install_dir
 
 #Link binary to bin folder (specify binary location)
 install_bin "$installDir/$program_file"
@@ -27,5 +24,5 @@ install_bin "$installDir/$program_file"
 uninstall_old_version
 
 add_new_Cobra_completions
-add_internet_image "https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"
+add_image_file "online" "https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"
 add_desktop_file true

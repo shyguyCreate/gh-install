@@ -36,6 +36,8 @@ case "$program_type" in
     "bin") installDir="/opt" ;;
     "font") installDir="/usr/local/share/fonts" ;;
 esac
+#Make parent directory for install
+[ ! -d "$installDir" ] && sudo mkdir -p "$installDir"
 
 #Set the install directory with github tag added to its name
 installDir="$installDir/${program_file}-${online_tag}"

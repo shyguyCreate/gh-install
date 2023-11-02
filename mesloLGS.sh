@@ -14,11 +14,8 @@ program_type="font"
 #Download release file based on match to the right (regex enabled)
 download_program 'Meslo.tar.xz'
 
-#Extract download archive (options to the right)
-extract_download
-
-#Copy download file to install directory
-copy_to_install_dir
+#Send downloaded file or archive contents to install directory (options to the right)
+send_to_install_dir
 
 #Copy fonts to font directory (optionally specify font name)
 install_font "MesloLGSNerdFont-*.ttf"

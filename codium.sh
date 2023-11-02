@@ -14,11 +14,8 @@ program_type="bin"
 #Download release file based on match to the right (regex enabled)
 download_program 'VSCodium-linux-x64-.*\.tar\.gz'
 
-#Extract download archive (options to the right)
-extract_download
-
-#Copy download file to install directory
-copy_to_install_dir
+#Send downloaded file or archive contents to install directory (options to the right)
+send_to_install_dir
 
 #Link binary to bin folder (specify binary location)
 install_bin "$installDir/bin/$program_file"
@@ -28,5 +25,5 @@ uninstall_old_version
 
 add_bash_completion "$installDir/resources/completions/bash/$program_file"
 add_zsh_completion "$installDir/resources/completions/zsh/_$program_file"
-add_local_image "$installDir/resources/app/resources/linux/code.png"
+add_image_file "local" "$installDir/resources/app/resources/linux/code.png"
 add_desktop_file false

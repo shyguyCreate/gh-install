@@ -18,42 +18,20 @@ download_program()
 
 #### Section 2 ####
 
-extract_download()
+send_to_install_dir()
 {
-    #Tell that file was extracted
-    was_extracted=false
-
-    #Set the extract directory with github tag added to its name
-    extractDir="/tmp/${program_file}-${online_tag}"
+    #Make directory for install
+    sudo mkdir -p "$installDir"
 
     #Expand tar file to folder installation
-    sudo mkdir -p "$extractDir"
-
     case $download_file in
-        *.tar.gz) eval "sudo tar zxf $download_file -C $extractDir $1" ;;
-        *.tar.xz) eval "sudo tar Jxf $download_file -C $extractDir $1" ;;
-        *) return ;;
+        *.tar.gz) eval "sudo tar zxf $download_file -C $installDir $1" ;;
+        *.tar.xz) eval "sudo tar Jxf $download_file -C $installDir $1" ;;
+        *) sudo cp "$download_file" "$installDir/$program_file" ;;
     esac
-
-    #Tell that file was extracted
-    was_extracted=true
 }
 
 #### Section 3 ####
-
-copy_to_install_dir()
-{
-    sudo mkdir -p "$installDir"
-    if [ "$was_extracted" = true ]; then
-        #Copy files extracted to folder installation
-        sudo cp -r "$extractDir"/* "$installDir"
-    else
-        #Copy program file to folder installation
-        sudo cp "$download_file" "$installDir"
-    fi
-}
-
-#### Section 4 ####
 
 install_bin()
 {
@@ -72,10 +50,10 @@ install_font()
     #If no parameter pass, set wildcard to match all files
     font_name="${1:-*}"
     #Copy fonts to install directory
-    find "$extractDir" -maxdepth 1 -mindepth 1 -type f -name "$font_name" -exec sudo cp '{}' "$installDir" \;
+    find "$installDir" -maxdepth 1 -mindepth 1 -type f -name "$font_name" -exec sudo cp '{}' "$installDir" \;
 }
 
-#### Section 5 ####
+#### Section 4 ####
 
 uninstall_old_version()
 {
@@ -83,7 +61,7 @@ uninstall_old_version()
     find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \+
 }
 
-#### Section 6 ####
+#### Section 5 ####
 
 bash_completion_dir="/usr/local/share/bash-completion/completions"
 zsh_completion_dir="/usr/local/share/zsh/site-functions"
@@ -143,39 +121,43 @@ add_new_Cobra_completions()
     eval "$program_file completion fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
 }
 
+#### Section 6 ####
+
+add_image_file()
+{
+    #Set image directory
+    image_dir="/usr/local/share/pixmaps"
+    #Save name with extension from image parameter
+    image_name="${program_file}.${2##*.}"
+
+    #Check if pixmaps image file exist
+        if [ -f "$image_dir/$image_name" ] && [ "$forceFlag" = false ]; then
+            return
+    fi
+
+    add_local_image()
+    {
+        #Add application image file from computer
+        local_image_dir="$1"
+        sudo mkdir -p "$image_dir"
+        sudo cp "$local_image_dir" "$image_dir/$image_name"
+    }
+
+    add_online_image()
+    {
+        #Add application image file from internet
+        url="$1"
+        sudo mkdir -p "$image_dir"
+        sudo curl -s "$url" -o "$image_dir/$image_name"
+    }
+
+    case $1 in
+        "local") add_local_image "$2" ;;
+        "online") add_online_image "$2" ;;
+    esac
+}
+
 #### Section 7 ####
-
-image_dir="/usr/local/share/pixmaps"
-
-add_local_image()
-{
-    #Check if pixmaps image file exist
-    if [ -f "$image_dir/$image_name" ] && [ "$forceFlag" = false ]; then
-        return
-    fi
-    #Get extension of image parameter
-    image_name="${program_file}.${1##*.}"
-    #Add application image file
-    local_image_dir="$1"
-    sudo mkdir -p "$image_dir"
-    sudo cp "$local_image_dir" "$image_dir/$image_name"
-}
-
-add_internet_image()
-{
-    #Check if pixmaps image file exist
-    if [ -f "$image_dir/$image_name" ] && [ "$forceFlag" = false ]; then
-        return
-    fi
-    #Get extension of image parameter
-    image_name="${program_file}.${1##*.}"
-    #Add application image file
-    url="$1"
-    sudo mkdir -p "$image_dir"
-    sudo curl -s "$url" -o "$image_dir/$image_name"
-}
-
-#### Section 8 ####
 
 add_desktop_file()
 {

@@ -14,9 +14,6 @@ program_type="bin"
 #Download release file based on match to the right (regex enabled)
 download_program 'shfmt_.*_linux_amd64'
 
-#Copy download file to install directory
-copy_to_install_dir
-
 #Link binary to bin folder (specify binary location)
 install_bin "$installDir/$program_file"
 
