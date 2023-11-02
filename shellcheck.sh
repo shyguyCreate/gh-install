@@ -15,7 +15,7 @@ program_type="bin"
 download_program 'shellcheck.*linux\.x86_64\.tar\.xz'
 
 #Extract download archive (options to the right)
-extract_tar_xz "--strip-components=1"
+extract_download "--strip-components=1"
 
 #Copy download file to install directory
 copy_to_install_dir

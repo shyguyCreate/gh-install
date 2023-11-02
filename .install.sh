@@ -11,27 +11,32 @@ download_program()
 
     #Set path to download file with the name found in the url
     download_file="/tmp/${url##*/}"
+
     #Start download
     curl -Lf --progress-bar "$url" -o "$download_file"
 }
 
 #### Section 2 ####
 
-#Set the extract directory with github tag added to its name
-extractDir="/tmp/${program_file}-${online_tag}"
-
-extract_tar_gz()
+extract_download()
 {
+    #Tell that file was extracted
+    was_extracted=false
+
+    #Set the extract directory with github tag added to its name
+    extractDir="/tmp/${program_file}-${online_tag}"
+
     #Expand tar file to folder installation
     sudo mkdir -p "$extractDir"
-    eval "sudo tar zxf $download_file -C $extractDir $1"
-}
 
-extract_tar_xz()
-{
-    #Expand tar file to folder installation
-    sudo mkdir -p "$extractDir"
-    eval "sudo tar Jxf $download_file -C $extractDir $1"
+    case $download_file in
+        *.tar.gz) eval "sudo tar zxf $download_file -C $extractDir $1" ;;
+        *.tar.xz) eval "sudo tar Jxf $download_file -C $extractDir $1" ;;
+        *) return ;;
+    esac
+
+    #Tell that file was extracted
+    was_extracted=true
 }
 
 #### Section 3 ####
@@ -39,7 +44,7 @@ extract_tar_xz()
 copy_to_install_dir()
 {
     sudo mkdir -p "$installDir"
-    if [ -d "$extractDir" ] && [ -n "$(ls "$extractDir")" ]; then
+    if [ "$was_extracted" = true ]; then
         #Copy files extracted to folder installation
         sudo cp -r "$extractDir"/* "$installDir"
     else
@@ -145,7 +150,7 @@ image_dir="/usr/local/share/pixmaps"
 add_local_image()
 {
     #Check if pixmaps image file exist
-    if [ -f "$image_dir/$image_name" ] && [ $forceFlag = false ]; then
+    if [ -f "$image_dir/$image_name" ] && [ "$forceFlag" = false ]; then
         return
     fi
     #Get extension of image parameter
@@ -159,7 +164,7 @@ add_local_image()
 add_internet_image()
 {
     #Check if pixmaps image file exist
-    if [ -f "$image_dir/$image_name" ] && [ $forceFlag = false ]; then
+    if [ -f "$image_dir/$image_name" ] && [ "$forceFlag" = false ]; then
         return
     fi
     #Get extension of image parameter
@@ -172,12 +177,12 @@ add_internet_image()
 
 #### Section 8 ####
 
-desktop_file="/usr/local/share/applications/$program_file.desktop"
-
 add_desktop_file()
 {
+    desktop_file="/usr/local/share/applications/$program_file.desktop"
+
     #Check if .desktop file exist
-    if [ -f "$desktop_file" ] && [ $forceFlag = false ]; then
+    if [ -f "$desktop_file" ] && [ "$forceFlag" = false ]; then
         return
     fi
     #Add application .desktop file
@@ -187,7 +192,7 @@ add_desktop_file()
         Type=Application
         Name=$program_name
         GenericName=$program_name
-        Exec="$bin_directory"/$program_file
+        Exec=$bin_directory/$program_file
         Icon=$image_dir/$image_name
         Categories=Utility;Development
         Terminal=$1" \

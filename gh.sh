@@ -15,7 +15,7 @@ program_type="bin"
 download_program 'gh_.*_linux_amd64\.tar\.gz'
 
 #Extract download archive (options to the right)
-extract_tar_gz "--strip-components=1"
+extract_download "--strip-components=1"
 
 #Copy download file to install directory
 copy_to_install_dir

@@ -15,7 +15,7 @@ program_type="bin"
 download_program 'VSCodium-linux-x64-.*\.tar\.gz'
 
 #Extract download archive (options to the right)
-extract_tar_gz
+extract_download
 
 #Copy download file to install directory
 copy_to_install_dir

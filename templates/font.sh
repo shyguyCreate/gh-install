@@ -15,7 +15,7 @@ program_type="font"
 download_program 'release-filename'
 
 #Extract download archive (options to the right)
-extract_tar_gz || extract_tar_xz
+extract_download
 
 #Copy download file to install directory
 copy_to_install_dir
