@@ -1,18 +1,18 @@
 #!/bin/sh
 
-#Add flags to script
 checkFlag=false
 forceFlag=false
 refreshFlag=false
-while getopts ":cfy" opt; do
+while getopts ":acfy" opt; do
     case $opt in
+        a) ;;
         c) checkFlag=true ;;
         f) forceFlag=true ;;
         y) refreshFlag=true ;;
         *)
             echo "-c to check available updates"
             echo "-f to force installation"
-            echo "-y to refresh github tag"
+            echo "-y to refresh github api response"
             ;;
     esac
 done
