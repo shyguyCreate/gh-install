@@ -3,9 +3,9 @@
 checkFlag=false
 forceFlag=false
 refreshFlag=false
-while getopts ":acfy" opt; do
+while getopts ":acfly" opt; do
     case $opt in
-        a) ;;
+        a | l) ;;
         c) checkFlag=true ;;
         f) forceFlag=true ;;
         y) refreshFlag=true ;;
