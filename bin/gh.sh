@@ -11,10 +11,10 @@ program_type="bin"
 #Source file with functions
 . "$(dirname "$0")/../.install.sh"
 
-#Download release file based on match to the right (regex enabled)
+#Download release file (specifiy match [regex])
 download_program 'gh_.*_linux_amd64\.tar\.gz'
 
-#Send downloaded file or archive contents to install directory (options to the right)
+#Send download contents to install directory (optional flags)
 send_to_install_dir "--strip-components=1"
 
 #BIN: Specify the program binary location
@@ -24,5 +24,5 @@ install_program "$installDir/bin/$program_file"
 #Uninstall old program version
 uninstall_old_version
 
-#Add completion file for bash/zsh/fish
+#Add completion file for bash/zsh/fish (completion-location)
 add_completions "old-Cobra"

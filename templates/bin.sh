@@ -11,10 +11,10 @@ program_type="bin"
 #Source file with functions
 . "$(dirname "$0")/../.install.sh"
 
-#Download release file based on match to the right (regex enabled)
+#Download release file (specifiy match [regex])
 download_program 'release-filename'
 
-#Send downloaded file or archive contents to install directory (options to the right)
+#Send download contents to install directory (optional flags)
 send_to_install_dir
 
 #BIN: Specify the program binary location
@@ -24,7 +24,7 @@ install_program "install-directory/binary"
 #Uninstall old program version
 uninstall_old_version
 
-#Add completion file for bash/zsh/fish
+#Add completion file for bash/zsh/fish (completion-location)
 # add_completions "bash" "location-of-completion-file-for-bash"
 # add_completions "zsh" "location-of-completion-file-for-zsh"
 # add_completions "fish" "location-of-completion-file-for-fish"
@@ -36,4 +36,4 @@ uninstall_old_version
 # add_image_file "online" "url"
 
 #Add image file to system (true/false for terminal application)
-# add_desktop_file
+# add_desktop_file false
