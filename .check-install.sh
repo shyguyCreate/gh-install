@@ -1,5 +1,13 @@
 #!/bin/sh
 
+usage()
+{
+    echo "-c to check available updates"
+    echo "-f to force installation"
+    echo "-y to refresh github api response"
+    exit
+}
+
 checkFlag=false
 forceFlag=false
 refreshFlag=false
@@ -9,11 +17,7 @@ while getopts ":acfly" opt; do
         c) checkFlag=true ;;
         f) forceFlag=true ;;
         y) refreshFlag=true ;;
-        *)
-            echo "-c to check available updates"
-            echo "-f to force installation"
-            echo "-y to refresh github api response"
-            ;;
+        *) usage ;;
     esac
 done
 
