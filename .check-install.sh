@@ -8,12 +8,12 @@ usage()
     exit
 }
 
+#Add flags to script
 checkFlag=false
 forceFlag=false
 refreshFlag=false
-while getopts ":acfly" opt; do
+while getopts ":cfy" opt; do
     case $opt in
-        a | l) ;;
         c) checkFlag=true ;;
         f) forceFlag=true ;;
         y) refreshFlag=true ;;
