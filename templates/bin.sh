@@ -35,5 +35,5 @@ uninstall_old_version
 # add_image_file "local" "image-location"
 # add_image_file "online" "url"
 
-#Add image file to system (true/false for terminal application)
+#Add desktop file to system (true/false for terminal application)
 # add_desktop_file false

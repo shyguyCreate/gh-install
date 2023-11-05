@@ -27,5 +27,5 @@ uninstall_old_version
 #Add image file to system (local/onine) (image-location/url)
 add_image_file "online" "https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"
 
-#Add image file to system (true/false for terminal application)
+#Add desktop file to system (true/false for terminal application)
 add_desktop_file true
