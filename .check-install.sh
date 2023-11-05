@@ -2,9 +2,9 @@
 
 usage()
 {
-    echo "-c to check available updates"
-    echo "-f to force installation"
-    echo "-y to refresh github api response"
+    echo "  -c to check available updates"
+    echo "  -f to force installation"
+    echo "  -y to refresh github api response"
     exit
 }
 
