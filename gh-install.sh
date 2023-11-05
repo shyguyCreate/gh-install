@@ -18,6 +18,20 @@ usage()
 #Iterate over all apps scripts
 allCommand()
 {
+    #Check that flags passed are valid
+    while getopts ":cfy" opt; do
+        case $opt in
+            c | f | y) ;;
+            *)
+                echo "Usage: gh-install all [FLAGS]"
+                echo "  -c to check available updates"
+                echo "  -f to force installation"
+                echo "  -y to refresh github api response"
+                exit
+                ;;
+        esac
+    done
+    #Execute all program scripts
     for script in "$(dirname "$0")"/apps/*.sh; do
         $script "$@"
     done
