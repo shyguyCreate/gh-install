@@ -1,10 +1,16 @@
 #!/bin/sh
 
-usage()
+usage_flags()
 {
     echo "  -c to check available updates"
     echo "  -f to force installation"
     echo "  -y to refresh github api response"
+}
+
+usage()
+{
+    echo "Flags:"
+    usage_flags
     exit
 }
 

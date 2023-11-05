@@ -1,5 +1,12 @@
 #!/bin/sh
 
+usage_flags()
+{
+    echo "  -c to check available updates"
+    echo "  -f to force installation"
+    echo "  -y to refresh github api response"
+}
+
 usage()
 {
     echo "Usage:"
@@ -9,9 +16,7 @@ usage()
     echo "  gh-install [FLAGS] [PROGRAMS]"
     echo ""
     echo "Flags:"
-    echo "  -c to check available updates"
-    echo "  -f to force installation"
-    echo "  -y to refresh github api response"
+    usage_flags
     exit
 }
 
@@ -24,9 +29,7 @@ allCommand()
             c | f | y) ;;
             *)
                 echo "Usage: gh-install all [FLAGS]"
-                echo "  -c to check available updates"
-                echo "  -f to force installation"
-                echo "  -y to refresh github api response"
+                usage_flags
                 exit
                 ;;
         esac
@@ -95,9 +98,16 @@ shift "$((OPTIND - 1))"
 #Reset getopts automatic variable
 OPTIND=1
 
-#Print usage if neither command or flag is passed or flag is passed but no program
-if [ "$program_flags" = "-" ] || [ $# = 0 ]; then
+#Print usage if flag is not passed
+if [ "$program_flags" = "-" ]; then
+    echo "here"
     usage
+fi
+#Print usage if flag is passed but no program
+if [ $# = 0 ]; then
+    echo "here2"
+    echo "Usage: gh-install [FLAGS] [PROGRAMS]"
+    exit
 fi
 
 #Pass arguments placed after flags
