@@ -40,7 +40,7 @@ searchFlag()
     #Iterate over all arguments and search for leading match
     for argument in "$@"; do
         for script in "$(dirname "$0")"/apps/"${argument}"*.sh; do
-            basename "$script" .sh
+            [ -f "$script" ] && basename "$script" .sh
         done
     done
     exit
@@ -82,7 +82,7 @@ elif [ "$_allFlag" = true ]; then
 fi
 
 #Get argument match from bin or fonts folder
-get_program()
+execute_program()
 {
     for argument in "$@"; do
         did_match=false
@@ -106,7 +106,7 @@ shift $flag_arg_num
 
 if [ $# != 0 ]; then
     #Pass arguments to search for a match with a program
-    get_program "$@"
+    execute_program "$@"
 else
     #Print usage if no flag or program is passed
     usage
