@@ -31,9 +31,9 @@ uninstall_old_version
 # add_completions "old-Cobra"
 # add_completions "new-Cobra"
 
-#Add image file to system (local/onine) (image-location/url)
+#Add image file to system (local|onine) (image-location|url)
 # add_image_file "local" "image-location"
 # add_image_file "online" "url"
 
-#Add desktop file to system (true/false for terminal application)
+#Add desktop file to system (true|false for terminal application)
 # add_desktop_file false

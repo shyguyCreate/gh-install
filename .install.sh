@@ -4,8 +4,14 @@
 
 download_program()
 {
+    #Exit if no argument was passed
+    [ -z "$1" ] && echo "Download match was not passed" && exit 1
+
     #Get the download url by opening the .api.json file and searching with regex
     url=$(grep "\"browser_download_url.*/$1\"" "$api_response" | cut -d \" -f 4)
+
+    #Exit if url is empty
+    [ -z "$url" ] && echo "Argument do not match any release file" && exit 1
 
     #Set path to download file with the name found in the url
     download_file="/tmp/${url##*/}"
@@ -35,6 +41,9 @@ install_program()
 {
     install_bin()
     {
+        #Exit if no argument was passed
+        [ -z "$1" ] && echo "Program binary location not specified" && exit 1
+
         #Change execute permissions
         bin_program="$1"
         sudo chmod +x "$bin_program"
@@ -81,56 +90,41 @@ add_completions()
     [ ! -d "$zsh_completion_dir" ] && sudo mkdir -p "$zsh_completion_dir"
     [ ! -d "$fish_completion_dir" ] && sudo mkdir -p "$fish_completion_dir"
 
-    add_bash_completion()
+    add_completion_file()
     {
-        #Add completions for bash
-        completion_file="$1"
-        sudo cp "$completion_file" "$bash_completion_dir"
-    }
+        #Exit if no argument was passed
+        [ -z "$1" ] && echo "Completion file not specified" && exit 1
 
-    add_zsh_completion()
-    {
-        #Add completions for zsh
+        #Add completion file to directory based on shell passed
         completion_file="$1"
-        sudo cp "$completion_file" "$zsh_completion_dir"
-    }
-
-    add_fish_completion()
-    {
-        #Add completions for fish
-        completion_file="$1"
-        sudo cp "$completion_file" "$fish_completion_dir"
+        completion_dir="$2"
+        sudo cp "$completion_file" "$completion_dir"
     }
 
     add_old_Cobra_completion()
     {
-        #Add completions for bash
+        #Add completions for bash/zsh/fish
         eval "$program_file completion -s bash | sudo tee $bash_completion_dir/$program_file > /dev/null"
-
-        #Add completions for zsh
         eval "$program_file completion -s zsh | sudo tee $zsh_completion_dir/_$program_file > /dev/null"
-
-        #Add completions for fish
         eval "$program_file completion -s fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
     }
 
     add_new_Cobra_completion()
     {
-        #Add completions for bash
+        #Add completions for bash/zsh/fish
         eval "$program_file completion bash | sudo tee $bash_completion_dir/$program_file > /dev/null"
-
-        #Add completions for zsh
         eval "$program_file completion zsh | sudo tee $zsh_completion_dir/_$program_file > /dev/null"
-
-        #Add completions for fish
         eval "$program_file completion fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
     }
 
+    #Exit if no argument was passed
+    [ -z "$1" ] && echo "Completion shell not specified" && exit 1
+
     #Choose which function to pick
     case "$1" in
-        "bash") add_bash_completion "$2" ;;
-        "zsh") add_zsh_completion "$2" ;;
-        "fish") add_fish_completion "$2" ;;
+        "bash") add_completion_file "$2" "$bash_completion_dir" ;;
+        "zsh")  add_completion_file "$2" "$zsh_completion_dir"  ;;
+        "fish") add_completion_file "$2" "$fish_completion_dir" ;;
         "old-Cobra") add_old_Cobra_completion ;;
         "new-Cobra") add_new_Cobra_completion ;;
     esac
@@ -152,6 +146,8 @@ add_image_file()
 
     add_local_image()
     {
+        #Exit if no argument was passed
+        [ -z "$1" ] && echo "Image location not specified" && exit 1
         #Add application image file from computer
         local_image_dir="$1"
         sudo mkdir -p "$image_dir"
@@ -160,11 +156,16 @@ add_image_file()
 
     add_online_image()
     {
+        #Exit if no argument was passed
+        [ -z "$1" ] && echo "Url not specified" && exit 1
         #Add application image file from internet
         url="$1"
         sudo mkdir -p "$image_dir"
         sudo curl -s "$url" -o "$image_dir/$image_name"
     }
+
+    #Exit if no argument was passed
+    [ -z "$1" ] && echo "Image type (local|onine) not specified" && exit 1
 
     #Choose which function to pick
     case "$1" in
@@ -183,6 +184,9 @@ add_desktop_file()
     if [ -f "$desktop_file" ] && [ "$forceFlag" = false ]; then
         return
     fi
+
+    #Exit if argument is incorrect
+    [ "$1" != true ] && [ "$1" != false ] && echo "Argument only accepts true or false" && exit 1
 
     #Set if application should be run on the terminal
     is_terminal="${1:-false}"

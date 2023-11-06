@@ -28,8 +28,8 @@ uninstall_old_version
 add_completions "bash" "$installDir/resources/completions/bash/$program_file"
 add_completions "zsh" "$installDir/resources/completions/zsh/_$program_file"
 
-#Add image file to system (local/onine) (image-location/url)
+#Add image file to system (local|onine) (image-location|url)
 add_image_file "local" "$installDir/resources/app/resources/linux/code.png"
 
-#Add desktop file to system (true/false for terminal application)
+#Add desktop file to system (true|false for terminal application)
 add_desktop_file false
