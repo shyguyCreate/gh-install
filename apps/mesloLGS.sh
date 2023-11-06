@@ -11,8 +11,9 @@ program_type="font"
 #Source file with functions
 . "$(dirname "$0")/../.install.sh"
 
-#Download release file (specifiy match [regex])
-download_program 'Meslo.tar.xz'
+#BIN: Set above matches for each architecture
+#FONT: Specify regex match to the right
+download_program 'Meslo\.tar\.xz'
 
 #Send download contents to install directory (optional flags)
 send_to_install_dir

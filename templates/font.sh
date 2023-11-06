@@ -11,7 +11,8 @@ program_type="font"
 #Source file with functions
 . "$(dirname "$0")/../.install.sh"
 
-#Download release file (specifiy match [regex])
+#BIN: Set above matches for each architecture
+#FONT: Specify regex match to the right
 download_program 'release-filename'
 
 #Send download contents to install directory (optional flags)

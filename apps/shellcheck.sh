@@ -11,8 +11,15 @@ program_type="bin"
 #Source file with functions
 . "$(dirname "$0")/../.install.sh"
 
-#Download release file (specifiy match [regex])
-download_program 'shellcheck.*linux\.x86_64\.tar\.xz'
+#Regex match to download release file
+download_x64='shellcheck-.*linux\.x86_64\.tar\.xz'
+download_arm32='shellcheck-.*linux\.armv6hf\.tar\.xz'
+download_arm64='shellcheck-.*linux\.aarch64\.tar\.xz'
+download_x32=''
+
+#BIN: Set above matches for each architecture
+#FONT: Specify regex match to the right
+download_program
 
 #Send download contents to install directory (optional flags)
 send_to_install_dir "--strip-components=1"

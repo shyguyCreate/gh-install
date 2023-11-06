@@ -4,14 +4,40 @@
 
 download_program()
 {
-    #Exit if no argument was passed
-    [ -z "$1" ] && echo "Download match was not passed" && exit 1
+    #Fonts should pass match as an argument
+    if [ "$program_type" = "font" ]; then
+        #Exit if no argument was passed
+        [ -z "$download_match" ] && echo "Download match is empty" && exit 1
+        #If argument is passed, set it to be match
+        download_match="$1"
+    else
+        #Check architecture
+        system_arch="$(uname -m | tr '[:upper:]' '[:lower:]')"
+
+        #Change to more readable form
+        case "$system_arch" in
+            x86_64) system_arch="x64" ;;
+            armv*) system_arch="arm32" ;;
+            arm64 | aarch64) system_arch="arm64" ;;
+            i?86) system_arch="x32" ;;
+        esac
+
+        #Set download match based on architecture
+        case $system_arch in
+            "x64") download_match=$download_x64 ;;
+            "arm32") download_match=$download_arm32 ;;
+            "arm64") download_match=$download_arm64 ;;
+            "x32") download_match=$download_x32 ;;
+        esac
+        #Exit if download match is empty
+        [ -z "$download_match" ] && echo "Download match not available for $system_arch" && exit 1
+    fi
 
     #Get the download url by opening the .api.json file and searching with regex
-    url=$(grep "\"browser_download_url.*/$1\"" "$api_response" | cut -d \" -f 4)
+    url=$(grep "\"browser_download_url.*/$download_match\"" "$api_response" | cut -d \" -f 4)
 
     #Exit if url is empty
-    [ -z "$url" ] && echo "Argument do not match any release file" && exit 1
+    [ -z "$url" ] && echo "Download match did not match any release file" && exit 1
 
     #Set path to download file with the name found in the url
     download_file="/tmp/${url##*/}"

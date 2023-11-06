@@ -11,8 +11,15 @@ program_type="bin"
 #Source file with functions
 . "$(dirname "$0")/../.install.sh"
 
-#Download release file (specifiy match [regex])
-download_program 'posh-linux-amd64'
+#Regex match to download release file
+download_x64='posh-linux-amd64'
+download_arm32='posh-linux-arm'
+download_arm64='posh-linux-arm64'
+download_x32='posh-linux-386'
+
+#BIN: Set above matches for each architecture
+#FONT: Specify regex match to the right
+download_program
 
 #Send download contents to install directory (optional flags)
 send_to_install_dir
