@@ -4,6 +4,7 @@ usage_flags()
 {
     echo "  -c to clean cache"
     echo "  -f to force installation"
+    echo "  -i to reinstall program"
     echo "  -r to remove/uninstall programs"
     echo "  -u to update programs"
     echo "  -y to refresh github api response"
@@ -19,13 +20,15 @@ usage()
 #Add flags to script
 cleanFlag=false
 forceFlag=false
+reinstallFlag=false
 removeFlag=false
 updateFlag=false
 refreshFlag=false
-while getopts ":cfruy" opt; do
+while getopts ":cfiruy" opt; do
     case $opt in
         c) cleanFlag=true ;;
         f) forceFlag=true ;;
+        i) reinstallFlag=true ;;
         r) removeFlag=true ;;
         u) updateFlag=true ;;
         y) refreshFlag=true ;;
@@ -79,7 +82,7 @@ online_tag=$(grep tag_name "$api_response" | cut -d \" -f 4)
 
 #Start installation if github version is not equal to installed version
 #Or if program is not installed or if force flag is passed
-if [ "$online_tag" != "$local_tag" ] && [ "$updateFlag" = true ] || [ -z "$local_tag" ] || [ "$forceFlag" = true ]; then
+if [ "$online_tag" != "$local_tag" ] && [ "$updateFlag" = true ] || [ -z "$local_tag" ] || [ "$reinstallFlag" = true ] || [ "$forceFlag" = true ]; then
     echo "Begin $program_name installation..."
 
 elif [ "$updateFlag" = false ] && [ "$online_tag" = "$local_tag" ]; then

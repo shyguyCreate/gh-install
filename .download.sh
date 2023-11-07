@@ -43,8 +43,11 @@ cacheDir="/var/cache/gh-install/$program_file"
 #Set path to download file with the name found in the url
 download_file="$cacheDir/${url##*/}"
 
-#Start download
-sudo curl -Lf --progress-bar "$url" -o "$download_file"
+#Download if file does not exits or if force passed
+if [ ! -f "$download_file" ] || [ "$forceFlag" = true ]; then
+    #Start download
+    sudo curl -Lf --progress-bar "$url" -o "$download_file"
+fi
 
 #Clean cache from old download files
 find "$cacheDir" -maxdepth 1 -mindepth 1 -type f -not -path "$download_file" -exec sudo rm -rf '{}' \;
