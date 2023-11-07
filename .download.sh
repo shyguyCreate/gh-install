@@ -20,10 +20,10 @@ else
 
     #Set download match based on architecture
     case $system_arch in
-        "x64") download_match=$download_x64 ;;
-        "arm32") download_match=$download_arm32 ;;
-        "arm64") download_match=$download_arm64 ;;
-        "x32") download_match=$download_x32 ;;
+        "x64") download_match="$download_x64" ;;
+        "arm32") download_match="$download_arm32" ;;
+        "arm64") download_match="$download_arm64" ;;
+        "x32") download_match="$download_x32" ;;
     esac
 
     #Exit if download match is empty
@@ -48,6 +48,9 @@ if [ ! -f "$download_file" ] || [ "$forceFlag" = true ]; then
     #Start download
     sudo curl -Lf --progress-bar "$url" -o "$download_file"
 fi
+
+#Exit if file does not exits after download
+[ ! -f "$download_file" ] && echo "Error when downloading" && exit
 
 #Clean cache from old download files
 find "$cacheDir" -maxdepth 1 -mindepth 1 -type f -not -path "$download_file" -exec sudo rm -rf '{}' \;
