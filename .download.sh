@@ -39,6 +39,9 @@ url=$(grep "\"browser_download_url.*/$download_match\"" "$api_response" | cut -d
 cacheDir="/var/cache/gh-install/$program_file"
 [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
 
+#Clean cache before installing new files
+clean_cache
+
 #Set path to download file with the name found in the url
 download_file="$cacheDir/${url##*/}"
 

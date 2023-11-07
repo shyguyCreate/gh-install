@@ -2,8 +2,9 @@
 
 usage_flags()
 {
-    echo "  -c to check available updates"
+    echo "  -c to clean cache"
     echo "  -f to force installation"
+    echo "  -u to update packages"
     echo "  -y to refresh github api response"
 }
 
@@ -15,13 +16,15 @@ usage()
 }
 
 #Add flags to script
-checkFlag=false
+cleanFlag=false
 forceFlag=false
+updateFlag=false
 refreshFlag=false
-while getopts ":cfy" opt; do
+while getopts ":cfuy" opt; do
     case $opt in
-        c) checkFlag=true ;;
+        c) cleanFlag=true ;;
         f) forceFlag=true ;;
+        u) updateFlag=true ;;
         y) refreshFlag=true ;;
         *) usage ;;
     esac
@@ -29,6 +32,20 @@ done
 
 #Reset getopts automatic variable
 OPTIND=1
+
+clean_cache()
+{
+    #Set cache directory to clean
+    cacheDir="/var/cache/gh-install/$program_file"
+    [ -d "$cacheDir" ] && sudo rm -rf "$cacheDir"/*
+}
+
+#Test if -c flag was passed
+if [ "$cleanFlag" = true ]; then
+    clean_cache
+    #Exit after cleaning
+    exit
+fi
 
 #File to save the tag_name
 api_response="/tmp/${program_file}.api.json"
@@ -57,13 +74,13 @@ installDir="$installDir/${program_file}-${online_tag}"
 local_tag=$(find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -printf '%f' -quit | sed "s,${program_file}-,,g")
 
 #Start installation if github version is not equal to installed version
-if [ "$online_tag" != "$local_tag" ] && [ "$checkFlag" = false ] || [ "$forceFlag" = true ]; then
+if [ "$online_tag" != "$local_tag" ] && [ "$updateFlag" = true ] || [ "$forceFlag" = true ]; then
     echo "Begin $program_name installation..."
 
-elif [ "$checkFlag" = true ] && [ "$online_tag" = "$local_tag" ]; then
+elif [ "$updateFlag" = false ] && [ "$online_tag" = "$local_tag" ]; then
     echo "No update found for $program_name"
     exit
-elif [ "$checkFlag" = true ] && [ "$online_tag" != "$local_tag" ]; then
+elif [ "$updateFlag" = false ] && [ "$online_tag" != "$local_tag" ]; then
     echo "Update found for $program_name"
     exit
 else

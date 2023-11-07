@@ -2,8 +2,9 @@
 
 usage_flags()
 {
-    echo "  -c to check available updates"
+    echo "  -c to clean cache"
     echo "  -f to force installation"
+    echo "  -u to update packages"
     echo "  -y to refresh github api response"
 }
 
@@ -24,9 +25,9 @@ usage()
 allCommand()
 {
     #Check that flags passed are valid
-    while getopts ":cfy" opt; do
+    while getopts ":cfuy" opt; do
         case $opt in
-            c | f | y) ;;
+            c | f | u | y) ;;
             *)
                 echo "Usage: gh-install all [FLAGS]"
                 usage_flags
@@ -83,10 +84,11 @@ esac
 #Check for flag match
 #Save flags that are needed for the programs script
 program_flags="-"
-while getopts ":cfy" opt; do
+while getopts ":cfuy" opt; do
     case $opt in
         c) program_flags="${program_flags}c" ;;
         f) program_flags="${program_flags}f" ;;
+        u) program_flags="${program_flags}u" ;;
         y) program_flags="${program_flags}y" ;;
         *) usage ;;
     esac
