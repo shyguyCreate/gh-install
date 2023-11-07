@@ -4,12 +4,10 @@
 
 download_program()
 {
-    #Fonts should pass match as an argument
-    if [ "$program_type" = "font" ]; then
-        #Exit if no argument was passed
-        [ -z "$download_match" ] && echo "Download match is empty" && exit 1
-        #If argument is passed, set it to be match
-        download_match="$1"
+    #If match for all architectures is passed
+    if [ -n "$download_all_arch" ]; then
+        #Set it to be the match
+        download_match="$download_all_arch"
     else
         #Check architecture
         system_arch="$(uname -m | tr '[:upper:]' '[:lower:]')"

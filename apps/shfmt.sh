@@ -11,14 +11,13 @@ program_type="bin"
 #Source file with functions
 . "$(dirname "$0")/../.install.sh"
 
-#Regex match to download release file
+#Regex match by architecture
 download_x64='shfmt_.*_linux_amd64'
 download_arm32='shfmt_.*_linux_arm'
 download_arm64='shfmt_.*_linux_arm64'
 download_x32='shfmt_.*_linux_386'
 
-#BIN: Set above matches for each architecture
-#FONT: Specify regex match to the right
+#Download release file
 download_program
 
 #Send download contents to install directory (optional flags)
