@@ -39,11 +39,11 @@ url=$(grep "\"browser_download_url.*/$download_match\"" "$api_response" | cut -d
 cacheDir="/var/cache/gh-install/$program_file"
 [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
 
-#Clean cache before installing new files
-clean_cache
-
 #Set path to download file with the name found in the url
 download_file="$cacheDir/${url##*/}"
 
 #Start download
 sudo curl -Lf --progress-bar "$url" -o "$download_file"
+
+#Clean cache from old download files
+find "$cacheDir" -maxdepth 1 -mindepth 1 -type f -not -path "$download_file" -exec sudo rm -rf '{}' \;

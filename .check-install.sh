@@ -33,17 +33,11 @@ done
 #Reset getopts automatic variable
 OPTIND=1
 
-clean_cache()
-{
+#Test if -c flag was passed
+if [ "$cleanFlag" = true ]; then
     #Set cache directory to clean
     cacheDir="/var/cache/gh-install/$program_file"
     [ -d "$cacheDir" ] && sudo rm -rf "$cacheDir"/*
-}
-
-#Test if -c flag was passed
-if [ "$cleanFlag" = true ]; then
-    clean_cache
-    #Exit after cleaning
     exit
 fi
 
@@ -74,7 +68,8 @@ installDir="$installDir/${program_file}-${online_tag}"
 local_tag=$(find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -printf '%f' -quit | sed "s,${program_file}-,,g")
 
 #Start installation if github version is not equal to installed version
-if [ "$online_tag" != "$local_tag" ] && [ "$updateFlag" = true ] || [ "$forceFlag" = true ]; then
+#Or if program is not installed or if force flag is passed
+if [ "$online_tag" != "$local_tag" ] && [ "$updateFlag" = true ] || [ -z "$local_tag" ] || [ "$forceFlag" = true ]; then
     echo "Begin $program_name installation..."
 
 elif [ "$updateFlag" = false ] && [ "$online_tag" = "$local_tag" ]; then
