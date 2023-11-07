@@ -25,6 +25,7 @@ else
         "arm64") download_match=$download_arm64 ;;
         "x32") download_match=$download_x32 ;;
     esac
+
     #Exit if download match is empty
     [ -z "$download_match" ] && echo "Download match not available for $system_arch" && exit 1
 fi

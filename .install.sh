@@ -4,6 +4,9 @@
 
 send_to_install_dir()
 {
+    #Set the install directory with github tag added to its name
+    installDir="$installDir/${program_file}-${online_tag}"
+
     #Make directory for install
     sudo mkdir -p "$installDir"
 
