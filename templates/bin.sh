@@ -5,11 +5,8 @@ program_file="name"
 repo="owner/repo-name"
 program_type="bin"
 
-#Source file with functions
+#Check if should install
 . "$(dirname "$0")/../.check-install.sh"
-
-#Source file with functions
-. "$(dirname "$0")/../.install.sh"
 
 #Regex match when program is independent of architecture
 # download_all_arch=''
@@ -20,7 +17,10 @@ download_arm64=''
 download_x32=''
 
 #Download release file
-download_program
+. "$(dirname "$0")/../.download.sh"
+
+#Source file with functions
+. "$(dirname "$0")/../.install.sh"
 
 #Send download contents to install directory (optional flags)
 send_to_install_dir
