@@ -37,11 +37,15 @@ download_program()
     #Exit if url is empty
     [ -z "$url" ] && echo "Download match did not match any release file" && exit 1
 
+    #Set cache directory for downloaded files
+    cacheDir="/var/cache/gh-install/$program_file"
+    [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
+
     #Set path to download file with the name found in the url
-    download_file="/tmp/${url##*/}"
+    download_file="$cacheDir/${url##*/}"
 
     #Start download
-    curl -Lf --progress-bar "$url" -o "$download_file"
+    sudo curl -Lf --progress-bar "$url" -o "$download_file"
 }
 
 #### Section 2 ####
