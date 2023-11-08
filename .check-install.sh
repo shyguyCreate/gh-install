@@ -3,6 +3,7 @@
 usage_flags()
 {
     echo "  -c to clean cache"
+    echo "  -d to download only"
     echo "  -f to force installation"
     echo "  -i to reinstall program"
     echo "  -r to remove/uninstall programs"
@@ -19,14 +20,16 @@ usage()
 
 #Add flags to script
 cleanFlag=false
+downloadFlag=false
 forceFlag=false
 reinstallFlag=false
 removeFlag=false
 updateFlag=false
 refreshFlag=false
-while getopts ":cfiruy" opt; do
+while getopts ":cdfiruy" opt; do
     case $opt in
         c) cleanFlag=true ;;
+        d) downloadFlag=true ;;
         f) forceFlag=true ;;
         i) reinstallFlag=true ;;
         r) removeFlag=true ;;
@@ -62,9 +65,7 @@ if [ "$removeFlag" = true ]; then
 fi
 
 #Exit if -c or -r flag was passed
-if [ "$cleanFlag" = true ] || [ "$removeFlag" = true ]; then
-    exit
-fi
+[ "$cleanFlag" = true ] || [ "$removeFlag" = true ] && exit
 
 #Get the current version of the program
 local_tag=$(find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -printf '%f' -quit | sed "s,${program_file}-,,g")
@@ -81,8 +82,11 @@ fi
 online_tag=$(grep tag_name "$api_response" | cut -d \" -f 4)
 
 #Start installation if github version is not equal to installed version
-#Or if program is not installed or if force flag is passed
-if [ "$online_tag" != "$local_tag" ] && [ "$updateFlag" = true ] || [ -z "$local_tag" ] || [ "$reinstallFlag" = true ] || [ "$forceFlag" = true ]; then
+#Or if program is not installed or if -rdf flag is passed
+if [ "$downloadFlag" = true ]; then
+    echo "Begin $program_name download..."
+
+elif [ "$online_tag" != "$local_tag" ] && [ "$updateFlag" = true ] || [ -z "$local_tag" ] || [ "$reinstallFlag" = true ] || [ "$forceFlag" = true ]; then
     echo "Begin $program_name installation..."
 
 elif [ "$updateFlag" = false ] && [ "$online_tag" = "$local_tag" ]; then

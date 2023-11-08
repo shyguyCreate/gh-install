@@ -54,3 +54,6 @@ fi
 
 #Clean cache from old download files
 find "$cacheDir" -maxdepth 1 -mindepth 1 -type f -not -path "$download_file" -exec sudo rm -rf '{}' \;
+
+#Exit if -d flag is passed
+[ "$downloadFlag" = true ] && exit

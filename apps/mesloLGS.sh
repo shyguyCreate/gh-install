@@ -8,7 +8,7 @@ program_type="font"
 #Check if should install
 . "$(dirname "$0")/../.check-install.sh"
 
-#Regex match when program is independent of architecture
+#Regex match for all architectures
 download_all_arch='Meslo\.tar\.xz'
 
 #Download release file

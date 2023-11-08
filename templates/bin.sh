@@ -8,8 +8,6 @@ program_type="bin"
 #Check if should install
 . "$(dirname "$0")/../.check-install.sh"
 
-#Regex match when program is independent of architecture
-# download_all_arch=''
 #Regex match by architecture
 download_x64=''
 download_arm32=''
