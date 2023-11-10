@@ -45,8 +45,11 @@ OPTIND=1
 #Test if -c flag was passed
 if [ "$cleanFlag" = true ]; then
     #Set cache directory to clean
-    cacheDir="/var/cache/gh-install/$program_file"
-    [ -d "$cacheDir" ] && sudo rm -rf "$cacheDir"/*
+    cacheDir="/var/cache/gh-install"
+    [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
+
+    #Clean cache directories of currents program
+    find "$cacheDir" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -exec sudo rm -rf '{}' \;
 fi
 
 #Set the root of the install directory based on type of program
@@ -61,7 +64,7 @@ esac
 #Test if -r flag was passed
 if [ "$removeFlag" = true ]; then
     #Remove contents if already installed
-    find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \;
+    find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -exec sudo rm -rf '{}' \;
 fi
 
 #Exit if -c or -r flag was passed

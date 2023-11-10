@@ -14,6 +14,13 @@ download_arm32=''
 download_arm64=''
 download_x32=''
 
+#Specify that file has checksums with same filename
+hash_extension=''
+#Specify filename with checksums
+hash_file=''
+#Specify hash algorithm when not found in extension
+hash_algorithm=''
+
 #Download release file
 . "$(dirname "$0")/../.download.sh"
 
