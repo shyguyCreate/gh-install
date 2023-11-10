@@ -5,9 +5,9 @@ usage_flags()
     echo "  -c to clean cache"
     echo "  -d to download only"
     echo "  -f to force installation"
-    echo "  -i to reinstall program"
-    echo "  -r to remove/uninstall programs"
-    echo "  -u to update programs"
+    echo "  -i to install/update programs"
+    echo "  -r to reinstall program"
+    echo "  -u to uninstall programs"
     echo "  -y to refresh github api response"
 }
 
@@ -22,18 +22,18 @@ usage()
 cleanFlag=false
 downloadFlag=false
 forceFlag=false
+installFlag=false
 reinstallFlag=false
-removeFlag=false
-updateFlag=false
+uninstallFlag=false
 refreshFlag=false
 while getopts ":cdfiruy" opt; do
     case $opt in
         c) cleanFlag=true ;;
         d) downloadFlag=true ;;
         f) forceFlag=true ;;
-        i) reinstallFlag=true ;;
-        r) removeFlag=true ;;
-        u) updateFlag=true ;;
+        i) installFlag=true ;;
+        r) reinstallFlag=true ;;
+        u) uninstallFlag=true ;;
         y) refreshFlag=true ;;
         *) usage ;;
     esac
@@ -62,13 +62,13 @@ esac
 [ ! -d "$installDir" ] && sudo mkdir -p "$installDir"
 
 #Test if -r flag was passed
-if [ "$removeFlag" = true ]; then
+if [ "$uninstallFlag" = true ]; then
     #Remove contents if already installed
     find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -exec sudo rm -rf '{}' \;
 fi
 
 #Exit if -c or -r flag was passed
-[ "$cleanFlag" = true ] || [ "$removeFlag" = true ] && exit
+[ "$cleanFlag" = true ] || [ "$uninstallFlag" = true ] && exit
 
 #Get the current version of the program
 local_tag=$(find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -printf '%f' -quit | sed "s,${program_file}-,,g")
@@ -89,13 +89,16 @@ online_tag=$(grep tag_name "$api_response" | cut -d \" -f 4)
 if [ "$downloadFlag" = true ]; then
     echo "Begin $program_name download..."
 
-elif [ "$online_tag" != "$local_tag" ] && [ "$updateFlag" = true ] || [ -z "$local_tag" ] || [ "$reinstallFlag" = true ] || [ "$forceFlag" = true ]; then
+elif [ "$reinstallFlag" = true ]; then
+    echo "Begin $program_name reinstallation..."
+
+elif [ "$online_tag" != "$local_tag" ] && [ "$installFlag" = true ] || [ -z "$local_tag" ] || [ "$forceFlag" = true ]; then
     echo "Begin $program_name installation..."
 
-elif [ "$updateFlag" = false ] && [ "$online_tag" = "$local_tag" ]; then
+elif [ "$installFlag" = false ] && [ "$online_tag" = "$local_tag" ]; then
     echo "No update found for $program_name"
     exit
-elif [ "$updateFlag" = false ] && [ "$online_tag" != "$local_tag" ]; then
+elif [ "$installFlag" = false ] && [ "$online_tag" != "$local_tag" ]; then
     echo "Update found for $program_name"
     exit
 else

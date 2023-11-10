@@ -5,9 +5,9 @@ usage_flags()
     echo "  -c to clean cache"
     echo "  -d to download only"
     echo "  -f to force installation"
-    echo "  -i to reinstall program"
-    echo "  -r to remove/uninstall programs"
-    echo "  -u to update programs"
+    echo "  -i to install/update programs"
+    echo "  -r to reinstall program"
+    echo "  -u to uninstall programs"
     echo "  -y to refresh github api response"
 }
 
@@ -106,14 +106,12 @@ shift "$((OPTIND - 1))"
 #Reset getopts automatic variable
 OPTIND=1
 
-#Print usage if flag is not passed
-if [ "$program_flags" = "-" ]; then
-    echo "here"
+#Print usage if flag and program are not passed
+if [ "$program_flags" = "-" ] && [ $# = 0 ]; then
     usage
 fi
 #Print usage if flag is passed but no program
-if [ $# = 0 ]; then
-    echo "here2"
+if [ "$program_flags" != "-" ] && [ $# = 0 ]; then
     echo "Usage: gh-install [FLAGS] [PROGRAMS]"
     exit
 fi
@@ -133,6 +131,6 @@ for argument in "$@"; do
     done
     #Print if argument and program matched
     if [ "$did_match" = false ]; then
-        echo "$argument is not available"
+        echo "'$argument' is not available"
     fi
 done
