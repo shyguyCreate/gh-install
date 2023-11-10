@@ -14,6 +14,9 @@ download_arm32='VSCodium-linux-armhf-.*\.tar\.gz'
 download_arm64='VSCodium-linux-arm64-.*\.tar\.gz'
 download_x32=''
 
+#Specify that file has checksums with same filename
+hash_extension='sha256'
+
 #Download release file
 . "$(dirname "$0")/../.download.sh"
 

@@ -31,37 +31,50 @@ else
 fi
 
 #Get the download url by opening the .api.json file and searching with regex
-url=$(grep "\"browser_download_url.*/$download_match\"" "$api_response" | cut -d \" -f 4)
+download_url=$(grep "\"browser_download_url.*/$download_match\"" "$api_response" | cut -d \" -f 4)
 
 #Exit if url is empty
-[ -z "$url" ] && echo "Download match did not match any release file" && exit 1
+[ -z "$download_url" ] && echo "Download match did not match any release file" && exit 1
 
 #Set cache directory for downloaded files
 cacheDir="/var/cache/gh-install/$program_file"
 [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
 
 #Set path to download file with the name found in the url
-download_file="$cacheDir/${url##*/}"
+download_file="$cacheDir/${download_url##*/}"
 
 #Download if file does not exits or if force passed
 if [ ! -f "$download_file" ] || [ "$forceFlag" = true ]; then
     #Start download
-    sudo curl -f --progress-bar "$url" -o "$download_file"
+    sudo curl -Lf --progress-bar "$download_url" -o "$download_file"
 fi
 
 #Exit if file does not exits after download
 [ ! -f "$download_file" ] && echo "Error when downloading" && exit
 
 #Test if download file has hashes
-[ -n "$trailing_hash" ] && hash_file="$(basename "$download_file").${trailing_hash}"
+[ -n "$hash_extension" ] && hash_file="$(basename "$download_file").${hash_extension}"
 
 #Check if hash file was set by trailing or manually
 if [ -n "$hash_file" ]; then
-    #Add cache dir to hash
-    hash_file="$cacheDir/$hash_file"
 
-    #Download hash file
-    sudo curl -s "${url}.$trailing_hash" -o "$hash_file"
+    #Get the hash url by opening the .api.json file and searching with regex
+    hash_url="$(grep "\"browser_download_url.*/$hash_file\"" "$api_response" | cut -d \" -f 4)"
+
+    #Set path to download file with the name found in the url
+    hash_file="$cacheDir/${hash_url##*/}"
+
+    #Exit if hashes do not match
+    [ -z "$hash_url" ] && echo "WARNING: Hash file did not match any release file" && exit
+
+    #Download if hash file does not exits or if force passed
+    if [ ! -f "$hash_file" ] || [ "$forceFlag" = true ]; then
+        #Start download
+        sudo curl -Lf --progress-bar "$hash_url" -o "$hash_file"
+    fi
+
+    #Exit if hashes do not match
+    [ "$download_file_hash" != "$download_hash" ] && echo "WARNING: Hashes do not match" && exit
 
     #Get hash of the download file
     case "$hash_file" in
@@ -71,18 +84,23 @@ if [ -n "$hash_file" ]; then
     esac
 
     #Get hash inside of the download hash file
-    download_hash="$(grep "$(basename "$download_file")" "$hash_file" | awk '{print $1}' || cat "$hash_file")"
+    download_hash="$(grep "$(basename "$download_file")" "$hash_file" || cat "$hash_file")"
+
+    #Remove filename from hash
+    download_file_hash="$(echo "$download_file_hash" | awk '{print $1}')"
+    download_hash="$(echo "$download_hash" | awk '{print $1}')"
 
     #Set hashes to lowercase
-    download_file_hash="$download_file_hash | tr '[:upper:]' '[:lower:]')"
-    download_hash="$download_hash | tr '[:upper:]' '[:lower:]')"
-
+    download_file_hash="$(echo "$download_file_hash" | tr '[:upper:]' '[:lower:]')"
+    download_hash="$(echo "$download_hash" | tr '[:upper:]' '[:lower:]')"
+    echo $download_file_hash
+    echo $download_hash
     #Exit if hashes do not match
-    [ "$download_file_hash" != "$hash_file" ] && echo "WARNING: Hashes do not match" && exit
+    [ "$download_file_hash" != "$download_hash" ] && echo "WARNING: Hashes do not match" && exit
 fi
 
 #Clean cache from old download files
-find "$cacheDir" -maxdepth 1 -mindepth 1 -type f -not -path "$download_file" -not -name "$hash_file" -exec echo '{}' \;
+find "$cacheDir" -maxdepth 1 -mindepth 1 -type f -not -path "$download_file" -not -path "$hash_file" -exec sudo rm -rf '{}' \;
 
 #Exit if -d flag is passed
 [ "$downloadFlag" = true ] && exit

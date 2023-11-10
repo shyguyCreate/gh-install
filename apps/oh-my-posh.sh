@@ -14,6 +14,9 @@ download_arm32='posh-linux-arm'
 download_arm64='posh-linux-arm64'
 download_x32='posh-linux-386'
 
+#Specify that file has checksums with same filename
+hash_extension='sha256'
+
 #Download release file
 . "$(dirname "$0")/../.download.sh"
 

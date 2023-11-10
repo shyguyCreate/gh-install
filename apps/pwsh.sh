@@ -14,6 +14,9 @@ download_arm32='powershell-.*-linux-arm32\.tar\.gz'
 download_arm64='powershell-.*-linux-arm64\.tar\.gz'
 download_x32=''
 
+#Specify filename with checksums
+hash_file='hashes.sha256'
+
 #Download release file
 . "$(dirname "$0")/../.download.sh"
 

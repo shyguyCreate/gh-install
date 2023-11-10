@@ -14,6 +14,11 @@ download_arm32='gh_.*_linux_armv6\.tar\.gz'
 download_arm64='gh_.*_linux_arm64\.tar\.gz'
 download_x32='gh_.*_linux_386\.tar\.gz'
 
+#Specify filename with checksums
+hash_file='gh_.*_checksums.txt'
+#Specify hash algorithm when not found in extension
+hash_algorithm='sha256'
+
 #Download release file
 . "$(dirname "$0")/../.download.sh"
 
