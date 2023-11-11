@@ -8,6 +8,7 @@ usage_flags()
     echo "  -i to install/update programs"
     echo "  -r to reinstall program"
     echo "  -u to uninstall programs"
+    echo "  -x to ignore hashes"
     echo "  -y to refresh github api response"
 }
 
@@ -22,11 +23,12 @@ usage()
 cleanFlag=false
 downloadFlag=false
 forceFlag=false
+hashFlag=false
 installFlag=false
 reinstallFlag=false
 uninstallFlag=false
 refreshFlag=false
-while getopts ":cdfiruy" opt; do
+while getopts ":cdfiruxy" opt; do
     case $opt in
         c) cleanFlag=true ;;
         d) downloadFlag=true ;;
@@ -34,6 +36,7 @@ while getopts ":cdfiruy" opt; do
         i) installFlag=true ;;
         r) reinstallFlag=true ;;
         u) uninstallFlag=true ;;
+        x) hashFlag=true ;;
         y) refreshFlag=true ;;
         *) usage ;;
     esac

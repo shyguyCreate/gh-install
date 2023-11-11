@@ -48,6 +48,9 @@ download_file="$cacheDir/${download_url##*/}"
 #Append hash extension to download file if set
 [ -n "$hash_extension" ] && hash_file="$(basename "$download_file").${hash_extension}"
 
+#Empty hash file if ignore hash is passed
+[ "$hashFlag" = true ] && hash_file=""
+
 #Check if hash file is set
 if [ -n "$hash_file" ]; then
 

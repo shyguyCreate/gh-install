@@ -8,6 +8,7 @@ usage_flags()
     echo "  -i to install/update programs"
     echo "  -r to reinstall program"
     echo "  -u to uninstall programs"
+    echo "  -x to ignore hashes"
     echo "  -y to refresh github api response"
 }
 
@@ -28,9 +29,9 @@ usage()
 allCommand()
 {
     #Check that flags passed are valid
-    while getopts ":cdfiruy" opt; do
+    while getopts ":cdfiruxy" opt; do
         case $opt in
-            c | d | f | i | r | u | y) ;;
+            c | d | f | i | r | u | x | y) ;;
             *)
                 echo "Usage: gh-install all [FLAGS]"
                 usage_flags
@@ -87,7 +88,7 @@ esac
 #Check for flag match
 #Save flags that are needed for the programs script
 program_flags="-"
-while getopts ":cdfiruy" opt; do
+while getopts ":cdfiruxy" opt; do
     case $opt in
         c) program_flags="${program_flags}c" ;;
         d) program_flags="${program_flags}d" ;;
@@ -95,6 +96,7 @@ while getopts ":cdfiruy" opt; do
         i) program_flags="${program_flags}i" ;;
         r) program_flags="${program_flags}r" ;;
         u) program_flags="${program_flags}u" ;;
+        x) program_flags="${program_flags}x" ;;
         y) program_flags="${program_flags}y" ;;
         *) usage ;;
     esac
