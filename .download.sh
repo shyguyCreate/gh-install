@@ -4,6 +4,10 @@
 cacheDir="/var/cache/gh-install/${program_name}-${online_tag}"
 [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
 
+#Set hashes empty
+download_file_hash=""
+download_hash=""
+
 #If match for all architectures is passed
 if [ -n "$download_all_arch" ]; then
     #Set it to be the match
@@ -35,35 +39,26 @@ fi
 #Get the download url by opening the .api.json file and searching with regex
 download_url=$(grep "\"browser_download_url.*/$download_match\"" "$api_response" | cut -d \" -f 4)
 
-#Exit if url is empty
+#Exit if download url is empty
 [ -z "$download_url" ] && echo "Download match did not match any release file" && exit 1
 
 #Set path to download file with the name found in the url
 download_file="$cacheDir/${download_url##*/}"
 
-#Download if file does not exists or if force passed
-if [ ! -f "$download_file" ] || [ "$forceFlag" = true ]; then
-    #Start download
-    sudo curl -Lf --progress-bar "$download_url" -o "$download_file"
-fi
-
-#Exit if file does not exists after download
-[ ! -f "$download_file" ] && echo "Error when downloading file" && exit 1
-
-#Test if download file has hashes
+#Append hash extension to download file if set
 [ -n "$hash_extension" ] && hash_file="$(basename "$download_file").${hash_extension}"
 
-#Check if hash file was set by trailing or manually
+#Check if hash file is set
 if [ -n "$hash_file" ]; then
 
     #Get the hash url by opening the .api.json file and searching with regex
     hash_url="$(grep "\"browser_download_url.*/$hash_file\"" "$api_response" | cut -d \" -f 4)"
 
+    #Exit if hash url is empty
+    [ -z "$hash_url" ] && echo "WARNING: Hash file did not match any release file" && exit 1
+
     #Set path to download file with the name found in the url
     hash_file="$cacheDir/${hash_url##*/}"
-
-    #Exit if hashes do not match
-    [ -z "$hash_url" ] && echo "WARNING: Hash file did not match any release file" && exit 1
 
     #Download if hash file does not exists or if force passed
     if [ ! -f "$hash_file" ] || [ "$forceFlag" = true ]; then
@@ -71,26 +66,45 @@ if [ -n "$hash_file" ]; then
         sudo curl -Lf --progress-bar "$hash_url" -o "$hash_file"
     fi
 
-    #Exit if hashes do not match
+    #Exit if hash file does not exists after download
     [ ! -f "$hash_file" ] && echo "WARNING: Error when downloading hash file" && exit 1
-
-    #Get hash of the download file
-    case "$hash_file" in
-        *.sha1) download_file_hash="$(eval "sha1sum $download_file")" ;;
-        *.sha256) download_file_hash="$(eval "sha256sum $download_file")" ;;
-        *) [ -n "$hash_algorithm" ] && download_file_hash="$(eval "${hash_algorithm}sum $download_file")" ;;
-    esac
 
     #Get hash inside of the download hash file
     download_hash="$(grep "$(basename "$download_file")" "$hash_file" || cat "$hash_file")"
 
-    #Remove filename from hash
-    download_file_hash="$(echo "$download_file_hash" | awk '{print $1}')"
-    download_hash="$(echo "$download_hash" | awk '{print $1}')"
+    #Remove filename from hash and set lo lowercase
+    download_hash="$(echo "$download_hash" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')"
 
-    #Set hashes to lowercase
-    download_file_hash="$(echo "$download_file_hash" | tr '[:upper:]' '[:lower:]')"
-    download_hash="$(echo "$download_hash" | tr '[:upper:]' '[:lower:]')"
+    get_download_file_hash()
+    {
+        #Get hash of the download file
+        case "$hash_file" in
+            *.sha1) download_file_hash="$(eval "sha1sum $download_file")" ;;
+            *.sha256) download_file_hash="$(eval "sha256sum $download_file")" ;;
+            *) [ -n "$hash_algorithm" ] && download_file_hash="$(eval "${hash_algorithm}sum $download_file")" ;;
+        esac
+
+        #Remove filename from hash and set lo lowercase
+        download_file_hash="$(echo "$download_file_hash" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')"
+    }
+
+    #Get hashes if download file is already installed
+    [ -f "$download_file" ] && get_download_file_hash
+fi
+
+#Download if file does not exists or if hashes do not match or if force passed
+if [ ! -f "$download_file" ] || [ "$download_file_hash" != "$download_hash" ] || [ "$forceFlag" = true ]; then
+    #Start download
+    sudo curl -Lf --progress-bar "$download_url" -o  "$download_file"
+fi
+
+#Exit if file does not exists after download
+[ ! -f "$download_file" ] && echo "Error when downloading file" && exit 1
+
+#Compare hashes after downloading file
+if [ -n "$hash_file" ]; then
+    #Get hash of download file
+    get_download_file_hash
 
     #Exit if hashes do not match
     if [ "$download_file_hash" != "$download_hash" ]; then

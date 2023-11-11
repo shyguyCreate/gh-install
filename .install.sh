@@ -89,7 +89,7 @@ add_completions()
         #Add completions for bash/zsh/fish
         eval "$program_name completion -s bash | sudo tee $bash_completion_dir/$program_name > /dev/null"
         eval "$program_name completion -s zsh | sudo tee $zsh_completion_dir/_$program_name > /dev/null"
-        eval "$program_name completion -s fish | sudo tee $fish_completion_dir/$program_name.fish > /dev/null"
+        eval "$program_name completion -s fish | sudo tee $fish_completion_dir/${program_name}.fish > /dev/null"
     }
 
     add_new_Cobra_completion()
@@ -97,7 +97,7 @@ add_completions()
         #Add completions for bash/zsh/fish
         eval "$program_name completion bash | sudo tee $bash_completion_dir/$program_name > /dev/null"
         eval "$program_name completion zsh | sudo tee $zsh_completion_dir/_$program_name > /dev/null"
-        eval "$program_name completion fish | sudo tee $fish_completion_dir/$program_name.fish > /dev/null"
+        eval "$program_name completion fish | sudo tee $fish_completion_dir/${program_name}.fish > /dev/null"
     }
 
     #Exit if no argument was passed
@@ -161,7 +161,7 @@ add_image_file()
 
 add_desktop_file()
 {
-    desktop_file="/usr/local/share/applications/$program_name.desktop"
+    desktop_file="/usr/local/share/applications/${program_name}.desktop"
 
     #Check if .desktop file exist
     if [ -f "$desktop_file" ] && [ "$forceFlag" = false ]; then
