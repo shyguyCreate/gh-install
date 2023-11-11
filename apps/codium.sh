@@ -1,7 +1,7 @@
 #!/bin/sh
 
-program_name="VSCodium"
-program_file="codium"
+program_long_name="VSCodium"
+program_name="codium"
 repo="VSCodium/vscodium"
 program_type="bin"
 
@@ -28,14 +28,14 @@ send_to_install_dir
 
 #BIN: Specify the program binary location
 #FONT: Specify which fonts should be kept
-install_program "$installDir/bin/$program_file"
+install_program "$installDir/bin/$program_name"
 
 #Uninstall old program version
 uninstall_old_version
 
 #Add completion file for bash/zsh/fish (completion-location)
-add_completions "bash" "$installDir/resources/completions/bash/$program_file"
-add_completions "zsh" "$installDir/resources/completions/zsh/_$program_file"
+add_completions "bash" "$installDir/resources/completions/bash/$program_name"
+add_completions "zsh" "$installDir/resources/completions/zsh/_$program_name"
 
 #Add image file to system (local|onine) (image-location|url)
 add_image_file "local" "$installDir/resources/app/resources/linux/code.png"

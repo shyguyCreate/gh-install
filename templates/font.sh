@@ -1,7 +1,7 @@
 #!/bin/sh
 
-program_name="Name"
-program_file="name"
+program_long_name="Name"
+program_name="name"
 repo="owner/repo-name"
 program_type="font"
 

@@ -1,7 +1,7 @@
 #!/bin/sh
 
-program_name="Oh-My-Posh"
-program_file="oh-my-posh"
+program_long_name="Oh-My-Posh"
+program_name="oh-my-posh"
 repo="JanDeDobbeleer/oh-my-posh"
 program_type="bin"
 
@@ -28,7 +28,7 @@ send_to_install_dir
 
 #BIN: Specify the program binary location
 #FONT: Specify which fonts should be kept
-install_program "$installDir/$program_file"
+install_program "$installDir/$program_name"
 
 #Uninstall old program version
 uninstall_old_version

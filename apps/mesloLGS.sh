@@ -1,7 +1,7 @@
 #!/bin/sh
 
-program_name="MesloLGS-NF"
-program_file="mesloLGS"
+program_long_name="MesloLGS-NF"
+program_name="mesloLGS"
 repo="ryanoasis/nerd-fonts"
 program_type="font"
 

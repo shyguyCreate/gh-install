@@ -49,7 +49,7 @@ if [ "$cleanFlag" = true ]; then
     [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
 
     #Clean cache directories of currents program
-    find "$cacheDir" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -exec sudo rm -rf '{}' \;
+    find "$cacheDir" -maxdepth 1 -mindepth 1 -type d -name "${program_name}-*" -exec sudo rm -rf '{}' \;
 fi
 
 #Set the root of the install directory based on type of program
@@ -64,17 +64,17 @@ esac
 #Test if -r flag was passed
 if [ "$uninstallFlag" = true ]; then
     #Remove contents if already installed
-    find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -exec sudo rm -rf '{}' \;
+    find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${program_name}-*" -exec sudo rm -rf '{}' \;
 fi
 
 #Exit if -c or -r flag was passed
 [ "$cleanFlag" = true ] || [ "$uninstallFlag" = true ] && exit
 
 #Get the current version of the program
-local_tag=$(find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -printf '%f' -quit | sed "s,${program_file}-,,g")
+local_tag=$(find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${program_name}-*" -printf '%f' -quit | sed "s,${program_name}-,,g")
 
 #File to save the tag_name
-api_response="/tmp/${program_file}.api.json"
+api_response="/tmp/${program_name}.api.json"
 
 #Get latest release from the github api response
 if [ ! -f "$api_response" ] || [ "$refreshFlag" = true ] || [ "$forceFlag" = true ]; then
@@ -87,21 +87,21 @@ online_tag=$(grep tag_name "$api_response" | cut -d \" -f 4)
 #Start installation if github version is not equal to installed version
 #Or if program is not installed or if -rdf flag is passed
 if [ "$downloadFlag" = true ]; then
-    echo "Begin $program_name download..."
+    echo "Begin $program_long_name download..."
 
 elif [ "$reinstallFlag" = true ]; then
-    echo "Begin $program_name reinstallation..."
+    echo "Begin $program_long_name reinstallation..."
 
 elif [ "$online_tag" != "$local_tag" ] && [ "$installFlag" = true ] || [ -z "$local_tag" ] || [ "$forceFlag" = true ]; then
-    echo "Begin $program_name installation..."
+    echo "Begin $program_long_name installation..."
 
 elif [ "$installFlag" = false ] && [ "$online_tag" = "$local_tag" ]; then
-    echo "No update found for $program_name"
+    echo "No update found for $program_long_name"
     exit
 elif [ "$installFlag" = false ] && [ "$online_tag" != "$local_tag" ]; then
-    echo "Update found for $program_name"
+    echo "Update found for $program_long_name"
     exit
 else
-    echo "$program_name is up to date"
+    echo "$program_long_name is up to date"
     exit
 fi

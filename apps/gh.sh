@@ -1,7 +1,7 @@
 #!/bin/sh
 
-program_name="Github-Cli"
-program_file="gh"
+program_long_name="Github-Cli"
+program_name="gh"
 repo="cli/cli"
 program_type="bin"
 
@@ -30,7 +30,7 @@ send_to_install_dir "--strip-components=1"
 
 #BIN: Specify the program binary location
 #FONT: Specify which fonts should be kept
-install_program "$installDir/bin/$program_file"
+install_program "$installDir/bin/$program_name"
 
 #Uninstall old program version
 uninstall_old_version

@@ -1,6 +1,8 @@
 #!/bin/sh
 
-#### Section 1 ####
+#Set cache directory for downloaded files
+cacheDir="/var/cache/gh-install/${program_name}-${online_tag}"
+[ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
 
 #If match for all architectures is passed
 if [ -n "$download_all_arch" ]; then
@@ -36,21 +38,17 @@ download_url=$(grep "\"browser_download_url.*/$download_match\"" "$api_response"
 #Exit if url is empty
 [ -z "$download_url" ] && echo "Download match did not match any release file" && exit 1
 
-#Set cache directory for downloaded files
-cacheDir="/var/cache/gh-install/${program_file}-${online_tag}"
-[ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
-
 #Set path to download file with the name found in the url
 download_file="$cacheDir/${download_url##*/}"
 
-#Download if file does not exits or if force passed
+#Download if file does not exists or if force passed
 if [ ! -f "$download_file" ] || [ "$forceFlag" = true ]; then
     #Start download
     sudo curl -Lf --progress-bar "$download_url" -o "$download_file"
 fi
 
-#Exit if file does not exits after download
-[ ! -f "$download_file" ] && echo "Error when downloading file" && exit
+#Exit if file does not exists after download
+[ ! -f "$download_file" ] && echo "Error when downloading file" && exit 1
 
 #Test if download file has hashes
 [ -n "$hash_extension" ] && hash_file="$(basename "$download_file").${hash_extension}"
@@ -65,16 +63,16 @@ if [ -n "$hash_file" ]; then
     hash_file="$cacheDir/${hash_url##*/}"
 
     #Exit if hashes do not match
-    [ -z "$hash_url" ] && echo "WARNING: Hash file did not match any release file" && exit
+    [ -z "$hash_url" ] && echo "WARNING: Hash file did not match any release file" && exit 1
 
-    #Download if hash file does not exits or if force passed
+    #Download if hash file does not exists or if force passed
     if [ ! -f "$hash_file" ] || [ "$forceFlag" = true ]; then
         #Start download
         sudo curl -Lf --progress-bar "$hash_url" -o "$hash_file"
     fi
 
     #Exit if hashes do not match
-    [ ! -f "$hash_file" ] && echo "WARNING: Error when downloading hash file" && exit
+    [ ! -f "$hash_file" ] && echo "WARNING: Error when downloading hash file" && exit 1
 
     #Get hash of the download file
     case "$hash_file" in
@@ -99,12 +97,12 @@ if [ -n "$hash_file" ]; then
         echo "WARNING: Hashes do not match"
         echo " Download hash: $download_file_hash"
         echo " Expected hash: $download_hash"
-        exit
+        exit 1
     fi
 fi
 
 #Clean cache from old download files
-find "$(dirname "$cacheDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -not -path "$cacheDir" -exec sudo rm -rf '{}' \;
+find "$(dirname "$cacheDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_name}-*" -not -path "$cacheDir" -exec sudo rm -rf '{}' \;
 
 #Exit if -d flag is passed
 [ "$downloadFlag" = true ] && exit

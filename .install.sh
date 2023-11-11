@@ -5,7 +5,7 @@
 send_to_install_dir()
 {
     #Set the install directory with github tag added to its name
-    installDir="$installDir/${program_file}-${online_tag}"
+    installDir="$installDir/${program_name}-${online_tag}"
 
     #Make directory for install
     sudo mkdir -p "$installDir"
@@ -14,7 +14,7 @@ send_to_install_dir()
     case $download_file in
         *.tar.gz) eval "sudo tar zxf $download_file -C $installDir $1" ;;
         *.tar.xz) eval "sudo tar Jxf $download_file -C $installDir $1" ;;
-        *) sudo cp "$download_file" "$installDir/$program_file" ;;
+        *) sudo cp "$download_file" "$installDir/$program_name" ;;
     esac
 }
 
@@ -57,7 +57,7 @@ install_program()
 uninstall_old_version()
 {
     #Remove contents if already installed
-    find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_file}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \;
+    find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_name}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \;
 }
 
 #### Section 4 ####
@@ -87,17 +87,17 @@ add_completions()
     add_old_Cobra_completion()
     {
         #Add completions for bash/zsh/fish
-        eval "$program_file completion -s bash | sudo tee $bash_completion_dir/$program_file > /dev/null"
-        eval "$program_file completion -s zsh | sudo tee $zsh_completion_dir/_$program_file > /dev/null"
-        eval "$program_file completion -s fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
+        eval "$program_name completion -s bash | sudo tee $bash_completion_dir/$program_name > /dev/null"
+        eval "$program_name completion -s zsh | sudo tee $zsh_completion_dir/_$program_name > /dev/null"
+        eval "$program_name completion -s fish | sudo tee $fish_completion_dir/$program_name.fish > /dev/null"
     }
 
     add_new_Cobra_completion()
     {
         #Add completions for bash/zsh/fish
-        eval "$program_file completion bash | sudo tee $bash_completion_dir/$program_file > /dev/null"
-        eval "$program_file completion zsh | sudo tee $zsh_completion_dir/_$program_file > /dev/null"
-        eval "$program_file completion fish | sudo tee $fish_completion_dir/$program_file.fish > /dev/null"
+        eval "$program_name completion bash | sudo tee $bash_completion_dir/$program_name > /dev/null"
+        eval "$program_name completion zsh | sudo tee $zsh_completion_dir/_$program_name > /dev/null"
+        eval "$program_name completion fish | sudo tee $fish_completion_dir/$program_name.fish > /dev/null"
     }
 
     #Exit if no argument was passed
@@ -120,7 +120,7 @@ add_image_file()
     #Set image directory
     image_dir="/usr/local/share/pixmaps"
     #Save name with extension from image parameter
-    image_name="${program_file}.${2##*.}"
+    image_name="${program_name}.${2##*.}"
 
     #Check if pixmaps image file exist
     if [ -f "$image_dir/$image_name" ] && [ "$forceFlag" = false ]; then
@@ -161,7 +161,7 @@ add_image_file()
 
 add_desktop_file()
 {
-    desktop_file="/usr/local/share/applications/$program_file.desktop"
+    desktop_file="/usr/local/share/applications/$program_name.desktop"
 
     #Check if .desktop file exist
     if [ -f "$desktop_file" ] && [ "$forceFlag" = false ]; then
@@ -179,9 +179,9 @@ add_desktop_file()
     echo \
         "[Desktop Entry]
         Type=Application
-        Name=$program_name
-        GenericName=$program_name
-        Exec=$bin_directory/$program_file
+        Name=$program_long_name
+        GenericName=$program_long_name
+        Exec=$bin_directory/$program_name
         Icon=$image_dir/$image_name
         Categories=Utility;Development
         Terminal=$is_terminal" \

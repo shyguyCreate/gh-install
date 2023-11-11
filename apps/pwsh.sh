@@ -1,7 +1,7 @@
 #!/bin/sh
 
-program_name="Powershell"
-program_file="pwsh"
+program_long_name="Powershell"
+program_name="pwsh"
 repo="PowerShell/PowerShell"
 program_type="bin"
 
@@ -28,7 +28,7 @@ send_to_install_dir
 
 #BIN: Specify the program binary location
 #FONT: Specify which fonts should be kept
-install_program "$installDir/$program_file"
+install_program "$installDir/$program_name"
 
 #Uninstall old program version
 uninstall_old_version
