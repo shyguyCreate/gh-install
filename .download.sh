@@ -4,6 +4,9 @@
 cacheDir="/var/cache/gh-install/${program_name}-${online_tag}"
 [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
 
+#Clean cache from old download files
+find "$(dirname "$cacheDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_name}-*" -not -path "$cacheDir" -exec sudo rm -rf '{}' \;
+
 #Set hashes empty
 download_file_hash=""
 download_hash=""
@@ -117,9 +120,6 @@ if [ -n "$hash_file" ]; then
         exit 1
     fi
 fi
-
-#Clean cache from old download files
-find "$(dirname "$cacheDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_name}-*" -not -path "$cacheDir" -exec sudo rm -rf '{}' \;
 
 #Exit if -d flag is passed
 [ "$downloadFlag" = true ] && exit

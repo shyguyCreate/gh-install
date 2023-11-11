@@ -47,11 +47,11 @@ OPTIND=1
 
 #Test if -c flag was passed
 if [ "$cleanFlag" = true ]; then
-    #Set cache directory to clean
+    #Set the root of the cache directory to clean
     cacheDir="/var/cache/gh-install"
     [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
 
-    #Clean cache directories of currents program
+    #Clean cache directories of current program
     find "$cacheDir" -maxdepth 1 -mindepth 1 -type d -name "${program_name}-*" -exec sudo rm -rf '{}' \;
 fi
 
