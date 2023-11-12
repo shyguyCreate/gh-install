@@ -5,9 +5,9 @@ usage_flags()
     echo "  -c to clean cache"
     echo "  -d to download only"
     echo "  -f to force installation"
-    echo "  -i to install/update programs"
-    echo "  -r to reinstall program"
-    echo "  -u to uninstall programs"
+    echo "  -i to install/reinstall program"
+    echo "  -r to remove program"
+    echo "  -u to update program"
     echo "  -x to ignore hashes"
     echo "  -y to refresh github api response"
 }

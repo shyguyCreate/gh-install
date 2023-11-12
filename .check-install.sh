@@ -5,9 +5,9 @@ usage_flags()
     echo "  -c to clean cache"
     echo "  -d to download only"
     echo "  -f to force installation"
-    echo "  -i to install/update programs"
-    echo "  -r to reinstall program"
-    echo "  -u to uninstall programs"
+    echo "  -i to install/reinstall program"
+    echo "  -r to remove program"
+    echo "  -u to update program"
     echo "  -x to ignore hashes"
     echo "  -y to refresh github api response"
 }
@@ -25,8 +25,8 @@ downloadFlag=false
 forceFlag=false
 hashFlag=false
 installFlag=false
-reinstallFlag=false
-uninstallFlag=false
+removeFlag=false
+updateFlag=false
 refreshFlag=false
 while getopts ":cdfiruxy" opt; do
     case $opt in
@@ -34,8 +34,8 @@ while getopts ":cdfiruxy" opt; do
         d) downloadFlag=true ;;
         f) forceFlag=true ;;
         i) installFlag=true ;;
-        r) reinstallFlag=true ;;
-        u) uninstallFlag=true ;;
+        r) removeFlag=true ;;
+        u) updateFlag=true ;;
         x) hashFlag=true ;;
         y) refreshFlag=true ;;
         *) usage ;;
@@ -65,13 +65,13 @@ esac
 [ ! -d "$installDir" ] && sudo mkdir -p "$installDir"
 
 #Test if -r flag was passed
-if [ "$uninstallFlag" = true ]; then
+if [ "$removeFlag" = true ]; then
     #Remove contents if already installed
     find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${program_name}-*" -exec sudo rm -rf '{}' \;
 fi
 
 #Exit if -c or -r flag was passed
-[ "$cleanFlag" = true ] || [ "$uninstallFlag" = true ] && exit
+[ "$cleanFlag" = true ] || [ "$removeFlag" = true ] && exit
 
 #Get the current version of the program
 local_tag=$(find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${program_name}-*" -printf '%f' -quit | sed "s,${program_name}-,,g")
@@ -87,21 +87,18 @@ fi
 #Save tag_name to variable
 online_tag=$(grep tag_name "$api_response" | cut -d \" -f 4)
 
-#Start installation if github version is not equal to installed version
-#Or if program is not installed or if -rdf flag is passed
+#Start installation if github version is not equal to installed version and -u
+#Or if program is not installed or if -dfi flag is passed
 if [ "$downloadFlag" = true ]; then
     echo "Begin $program_long_name download..."
 
-elif [ "$reinstallFlag" = true ]; then
-    echo "Begin $program_long_name reinstallation..."
-
-elif [ "$online_tag" != "$local_tag" ] && [ "$installFlag" = true ] || [ -z "$local_tag" ] || [ "$forceFlag" = true ]; then
+elif [ "$online_tag" != "$local_tag" ] && [ "$updateFlag" = true ] || [ -z "$local_tag" ] || [ "$installFlag" = true ] || [ "$forceFlag" = true ]; then
     echo "Begin $program_long_name installation..."
 
-elif [ "$installFlag" = false ] && [ "$online_tag" = "$local_tag" ]; then
+elif [ "$updateFlag" = false ] && [ "$online_tag" = "$local_tag" ]; then
     echo "No update found for $program_long_name"
     exit
-elif [ "$installFlag" = false ] && [ "$online_tag" != "$local_tag" ]; then
+elif [ "$updateFlag" = false ] && [ "$online_tag" != "$local_tag" ]; then
     echo "Update found for $program_long_name"
     exit
 else
