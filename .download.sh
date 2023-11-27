@@ -36,14 +36,14 @@ else
     esac
 
     #Exit if download match is empty
-    [ -z "$download_match" ] && echo "Download match not available for $system_arch" && exit 1
+    [ -z "$download_match" ] && echo "Error: Download match not available for $system_arch" && exit 1
 fi
 
 #Get the download url by opening the .api.json file and searching with regex
 download_url=$(grep "\"browser_download_url.*/$download_match\"" "$api_response" | cut -d \" -f 4)
 
 #Exit if download url is empty
-[ -z "$download_url" ] && echo "Download match did not match any release file" && exit 1
+[ -z "$download_url" ] && echo "Error: Download match did not match any release file" && exit 1
 
 #Set path to download file with the name found in the url
 download_file="$cacheDir/${download_url##*/}"
@@ -61,7 +61,7 @@ if [ -n "$hash_file" ]; then
     hash_url="$(grep "\"browser_download_url.*/$hash_file\"" "$api_response" | cut -d \" -f 4)"
 
     #Exit if hash url is empty
-    [ -z "$hash_url" ] && echo "WARNING: Hash file did not match any release file" && exit 1
+    [ -z "$hash_url" ] && echo "Error: Hash file did not match any release file" && exit 1
 
     #Set path to download file with the name found in the url
     hash_file="$cacheDir/${hash_url##*/}"
@@ -73,7 +73,7 @@ if [ -n "$hash_file" ]; then
     fi
 
     #Exit if hash file does not exists after download
-    [ ! -f "$hash_file" ] && echo "WARNING: Error when downloading hash file" && exit 1
+    [ ! -f "$hash_file" ] && echo "Error: Hash file was not downloaded" && exit 1
 
     #Get hash inside of the download hash file
     download_hash="$(grep "$(basename "$download_file")" "$hash_file" || cat "$hash_file")"
@@ -105,7 +105,7 @@ if [ ! -f "$download_file" ] || [ "$download_file_hash" != "$download_hash" ] ||
 fi
 
 #Exit if file does not exists after download
-[ ! -f "$download_file" ] && echo "Error when downloading file" && exit 1
+[ ! -f "$download_file" ] && echo "Error: File was not downloaded" && exit 1
 
 #Compare hashes after downloading file
 if [ -n "$hash_file" ]; then
@@ -114,8 +114,8 @@ if [ -n "$hash_file" ]; then
 
     #Exit if hashes do not match
     if [ "$download_file_hash" != "$download_hash" ]; then
-        echo "WARNING: Hashes do not match"
-        echo " Download hash: $download_file_hash"
+        echo "Error: Hashes do not match"
+        echo " Program hash:  $download_file_hash"
         echo " Expected hash: $download_hash"
         exit 1
     fi

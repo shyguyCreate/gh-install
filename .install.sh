@@ -25,7 +25,7 @@ install_program()
     install_bin()
     {
         #Exit if no argument was passed
-        [ -z "$1" ] && echo "Program binary location not specified" && exit 1
+        [ -z "$1" ] && echo "Error: Program binary location not specified" && exit 1
 
         #Change execute permissions
         bin_program="$1"
@@ -76,7 +76,7 @@ add_completions()
     add_completion_file()
     {
         #Exit if no argument was passed
-        [ -z "$1" ] && echo "Completion file not specified" && exit 1
+        [ -z "$1" ] && echo "Error: Completion file not specified" && exit 1
 
         #Add completion file to directory based on shell passed
         completion_file="$1"
@@ -101,7 +101,7 @@ add_completions()
     }
 
     #Exit if no argument was passed
-    [ -z "$1" ] && echo "Completion shell not specified" && exit 1
+    [ -z "$1" ] && echo "Error: Completion shell not specified" && exit 1
 
     #Choose which function to pick
     case "$1" in
@@ -130,7 +130,7 @@ add_image_file()
     add_local_image()
     {
         #Exit if no argument was passed
-        [ -z "$1" ] && echo "Image location not specified" && exit 1
+        [ -z "$1" ] && echo "Error: Image location not specified" && exit 1
         #Add application image file from computer
         local_image_dir="$1"
         sudo mkdir -p "$image_dir"
@@ -140,7 +140,7 @@ add_image_file()
     add_online_image()
     {
         #Exit if no argument was passed
-        [ -z "$1" ] && echo "Url not specified" && exit 1
+        [ -z "$1" ] && echo "Error: Url not specified" && exit 1
         #Add application image file from internet
         url="$1"
         sudo mkdir -p "$image_dir"
@@ -148,7 +148,7 @@ add_image_file()
     }
 
     #Exit if no argument was passed
-    [ -z "$1" ] && echo "Image type (local|onine) not specified" && exit 1
+    [ -z "$1" ] && echo "Error: Image type (local|onine) not specified" && exit 1
 
     #Choose which function to pick
     case "$1" in
@@ -169,7 +169,7 @@ add_desktop_file()
     fi
 
     #Exit if argument is incorrect
-    [ "$1" != true ] && [ "$1" != false ] && echo "Argument only accepts true or false" && exit 1
+    [ "$1" != true ] && [ "$1" != false ] && echo "Error: Argument only accepts true or false" && exit 1
 
     #Set if application should be run on the terminal
     is_terminal="${1:-false}"
