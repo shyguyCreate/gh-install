@@ -23,9 +23,9 @@ download_x32=''
 #Send download contents to install directory (optional flags)
 send_to_install_dir "--strip-components=1"
 
-#BIN: Specify the program binary location
+#BIN: Specify the package binary location
 #FONT: Specify which fonts should be kept
 install_program "$installDir/$program_name"
 
-#Uninstall old program version
+#Uninstall old package version
 uninstall_old_version

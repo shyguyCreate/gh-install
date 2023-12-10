@@ -5,9 +5,9 @@ usage_flags()
     echo "  -c to clean cache"
     echo "  -d to download only"
     echo "  -f to force installation"
-    echo "  -i to install/reinstall program"
-    echo "  -r to remove program"
-    echo "  -u to update program"
+    echo "  -i to (re)install package"
+    echo "  -r to remove package"
+    echo "  -u to update package"
     echo "  -x to ignore hashes"
     echo "  -y to refresh github api response"
 }
@@ -51,11 +51,11 @@ if [ "$cleanFlag" = true ]; then
     cacheDir="/var/cache/gh-install"
     [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
 
-    #Clean cache directories of current program
+    #Clean cache directories of current package
     find "$cacheDir" -maxdepth 1 -mindepth 1 -type d -name "${program_name}-*" -exec sudo rm -rf '{}' \;
 fi
 
-#Set the root of the install directory based on type of program
+#Set the root of the install directory based on type of package
 case "$program_type" in
     "bin") installDir="/opt" ;;
     "font") installDir="/usr/local/share/fonts" ;;
@@ -73,7 +73,7 @@ fi
 #Exit if -c or -r flag was passed
 [ "$cleanFlag" = true ] || [ "$removeFlag" = true ] && exit
 
-#Get the current version of the program
+#Get the current version of the package
 local_tag=$(find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${program_name}-*" -printf '%f' -quit | sed "s,${program_name}-,,g")
 
 #File to save the tag_name
@@ -88,11 +88,11 @@ fi
 online_tag=$(grep tag_name "$api_response" | cut -d \" -f 4)
 
 #Start installation if github version is not equal to installed version and -u
-#Or if program is not installed or if -dfi flag is passed
+#Or if package is not installed or if -dfi flag is passed
 if [ "$downloadFlag" = true ]; then
     echo "Begin $program_long_name download..."
 
-elif [ "$online_tag" != "$local_tag" ] && [ "$updateFlag" = true ] || [ -z "$local_tag" ] || [ "$installFlag" = true ] || [ "$forceFlag" = true ]; then
+elif [ "$online_tag" != "$local_tag" ] && [ "$updateFlag" = true ] || [ "$installFlag" = true ] || [ "$forceFlag" = true ]; then
     echo "Begin $program_long_name installation..."
 
 elif [ "$updateFlag" = false ] && [ "$online_tag" = "$local_tag" ]; then

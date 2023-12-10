@@ -25,7 +25,7 @@ install_program()
     install_bin()
     {
         #Exit if no argument was passed
-        [ -z "$1" ] && echo "Error: Program binary location not specified" && exit 1
+        [ -z "$1" ] && echo "Error: Binary location not specified" && exit 1
 
         #Change execute permissions
         bin_program="$1"

@@ -115,7 +115,7 @@ if [ -n "$hash_file" ]; then
     #Exit if hashes do not match
     if [ "$download_file_hash" != "$download_hash" ]; then
         echo "Error: Hashes do not match"
-        echo " Program hash:  $download_file_hash"
+        echo " Package hash:  $download_file_hash"
         echo " Expected hash: $download_hash"
         exit 1
     fi

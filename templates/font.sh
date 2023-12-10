@@ -20,9 +20,9 @@ download_all_arch=''
 #Send download contents to install directory (optional flags)
 send_to_install_dir
 
-#BIN: Specify the program binary location
+#BIN: Specify the package binary location
 #FONT: Specify which fonts should be kept
 install_program "font-name"
 
-#Uninstall old program version
+#Uninstall old package version
 uninstall_old_version
