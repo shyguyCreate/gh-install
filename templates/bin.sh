@@ -1,9 +1,8 @@
 #!/bin/sh
 
-program_long_name="Name"
-program_name="name"
+package_name="name"
 repo="owner/repo-name"
-program_type="bin"
+package_type="bin"
 
 #Check if should install
 . "$(dirname "$0")/../.check-install.sh"
@@ -32,7 +31,7 @@ send_to_install_dir
 
 #BIN: Specify the package binary location
 #FONT: Specify which fonts should be kept
-install_program "install-directory/binary"
+install_package "install-directory/binary"
 
 #Uninstall old package version
 uninstall_old_version

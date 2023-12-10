@@ -87,17 +87,17 @@ esac
 
 #Check for flag match
 #Save flags that are needed for the packages script
-program_flags="-"
+package_flags="-"
 while getopts ":cdfiruxy" opt; do
     case $opt in
-        c) program_flags="${program_flags}c" ;;
-        d) program_flags="${program_flags}d" ;;
-        f) program_flags="${program_flags}f" ;;
-        i) program_flags="${program_flags}i" ;;
-        r) program_flags="${program_flags}r" ;;
-        u) program_flags="${program_flags}u" ;;
-        x) program_flags="${program_flags}x" ;;
-        y) program_flags="${program_flags}y" ;;
+        c) package_flags="${package_flags}c" ;;
+        d) package_flags="${package_flags}d" ;;
+        f) package_flags="${package_flags}f" ;;
+        i) package_flags="${package_flags}i" ;;
+        r) package_flags="${package_flags}r" ;;
+        u) package_flags="${package_flags}u" ;;
+        x) package_flags="${package_flags}x" ;;
+        y) package_flags="${package_flags}y" ;;
         *) usage ;;
     esac
 done
@@ -109,11 +109,11 @@ shift "$((OPTIND - 1))"
 OPTIND=1
 
 #Print usage if flag and package are not passed
-if [ "$program_flags" = "-" ] && [ $# = 0 ]; then
+if [ "$package_flags" = "-" ] && [ $# = 0 ]; then
     usage
 fi
 #Print usage if flag is passed but no package
-if [ "$program_flags" != "-" ] && [ $# = 0 ]; then
+if [ "$package_flags" != "-" ] && [ $# = 0 ]; then
     echo "Usage: gh-install [FLAGS] [PACKAGES]"
     exit
 fi
@@ -126,7 +126,7 @@ for argument in "$@"; do
     for script in "$(dirname "$0")"/packages/*.sh; do
         #Check if argument and package are the same
         if [ "$argument" = "$(basename "$script" .sh)" ]; then
-            $script "$program_flags"
+            $script "$package_flags"
             did_match=true
             break
         fi

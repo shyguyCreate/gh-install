@@ -1,9 +1,8 @@
 #!/bin/sh
 
-program_long_name="Oh-My-Posh"
-program_name="oh-my-posh"
+package_name="oh-my-posh"
 repo="JanDeDobbeleer/oh-my-posh"
-program_type="bin"
+package_type="bin"
 
 #Check if should install
 . "$(dirname "$0")/../.check-install.sh"
@@ -28,7 +27,7 @@ send_to_install_dir
 
 #BIN: Specify the package binary location
 #FONT: Specify which fonts should be kept
-install_program "$installDir/$program_name"
+install_package "$installDir/$package_name"
 
 #Uninstall old package version
 uninstall_old_version

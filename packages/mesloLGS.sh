@@ -1,9 +1,8 @@
 #!/bin/sh
 
-program_long_name="MesloLGS-NF"
-program_name="mesloLGS"
+package_name="mesloLGS"
 repo="ryanoasis/nerd-fonts"
-program_type="font"
+package_type="font"
 
 #Check if should install
 . "$(dirname "$0")/../.check-install.sh"
@@ -22,7 +21,7 @@ send_to_install_dir
 
 #BIN: Specify the package binary location
 #FONT: Specify which fonts should be kept
-install_program "MesloLGSNerdFont-*.ttf"
+install_package "MesloLGSNerdFont-*.ttf"
 
 #Uninstall old package version
 uninstall_old_version

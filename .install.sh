@@ -5,7 +5,7 @@
 send_to_install_dir()
 {
     #Set the install directory with github tag added to its name
-    installDir="$installDir/${program_name}-${online_tag}"
+    installDir="$installDir/${package_name}-${online_tag}"
 
     #Make directory for install
     sudo mkdir -p "$installDir"
@@ -14,13 +14,13 @@ send_to_install_dir()
     case $download_file in
         *.tar.gz) eval "sudo tar zxf $download_file -C $installDir $1" ;;
         *.tar.xz) eval "sudo tar Jxf $download_file -C $installDir $1" ;;
-        *) sudo cp "$download_file" "$installDir/$program_name" ;;
+        *) sudo cp "$download_file" "$installDir/$package_name" ;;
     esac
 }
 
 #### Section 2 ####
 
-install_program()
+install_package()
 {
     install_bin()
     {
@@ -28,13 +28,13 @@ install_program()
         [ -z "$1" ] && echo "Error: Binary location not specified" && exit 1
 
         #Change execute permissions
-        bin_program="$1"
-        sudo chmod +x "$bin_program"
+        bin_package="$1"
+        sudo chmod +x "$bin_package"
 
         #Create symbolic link to bin folder
         bin_directory="/usr/local/bin"
         sudo mkdir -p "$bin_directory"
-        sudo ln -sf "$bin_program" "$bin_directory"
+        sudo ln -sf "$bin_package" "$bin_directory"
     }
 
     install_font()
@@ -46,7 +46,7 @@ install_program()
     }
 
     #Choose which function to pick
-    case "$program_type" in
+    case "$package_type" in
         "bin") install_bin "$1" ;;
         "font") install_font "$1" ;;
     esac
@@ -57,7 +57,7 @@ install_program()
 uninstall_old_version()
 {
     #Remove contents if already installed
-    find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${program_name}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \;
+    find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \;
 }
 
 #### Section 4 ####
@@ -87,17 +87,17 @@ add_completions()
     add_old_Cobra_completion()
     {
         #Add completions for bash/zsh/fish
-        eval "$program_name completion -s bash | sudo tee $bash_completion_dir/$program_name > /dev/null"
-        eval "$program_name completion -s zsh | sudo tee $zsh_completion_dir/_$program_name > /dev/null"
-        eval "$program_name completion -s fish | sudo tee $fish_completion_dir/${program_name}.fish > /dev/null"
+        eval "$package_name completion -s bash | sudo tee $bash_completion_dir/$package_name > /dev/null"
+        eval "$package_name completion -s zsh | sudo tee $zsh_completion_dir/_$package_name > /dev/null"
+        eval "$package_name completion -s fish | sudo tee $fish_completion_dir/${package_name}.fish > /dev/null"
     }
 
     add_new_Cobra_completion()
     {
         #Add completions for bash/zsh/fish
-        eval "$program_name completion bash | sudo tee $bash_completion_dir/$program_name > /dev/null"
-        eval "$program_name completion zsh | sudo tee $zsh_completion_dir/_$program_name > /dev/null"
-        eval "$program_name completion fish | sudo tee $fish_completion_dir/${program_name}.fish > /dev/null"
+        eval "$package_name completion bash | sudo tee $bash_completion_dir/$package_name > /dev/null"
+        eval "$package_name completion zsh | sudo tee $zsh_completion_dir/_$package_name > /dev/null"
+        eval "$package_name completion fish | sudo tee $fish_completion_dir/${package_name}.fish > /dev/null"
     }
 
     #Exit if no argument was passed
@@ -120,7 +120,7 @@ add_image_file()
     #Set image directory
     image_dir="/usr/local/share/pixmaps"
     #Save name with extension from image parameter
-    image_name="${program_name}.${2##*.}"
+    image_name="${package_name}.${2##*.}"
 
     #Check if pixmaps image file exist
     if [ -f "$image_dir/$image_name" ] && [ "$forceFlag" = false ]; then
@@ -131,7 +131,7 @@ add_image_file()
     {
         #Exit if no argument was passed
         [ -z "$1" ] && echo "Error: Image location not specified" && exit 1
-        #Add application image file from computer
+        #Add package image file from computer
         local_image_dir="$1"
         sudo mkdir -p "$image_dir"
         sudo cp "$local_image_dir" "$image_dir/$image_name"
@@ -141,7 +141,7 @@ add_image_file()
     {
         #Exit if no argument was passed
         [ -z "$1" ] && echo "Error: Url not specified" && exit 1
-        #Add application image file from internet
+        #Add package image file from internet
         url="$1"
         sudo mkdir -p "$image_dir"
         sudo curl -s "$url" -o "$image_dir/$image_name"
@@ -161,7 +161,7 @@ add_image_file()
 
 add_desktop_file()
 {
-    desktop_file="/usr/local/share/applications/${program_name}.desktop"
+    desktop_file="/usr/local/share/applications/${package_name}.desktop"
 
     #Check if .desktop file exist
     if [ -f "$desktop_file" ] && [ "$forceFlag" = false ]; then
@@ -171,17 +171,17 @@ add_desktop_file()
     #Exit if argument is incorrect
     [ "$1" != true ] && [ "$1" != false ] && echo "Error: Argument only accepts true or false" && exit 1
 
-    #Set if application should be run on the terminal
+    #Set if package should be run on the terminal
     is_terminal="${1:-false}"
 
-    #Add application .desktop file
+    #Add package .desktop file
     sudo mkdir -p "$(dirname "$desktop_file")"
     echo \
         "[Desktop Entry]
         Type=Application
-        Name=$program_long_name
-        GenericName=$program_long_name
-        Exec=$bin_directory/$program_name
+        Name=$package_name
+        GenericName=$package_name
+        Exec=$bin_directory/$package_name
         Icon=$image_dir/$image_name
         Categories=Utility;Development
         Terminal=$is_terminal" \
