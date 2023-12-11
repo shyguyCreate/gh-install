@@ -4,17 +4,20 @@ package_name="name"
 repo="owner/repo-name"
 package_type="font"
 
+#Save path to root of the repo
+repoDir="$(dirname "$(dirname "$0")")"
+
 #Check if should install
-. "$(dirname "$0")/../.check-install.sh"
+. "$repoDir/.check-install.sh"
 
 #Regex match for all architectures
 download_all_arch=''
 
 #Download release file
-. "$(dirname "$0")/../.download.sh"
+. "$repoDir/.download.sh"
 
 #Source file with functions
-. "$(dirname "$0")/../.install.sh"
+. "$repoDir/.install.sh"
 
 #Send download contents to install directory (optional flags)
 send_to_install_dir

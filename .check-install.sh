@@ -45,15 +45,12 @@ done
 #Reset getopts automatic variable
 OPTIND=1
 
-#Test if -c flag was passed
-if [ "$cleanFlag" = true ]; then
-    #Set the root of the cache directory to clean
-    cacheDir="/var/cache/gh-install"
-    [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
+#Clean cache if -c flag was passed
+[ "$cleanFlag" = true ] && . "$repoDir/.clean-cache.sh"
 
-    #Clean cache directories of current package
-    find "$cacheDir" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -exec sudo rm -rf '{}' \;
-fi
+#Set directory to save package version
+libDir="/var/lib/gh-install"
+[ ! -d "$libDir" ] && sudo mkdir -p "$libDir"
 
 #Set the root of the install directory based on type of package
 case "$package_type" in
@@ -74,7 +71,7 @@ fi
 [ "$cleanFlag" = true ] || [ "$removeFlag" = true ] && exit
 
 #Get the current version of the package
-local_tag=$(find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -printf '%f' -quit | sed "s,${package_name}-,,g")
+local_tag="$(find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -printf '%f' -quit | sed "s,${package_name}-,,g")"
 
 #File to save the tag_name
 api_response="/tmp/${package_name}.api.json"
@@ -85,14 +82,14 @@ if [ ! -f "$api_response" ] || [ "$refreshFlag" = true ] || [ "$forceFlag" = tru
 fi
 
 #Save tag_name to variable
-online_tag=$(grep tag_name "$api_response" | cut -d \" -f 4)
+online_tag="$(grep tag_name "$api_response" | cut -d \" -f 4)"
 
 #Start installation if github version is not equal to installed version and -u
 #Or if package is not installed or if -dfi flag is passed
 if [ "$downloadFlag" = true ]; then
     echo "Begin $package_name download..."
 
-elif [ "$online_tag" != "$local_tag" ] && [ "$updateFlag" = true ] || [ "$installFlag" = true ] || [ "$forceFlag" = true ]; then
+elif [ "$online_tag" != "$local_tag" ] && [ "$updateFlag" = true ] || [ -z "$local_tag" ] || [ "$installFlag" = true ] || [ "$forceFlag" = true ]; then
     echo "Begin $package_name installation..."
 
 elif [ "$updateFlag" = false ] && [ "$online_tag" = "$local_tag" ]; then

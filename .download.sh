@@ -1,11 +1,7 @@
 #!/bin/sh
 
-#Set cache directory for downloaded files
-cacheDir="/var/cache/gh-install/${package_name}-${online_tag}"
-[ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
-
-#Clean cache from old download files
-find "$(dirname "$cacheDir")" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -not -path "$cacheDir" -exec sudo rm -rf '{}' \;
+#Clean cache and exclude folder
+. "$repoDir/.clean-cache.sh"
 
 #Set hashes empty
 download_file_hash=""
