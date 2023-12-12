@@ -45,17 +45,17 @@ done
 #Reset getopts automatic variable
 OPTIND=1
 
-#Clean cache if -c flag was passed
-[ "$cleanFlag" = true ] && . "$repoDir/.clean-cache.sh"
-
 #Set directory to save package version
 libDir="/var/lib/gh-install"
 [ ! -d "$libDir" ] && sudo mkdir -p "$libDir"
 
+#Clean cache if -c flag was passed
+[ "$cleanFlag" = true ] && . "$repoDir/.clean-cache.sh"
+
 #Set the root of the install directory based on type of package
 case "$package_type" in
-    "bin") installDir="/opt" ;;
-    "font") installDir="/usr/local/share/fonts" ;;
+    "bin") installDir="/opt/${package_name}" ;;
+    "font") installDir="/usr/local/share/fonts/${package_name}" ;;
 esac
 
 #Make parent directory for install
@@ -68,7 +68,7 @@ esac
 [ "$cleanFlag" = true ] || [ "$removeFlag" = true ] && exit
 
 #Get the current version of the package
-local_tag="$(find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -printf '%f' -quit | sed "s,${package_name}-,,g")"
+local_tag="$(find "$libDir" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -printf '%f' -quit | sed "s,${package_name}-,,g")"
 
 #File to save the tag_name
 api_response="/tmp/${package_name}.api.json"
@@ -81,7 +81,7 @@ fi
 #Save tag_name to variable
 online_tag="$(grep tag_name "$api_response" | cut -d \" -f 4)"
 
-#Start installation if github version is not equal to installed version and -u
+#Install if github version is not equal to installed version and -u
 #Or if package is not installed or if -dfi flag is passed
 if [ "$downloadFlag" = true ]; then
     echo "Begin $package_name download..."

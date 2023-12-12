@@ -22,6 +22,9 @@ hash_extension='sha256'
 #Download release file
 . "$repoDir/.download.sh"
 
+#Uninstall old package version
+. "$repoDir/.uninstall.sh"
+
 #Source file with functions
 . "$repoDir/.install.sh"
 
@@ -34,6 +37,3 @@ install_package "$installDir/$package_name"
 
 #Add completion file for bash/zsh/fish (completion-location)
 add_completions "new-Cobra"
-
-#Uninstall old package version
-. "$repoDir/.uninstall.sh"

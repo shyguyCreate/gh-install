@@ -22,6 +22,9 @@ hash_file='hashes.sha256'
 #Download release file
 . "$repoDir/.download.sh"
 
+#Uninstall old package version
+. "$repoDir/.uninstall.sh"
+
 #Source file with functions
 . "$repoDir/.install.sh"
 
@@ -37,6 +40,3 @@ add_image_file "online" "https://raw.githubusercontent.com/PowerShell/PowerShell
 
 #Add desktop file to system (true|false for terminal application)
 add_desktop_file true
-
-#Uninstall old package version
-. "$repoDir/.uninstall.sh"

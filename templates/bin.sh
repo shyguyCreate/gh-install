@@ -26,6 +26,9 @@ hash_algorithm=''
 #Download release file
 . "$repoDir/.download.sh"
 
+#Uninstall old package version
+. "$repoDir/.uninstall.sh"
+
 #Source file with functions
 . "$repoDir/.install.sh"
 
@@ -49,6 +52,3 @@ install_package "install-directory/binary"
 
 #Add desktop file to system (true|false for terminal application)
 # add_desktop_file false
-
-#Uninstall old package version
-. "$repoDir/.uninstall.sh"

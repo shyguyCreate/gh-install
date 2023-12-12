@@ -4,12 +4,6 @@
 
 send_to_install_dir()
 {
-    #Set the install directory with github tag added to its name
-    installDir="$installDir/${package_name}-${online_tag}"
-
-    #Make directory for install
-    sudo mkdir -p "$installDir"
-
     #Expand tar file to folder installation
     case $download_file in
         *.tar.gz) eval "sudo tar zxf $download_file -C $installDir $1" ;;
@@ -50,6 +44,9 @@ install_package()
         "bin") install_bin "$1" ;;
         "font") install_font "$1" ;;
     esac
+
+    #Save package version
+    touch "$libDir/${package_name}-${online_tag}"
 }
 
 #### Section 3 ####

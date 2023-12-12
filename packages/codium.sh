@@ -22,6 +22,9 @@ hash_extension='sha256'
 #Download release file
 . "$repoDir/.download.sh"
 
+#Uninstall old package version
+. "$repoDir/.uninstall.sh"
+
 #Source file with functions
 . "$repoDir/.install.sh"
 
@@ -41,6 +44,3 @@ add_image_file "local" "$installDir/resources/app/resources/linux/code.png"
 
 #Add desktop file to system (true|false for terminal application)
 add_desktop_file false
-
-#Uninstall old package version
-. "$repoDir/.uninstall.sh"

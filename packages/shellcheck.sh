@@ -19,6 +19,9 @@ download_x32=''
 #Download release file
 . "$repoDir/.download.sh"
 
+#Uninstall old package version
+. "$repoDir/.uninstall.sh"
+
 #Source file with functions
 . "$repoDir/.install.sh"
 
@@ -28,6 +31,3 @@ send_to_install_dir "--strip-components=1"
 #BIN: Specify the package binary location
 #FONT: Specify which fonts should be kept
 install_package "$installDir/$package_name"
-
-#Uninstall old package version
-. "$repoDir/.uninstall.sh"
