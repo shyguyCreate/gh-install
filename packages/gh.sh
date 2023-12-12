@@ -34,8 +34,8 @@ send_to_install_dir "--strip-components=1"
 #FONT: Specify which fonts should be kept
 install_package "$installDir/bin/$package_name"
 
-#Uninstall old package version
-uninstall_old_version
-
 #Add completion file for bash/zsh/fish (completion-location)
 add_completions "old-Cobra"
+
+#Uninstall old package version
+. "$repoDir/.uninstall.sh"

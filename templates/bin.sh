@@ -36,9 +36,6 @@ send_to_install_dir
 #FONT: Specify which fonts should be kept
 install_package "install-directory/binary"
 
-#Uninstall old package version
-uninstall_old_version
-
 #Add completion file for bash/zsh/fish (completion-location)
 # add_completions "bash" "location-of-completion-file-for-bash"
 # add_completions "zsh" "location-of-completion-file-for-zsh"
@@ -52,3 +49,6 @@ uninstall_old_version
 
 #Add desktop file to system (true|false for terminal application)
 # add_desktop_file false
+
+#Uninstall old package version
+. "$repoDir/.uninstall.sh"

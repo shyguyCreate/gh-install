@@ -62,10 +62,7 @@ esac
 [ ! -d "$installDir" ] && sudo mkdir -p "$installDir"
 
 #Test if -r flag was passed
-if [ "$removeFlag" = true ]; then
-    #Remove contents if already installed
-    find "$installDir" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -exec sudo rm -rf '{}' \;
-fi
+[ "$removeFlag" = true ] && . "$repoDir/.uninstall.sh"
 
 #Exit if -c or -r flag was passed
 [ "$cleanFlag" = true ] || [ "$removeFlag" = true ] && exit

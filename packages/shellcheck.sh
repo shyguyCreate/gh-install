@@ -30,4 +30,4 @@ send_to_install_dir "--strip-components=1"
 install_package "$installDir/$package_name"
 
 #Uninstall old package version
-uninstall_old_version
+. "$repoDir/.uninstall.sh"

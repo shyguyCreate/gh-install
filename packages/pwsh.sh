@@ -32,11 +32,11 @@ send_to_install_dir
 #FONT: Specify which fonts should be kept
 install_package "$installDir/$package_name"
 
-#Uninstall old package version
-uninstall_old_version
-
 #Add image file to system (local|onine) (image-location|url)
 add_image_file "online" "https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"
 
 #Add desktop file to system (true|false for terminal application)
 add_desktop_file true
+
+#Uninstall old package version
+. "$repoDir/.uninstall.sh"

@@ -27,4 +27,4 @@ send_to_install_dir
 install_package "MesloLGSNerdFont-*.ttf"
 
 #Uninstall old package version
-uninstall_old_version
+. "$repoDir/.uninstall.sh"

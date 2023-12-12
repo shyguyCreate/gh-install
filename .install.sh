@@ -54,14 +54,6 @@ install_package()
 
 #### Section 3 ####
 
-uninstall_old_version()
-{
-    #Remove contents if already installed
-    find "$(dirname "$installDir")" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -not -path "$installDir" -exec sudo rm -rf '{}' \;
-}
-
-#### Section 4 ####
-
 add_completions()
 {
     bash_completion_dir="/usr/local/share/bash-completion/completions"
@@ -113,7 +105,7 @@ add_completions()
     esac
 }
 
-#### Section 5 ####
+#### Section 4 ####
 
 add_image_file()
 {
@@ -157,7 +149,7 @@ add_image_file()
     esac
 }
 
-#### Section 6 ####
+#### Section 5 ####
 
 add_desktop_file()
 {
