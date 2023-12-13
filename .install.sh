@@ -1,53 +1,35 @@
 #!/bin/sh
 
-#### Section 1 ####
+strip_components=${strip_components:-0}
 
-send_to_install_dir()
-{
-    #Expand tar file to folder installation
-    case $download_file in
-        *.tar.gz) eval "sudo tar zxf $download_file -C $installDir $1" ;;
-        *.tar.xz) eval "sudo tar Jxf $download_file -C $installDir $1" ;;
-        *) sudo cp "$download_file" "$installDir/$package_name" ;;
-    esac
-}
+#Expand tar file to folder installation
+case $download_file in
+    *.tar.gz) eval "sudo tar zxf $download_file -C $installDir --strip-components=$strip_components" ;;
+    *.tar.xz) eval "sudo tar Jxf $download_file -C $installDir --strip-components=$strip_components" ;;
+    *) sudo cp "$download_file" "$installDir/$package_name" ;;
+esac
 
-#### Section 2 ####
+bin_directory="/usr/local/bin"
+[ ! -d "$bin_directory" ] && sudo mkdir -p "$bin_directory"
 
-install_package()
-{
-    install_bin()
-    {
-        #Exit if no argument was passed
-        [ -z "$1" ] && echo "Error: Binary location not specified" && exit 1
-
-        #Change execute permissions
-        bin_package="$1"
-        sudo chmod +x "$bin_package"
-
+case "$package_type" in
+    "app")
         #Create symbolic link to bin folder
-        bin_directory="/usr/local/bin"
-        sudo mkdir -p "$bin_directory"
-        sudo ln -sf "$bin_package" "$bin_directory"
-    }
-
-    install_font()
-    {
-        #If no parameter pass, set wildcard to match all files
-        font_name="${1:-*}"
-        #Copy fonts to install directory
+        sudo ln -sf "$installDir/$bin_package" "$bin_directory/$package_name"
+        ;;
+    "bin")
+        #Copy binary to bin folder and clean tmp folder
+        sudo cp "$installDir/$package_name" "$bin_directory/$package_name"
+        rm -rf "$installDir"
+        ;;
+    "font")
+        #Specify which fonts should be kept in the system
         find "$installDir" -maxdepth 1 -mindepth 1 -type f -not -name "$font_name" -exec sudo rm -rf '{}' \;
-    }
+        ;;
+esac
 
-    #Choose which function to pick
-    case "$package_type" in
-        "bin") install_bin "$1" ;;
-        "font") install_font "$1" ;;
-    esac
-
-    #Save package version
-    touch "$libDir/${package_name}-${online_tag}"
-}
+#Save package version
+touch "$libDir/${package_name}-${online_tag}"
 
 #### Section 3 ####
 

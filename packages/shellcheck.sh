@@ -22,12 +22,9 @@ download_x32=''
 #Uninstall old package version
 . "$repoDir/.uninstall.sh"
 
+strip_components=1
+
+bin_package="./$package_name"
+
 #Source file with functions
 . "$repoDir/.install.sh"
-
-#Send download contents to install directory (optional flags)
-send_to_install_dir "--strip-components=1"
-
-#BIN: Specify the package binary location
-#FONT: Specify which fonts should be kept
-install_package "$installDir/$package_name"

@@ -29,15 +29,10 @@ hash_algorithm=''
 #Uninstall old package version
 . "$repoDir/.uninstall.sh"
 
+bin_package="install-directory/binary"
+
 #Source file with functions
 . "$repoDir/.install.sh"
-
-#Send download contents to install directory (optional flags)
-send_to_install_dir
-
-#BIN: Specify the package binary location
-#FONT: Specify which fonts should be kept
-install_package "install-directory/binary"
 
 #Add completion file for bash/zsh/fish (completion-location)
 # add_completions "bash" "location-of-completion-file-for-bash"

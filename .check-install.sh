@@ -52,15 +52,6 @@ libDir="/var/lib/gh-install"
 #Clean cache if -c flag was passed
 [ "$cleanFlag" = true ] && . "$repoDir/.clean-cache.sh"
 
-#Set the root of the install directory based on type of package
-case "$package_type" in
-    "bin") installDir="/opt/${package_name}" ;;
-    "font") installDir="/usr/local/share/fonts/${package_name}" ;;
-esac
-
-#Make parent directory for install
-[ ! -d "$installDir" ] && sudo mkdir -p "$installDir"
-
 #Test if -r flag was passed
 [ "$removeFlag" = true ] && . "$repoDir/.uninstall.sh"
 

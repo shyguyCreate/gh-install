@@ -22,12 +22,7 @@ download_x32='shfmt_.*_linux_386'
 #Uninstall old package version
 . "$repoDir/.uninstall.sh"
 
+bin_package="./$package_name"
+
 #Source file with functions
 . "$repoDir/.install.sh"
-
-#Send download contents to install directory (optional flags)
-send_to_install_dir
-
-#BIN: Specify the package binary location
-#FONT: Specify which fonts should be kept
-install_package "$installDir/$package_name"

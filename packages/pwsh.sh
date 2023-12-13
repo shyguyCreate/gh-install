@@ -2,7 +2,7 @@
 
 package_name="pwsh"
 repo="PowerShell/PowerShell"
-package_type="bin"
+package_type="app"
 
 #Save path to root of the repo
 repoDir="$(dirname "$(dirname "$0")")"
@@ -28,12 +28,7 @@ hash_file='hashes.sha256'
 #Source file with functions
 . "$repoDir/.install.sh"
 
-#Send download contents to install directory (optional flags)
-send_to_install_dir
-
-#BIN: Specify the package binary location
-#FONT: Specify which fonts should be kept
-install_package "$installDir/$package_name"
+bin_package="./$package_name"
 
 #Add image file to system (local|onine) (image-location|url)
 add_image_file "online" "https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"

@@ -2,7 +2,7 @@
 
 package_name="codium"
 repo="VSCodium/vscodium"
-package_type="bin"
+package_type="app"
 
 #Save path to root of the repo
 repoDir="$(dirname "$(dirname "$0")")"
@@ -25,15 +25,10 @@ hash_extension='sha256'
 #Uninstall old package version
 . "$repoDir/.uninstall.sh"
 
+bin_package="./bin/$package_name"
+
 #Source file with functions
 . "$repoDir/.install.sh"
-
-#Send download contents to install directory (optional flags)
-send_to_install_dir
-
-#BIN: Specify the package binary location
-#FONT: Specify which fonts should be kept
-install_package "$installDir/bin/$package_name"
 
 #Add completion file for bash/zsh/fish (completion-location)
 add_completions "bash" "$installDir/resources/completions/bash/$package_name"

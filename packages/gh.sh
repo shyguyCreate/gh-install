@@ -27,15 +27,12 @@ hash_algorithm='sha256'
 #Uninstall old package version
 . "$repoDir/.uninstall.sh"
 
+strip_components=1
+
+bin_package="./bin/$package_name"
+
 #Source file with functions
 . "$repoDir/.install.sh"
-
-#Send download contents to install directory (optional flags)
-send_to_install_dir "--strip-components=1"
-
-#BIN: Specify the package binary location
-#FONT: Specify which fonts should be kept
-install_package "$installDir/bin/$package_name"
 
 #Add completion file for bash/zsh/fish (completion-location)
 add_completions "old-Cobra"
