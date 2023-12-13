@@ -1,42 +1,49 @@
 #!/bin/sh
 
+#Uninstall old package version
+. "$repoDir/.uninstall.sh"
+
+#Create tmp folder for package extraction
+tmp_dir="/tmp/$package_name"
+sudo mkdir -p "$tmp_dir"
+
 #Set strip-components to cer if not set
 strip_components=${strip_components:-0}
 
 #Expand tar file to folder installation
 case $download_file in
-    *.tar.gz) eval "sudo tar zxf $download_file -C $installDir --strip-components=$strip_components" ;;
-    *.tar.xz) eval "sudo tar Jxf $download_file -C $installDir --strip-components=$strip_components" ;;
-    *) sudo cp "$download_file" "$installDir/$package_name" ;;
+    *.tar.gz) eval "sudo tar zxf $download_file -C $tmp_dir --strip-components=$strip_components" ;;
+    *.tar.xz) eval "sudo tar Jxf $download_file -C $tmp_dir --strip-components=$strip_components" ;;
+    *) sudo cp "$download_file" "$tmp_dir/$package_name" ;;
 esac
 
 #Install package based on type
 case "$package_type" in
     "app")
-        bin_directory="/usr/local/bin"
-        [ ! -d "$bin_directory" ] && sudo mkdir -p "$bin_directory"
-        #Create symbolic link to bin folder
-        sudo ln -sf "$installDir/$bin_package" "$bin_directory/$package_name"
+        #Move tmp folder to install directory
+        sudo mv -f "$tmp_dir" "$installDir"
         #Make binary executable
-        sudo chmod +x "$bin_directory/$package_name"
+        sudo chmod +x "$installDir/${bin_package#./}"
+        #Create symbolic link to bin folder
+        sudo ln -sf "$installDir/${bin_package#./}" "$bin_directory/$package_name"
         ;;
     "bin")
-        bin_directory="/usr/local/bin"
-        [ ! -d "$bin_directory" ] && sudo mkdir -p "$bin_directory"
-        #Copy binary to bin folder and clean tmp folder
-        sudo cp "$installDir/$bin_package" "$bin_directory/$package_name"
-        sudo rm -rf "$installDir"
+        #Copy binary to bin folder
+        sudo mv -f "$tmp_dir/${bin_package#./}" "$bin_directory/$package_name"
         #Make binary executable
         sudo chmod +x "$bin_directory/$package_name"
         ;;
     "font")
         #Specify which fonts should be kept in the system
-        find "$installDir" -maxdepth 1 -mindepth 1 -not -name "$font_name" -exec sudo rm -rf '{}' \;
+        find "$tmp_dir" -maxdepth 1 -mindepth 1 -name "$font_name" -exec sudo mv -f '{}' "$installDir" \;
         ;;
 esac
 
 #Save package version
 sudo touch "$libDir/${package_name}-${online_tag}"
+
+#Clean tmp folder
+sudo rm -rf "$tmp_dir"
 
 #### Section 3 ####
 

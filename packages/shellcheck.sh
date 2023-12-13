@@ -19,9 +19,6 @@ download_x32=''
 #Download release file
 . "$repoDir/.download.sh"
 
-#Uninstall old package version
-. "$repoDir/.uninstall.sh"
-
 #Remove num of leading folders in tar archive
 strip_components=1
 #Remove num of leading folders in tar archive

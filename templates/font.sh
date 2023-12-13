@@ -16,9 +16,6 @@ download_all_arch=''
 #Download release file
 . "$repoDir/.download.sh"
 
-#Uninstall old package version
-. "$repoDir/.uninstall.sh"
-
 #Specify font to keep (wildcards allowed)
 font_name="font-name"
 

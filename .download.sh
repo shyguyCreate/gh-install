@@ -1,8 +1,5 @@
 #!/bin/sh
 
-#Clean cache and exclude folder
-. "$repoDir/.clean-cache.sh"
-
 #Set hashes empty
 download_file_hash=""
 download_hash=""
@@ -116,6 +113,9 @@ if [ -n "$hash_file" ]; then
         exit 1
     fi
 fi
+
+#Clean cache with folder excluded
+. "$repoDir/.clean-cache.sh"
 
 #Exit if -d flag is passed
 [ "$downloadFlag" = true ] && exit

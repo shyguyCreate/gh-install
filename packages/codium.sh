@@ -22,10 +22,7 @@ hash_extension='sha256'
 #Download release file
 . "$repoDir/.download.sh"
 
-#Uninstall old package version
-. "$repoDir/.uninstall.sh"
-
-#Set path to binary based on the downloaded file
+#Path to binary based on download (start with ./)
 bin_package="./bin/$package_name"
 
 #Source file with functions
