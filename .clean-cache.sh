@@ -16,5 +16,5 @@ else
     [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
 
     #Clean cache from old download files
-    find "$(dirname "$cacheDir")" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -not -path "${package_name}-${online_tag}" -exec sudo rm -rf '{}' \;
+    find "$(dirname "$cacheDir")" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -not -path "$cacheDir" -exec sudo rm -rf '{}' \;
 fi

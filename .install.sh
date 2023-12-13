@@ -9,27 +9,32 @@ case $download_file in
     *) sudo cp "$download_file" "$installDir/$package_name" ;;
 esac
 
-bin_directory="/usr/local/bin"
-[ ! -d "$bin_directory" ] && sudo mkdir -p "$bin_directory"
-
 case "$package_type" in
     "app")
+        bin_directory="/usr/local/bin"
+        [ ! -d "$bin_directory" ] && sudo mkdir -p "$bin_directory"
+        #Make binary executable
+        sudo chmod +x "$installDir/$bin_package"
         #Create symbolic link to bin folder
         sudo ln -sf "$installDir/$bin_package" "$bin_directory/$package_name"
         ;;
     "bin")
+        bin_directory="/usr/local/bin"
+        [ ! -d "$bin_directory" ] && sudo mkdir -p "$bin_directory"
+        #Make binary executable
+        sudo chmod +x "$installDir/$bin_package"
         #Copy binary to bin folder and clean tmp folder
-        sudo cp "$installDir/$package_name" "$bin_directory/$package_name"
-        rm -rf "$installDir"
+        sudo cp "$installDir/$bin_package" "$bin_directory/$package_name"
+        sudo rm -rf "$installDir"
         ;;
     "font")
         #Specify which fonts should be kept in the system
-        find "$installDir" -maxdepth 1 -mindepth 1 -type f -not -name "$font_name" -exec sudo rm -rf '{}' \;
+        find "$installDir" -maxdepth 1 -mindepth 1 -not -name "$font_name" -exec sudo rm -rf '{}' \;
         ;;
 esac
 
 #Save package version
-touch "$libDir/${package_name}-${online_tag}"
+sudo touch "$libDir/${package_name}-${online_tag}"
 
 #### Section 3 ####
 

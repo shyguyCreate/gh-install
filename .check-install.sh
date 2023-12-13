@@ -59,7 +59,7 @@ libDir="/var/lib/gh-install"
 [ "$cleanFlag" = true ] || [ "$removeFlag" = true ] && exit
 
 #Get the current version of the package
-local_tag="$(find "$libDir" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -printf '%f' -quit | sed "s,${package_name}-,,g")"
+local_tag="$(find "$libDir" -maxdepth 1 -mindepth 1 -type f -name "${package_name}-*" -printf '%f' -quit | sed "s,${package_name}-,,g")"
 
 #File to save the tag_name
 api_response="/tmp/${package_name}.api.json"

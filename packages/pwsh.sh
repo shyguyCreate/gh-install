@@ -25,10 +25,10 @@ hash_file='hashes.sha256'
 #Uninstall old package version
 . "$repoDir/.uninstall.sh"
 
+bin_package="./$package_name"
+
 #Source file with functions
 . "$repoDir/.install.sh"
-
-bin_package="./$package_name"
 
 #Add image file to system (local|onine) (image-location|url)
 add_image_file "online" "https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"
