@@ -26,7 +26,7 @@ usage()
 }
 
 #Iterate over all packages scripts
-allCommand()
+all_command()
 {
     #Check that flags passed are valid
     while getopts ":cdfiruxy" opt; do
@@ -47,7 +47,7 @@ allCommand()
 }
 
 #Print all packages scripts available
-listCommand()
+list_command()
 {
     for script in "$(dirname "$0")"/packages/*.sh; do
         basename "$script" .sh
@@ -56,7 +56,7 @@ listCommand()
 }
 
 #Print all packages scripts available
-searchCommand()
+search_command()
 {
     #Print usage if arguments are empty
     if [ $# = 0 ]; then
@@ -76,12 +76,12 @@ searchCommand()
 case "$1" in
     "all")
         shift 1
-        allCommand "$@"
+        all_command "$@"
         ;;
-    "list") listCommand ;;
+    "list") list_command ;;
     "search")
         shift 1
-        searchCommand "$@"
+        search_command "$@"
         ;;
 esac
 

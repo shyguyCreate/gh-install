@@ -5,10 +5,10 @@ repo="owner/repo-name"
 package_type="bin"
 
 #Save path to root of the repo
-repoDir="$(dirname "$(dirname "$0")")"
+repo_dir="$(dirname "$(dirname "$0")")"
 
 #Check if should install
-. "$repoDir/.check-install.sh"
+. "$repo_dir/.check-install.sh"
 
 #Regex match by architecture
 download_x64=''
@@ -24,7 +24,7 @@ hash_file=''
 hash_algorithm=''
 
 #Download release file
-. "$repoDir/.download.sh"
+. "$repo_dir/.download.sh"
 
 #Remove num of leading folders in tar archive
 strip_components=0
@@ -32,7 +32,7 @@ strip_components=0
 bin_package="install-directory/binary"
 
 #Source file with functions
-. "$repoDir/.install.sh"
+. "$repo_dir/.install.sh"
 
 #Add completion file for bash/zsh/fish (completion-location)
 # add_completions "bash" "location-of-completion-file-for-bash"

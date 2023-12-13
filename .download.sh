@@ -39,13 +39,13 @@ download_url=$(grep "\"browser_download_url.*/$download_match\"" "$api_response"
 [ -z "$download_url" ] && echo "Error: Download match did not match any release file" && exit 1
 
 #Set path to download file with the name found in the url
-download_file="$cacheDir/${download_url##*/}"
+download_file="$cache_dir/${download_url##*/}"
 
 #Append hash extension to download file if set
 [ -n "$hash_extension" ] && hash_file="$(basename "$download_file").${hash_extension}"
 
 #Empty hash file if ignore hash is passed
-[ "$hashFlag" = true ] && hash_file=""
+[ "$hash_flag" = true ] && hash_file=""
 
 #Check if hash file is set
 if [ -n "$hash_file" ]; then
@@ -57,10 +57,10 @@ if [ -n "$hash_file" ]; then
     [ -z "$hash_url" ] && echo "Error: Hash file did not match any release file" && exit 1
 
     #Set path to download file with the name found in the url
-    hash_file="$cacheDir/${hash_url##*/}"
+    hash_file="$cache_dir/${hash_url##*/}"
 
     #Download if hash file does not exists or if force passed
-    if [ ! -f "$hash_file" ] || [ "$forceFlag" = true ]; then
+    if [ ! -f "$hash_file" ] || [ "$force_flag" = true ]; then
         #Start download
         sudo curl -Lf --progress-bar "$hash_url" -o "$hash_file"
     fi
@@ -92,7 +92,7 @@ if [ -n "$hash_file" ]; then
 fi
 
 #Download if file does not exists or if hashes do not match or if force passed
-if [ ! -f "$download_file" ] || [ "$download_file_hash" != "$download_hash" ] || [ "$forceFlag" = true ]; then
+if [ ! -f "$download_file" ] || [ "$download_file_hash" != "$download_hash" ] || [ "$force_flag" = true ]; then
     #Start download
     sudo curl -Lf --progress-bar "$download_url" -o  "$download_file"
 fi
@@ -115,7 +115,7 @@ if [ -n "$hash_file" ]; then
 fi
 
 #Clean cache with folder excluded
-. "$repoDir/.clean-cache.sh"
+. "$repo_dir/.clean-cache.sh"
 
 #Exit if -d flag is passed
-[ "$downloadFlag" = true ] && exit
+[ "$download_flag" = true ] && exit

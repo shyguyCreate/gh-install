@@ -5,10 +5,10 @@ repo="PowerShell/PowerShell"
 package_type="app"
 
 #Save path to root of the repo
-repoDir="$(dirname "$(dirname "$0")")"
+repo_dir="$(dirname "$(dirname "$0")")"
 
 #Check if should install
-. "$repoDir/.check-install.sh"
+. "$repo_dir/.check-install.sh"
 
 #Regex match by architecture
 download_x64='powershell-.*-linux-x64\.tar\.gz'
@@ -20,13 +20,13 @@ download_x32=''
 hash_file='hashes.sha256'
 
 #Download release file
-. "$repoDir/.download.sh"
+. "$repo_dir/.download.sh"
 
 #Path to binary based on download (start with ./)
 bin_package="./$package_name"
 
 #Source file with functions
-. "$repoDir/.install.sh"
+. "$repo_dir/.install.sh"
 
 #Add image file to system (local|onine) (image-location|url)
 add_image_file "online" "https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #Uninstall old package version
-. "$repoDir/.uninstall.sh"
+. "$repo_dir/.uninstall.sh"
 
 #Create tmp folder for package extraction
 tmp_dir="/tmp/$package_name"
@@ -21,11 +21,11 @@ esac
 case "$package_type" in
     "app")
         #Move tmp folder to install directory
-        sudo mv -f "$tmp_dir" "$installDir"
+        sudo mv -f "$tmp_dir" "$intall_dir"
         #Make binary executable
-        sudo chmod +x "$installDir/${bin_package#./}"
+        sudo chmod +x "$intall_dir/${bin_package#./}"
         #Create symbolic link to bin folder
-        sudo ln -sf "$installDir/${bin_package#./}" "$bin_directory/$package_name"
+        sudo ln -sf "$intall_dir/${bin_package#./}" "$bin_directory/$package_name"
         ;;
     "bin")
         #Copy binary to bin folder
@@ -35,12 +35,12 @@ case "$package_type" in
         ;;
     "font")
         #Specify which fonts should be kept in the system
-        find "$tmp_dir" -maxdepth 1 -mindepth 1 -name "$font_name" -exec sudo mv -f '{}' "$installDir" \;
+        find "$tmp_dir" -maxdepth 1 -mindepth 1 -name "$font_name" -exec sudo mv -f '{}' "$intall_dir" \;
         ;;
 esac
 
 #Save package version
-sudo touch "$libDir/${package_name}-${online_tag}"
+sudo touch "$lib_dir/${package_name}-${online_tag}"
 
 #Clean tmp folder
 sudo rm -rf "$tmp_dir"
@@ -108,7 +108,7 @@ add_image_file()
     image_name="${package_name}.${2##*.}"
 
     #Check if pixmaps image file exist
-    if [ -f "$image_dir/$image_name" ] && [ "$forceFlag" = false ]; then
+    if [ -f "$image_dir/$image_name" ] && [ "$force_flag" = false ]; then
         return
     fi
 
@@ -149,7 +149,7 @@ add_desktop_file()
     desktop_file="/usr/local/share/applications/${package_name}.desktop"
 
     #Check if .desktop file exist
-    if [ -f "$desktop_file" ] && [ "$forceFlag" = false ]; then
+    if [ -f "$desktop_file" ] && [ "$force_flag" = false ]; then
         return
     fi
 

@@ -5,10 +5,10 @@ repo="koalaman/shellcheck"
 package_type="bin"
 
 #Save path to root of the repo
-repoDir="$(dirname "$(dirname "$0")")"
+repo_dir="$(dirname "$(dirname "$0")")"
 
 #Check if should install
-. "$repoDir/.check-install.sh"
+. "$repo_dir/.check-install.sh"
 
 #Regex match by architecture
 download_x64='shellcheck-.*linux\.x86_64\.tar\.xz'
@@ -17,7 +17,7 @@ download_arm64='shellcheck-.*linux\.aarch64\.tar\.xz'
 download_x32=''
 
 #Download release file
-. "$repoDir/.download.sh"
+. "$repo_dir/.download.sh"
 
 #Remove num of leading folders in tar archive
 strip_components=1
@@ -25,4 +25,4 @@ strip_components=1
 bin_package="./$package_name"
 
 #Source file with functions
-. "$repoDir/.install.sh"
+. "$repo_dir/.install.sh"
