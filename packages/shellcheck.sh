@@ -22,8 +22,9 @@ download_x32=''
 #Uninstall old package version
 . "$repoDir/.uninstall.sh"
 
+#Remove num of leading folders in tar archive
 strip_components=1
-
+#Remove num of leading folders in tar archive
 bin_package="./$package_name"
 
 #Source file with functions

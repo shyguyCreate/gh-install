@@ -1,5 +1,6 @@
 #!/bin/sh
 
+#Set strip-components to cer if not set
 strip_components=${strip_components:-0}
 
 #Expand tar file to folder installation
@@ -9,23 +10,24 @@ case $download_file in
     *) sudo cp "$download_file" "$installDir/$package_name" ;;
 esac
 
+#Install package based on type
 case "$package_type" in
     "app")
         bin_directory="/usr/local/bin"
         [ ! -d "$bin_directory" ] && sudo mkdir -p "$bin_directory"
-        #Make binary executable
-        sudo chmod +x "$installDir/$bin_package"
         #Create symbolic link to bin folder
         sudo ln -sf "$installDir/$bin_package" "$bin_directory/$package_name"
+        #Make binary executable
+        sudo chmod +x "$bin_directory/$package_name"
         ;;
     "bin")
         bin_directory="/usr/local/bin"
         [ ! -d "$bin_directory" ] && sudo mkdir -p "$bin_directory"
-        #Make binary executable
-        sudo chmod +x "$installDir/$bin_package"
         #Copy binary to bin folder and clean tmp folder
         sudo cp "$installDir/$bin_package" "$bin_directory/$package_name"
         sudo rm -rf "$installDir"
+        #Make binary executable
+        sudo chmod +x "$bin_directory/$package_name"
         ;;
     "font")
         #Specify which fonts should be kept in the system

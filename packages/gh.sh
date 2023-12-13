@@ -27,8 +27,9 @@ hash_algorithm='sha256'
 #Uninstall old package version
 . "$repoDir/.uninstall.sh"
 
+#Remove num of leading folders in tar archive
 strip_components=1
-
+#Set path to binary based on the downloaded file
 bin_package="./bin/$package_name"
 
 #Source file with functions

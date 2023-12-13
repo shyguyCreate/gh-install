@@ -25,6 +25,7 @@ hash_file='hashes.sha256'
 #Uninstall old package version
 . "$repoDir/.uninstall.sh"
 
+#Set path to binary based on the downloaded file
 bin_package="./$package_name"
 
 #Source file with functions

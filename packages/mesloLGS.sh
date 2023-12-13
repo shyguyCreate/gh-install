@@ -19,6 +19,7 @@ download_all_arch='Meslo\.tar\.xz'
 #Uninstall old package version
 . "$repoDir/.uninstall.sh"
 
+#Specify font to keep (wildcards allowed)
 font_name="MesloLGSNerdFont-*.ttf"
 
 #Source file with functions

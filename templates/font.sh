@@ -19,6 +19,7 @@ download_all_arch=''
 #Uninstall old package version
 . "$repoDir/.uninstall.sh"
 
+#Specify font to keep (wildcards allowed)
 font_name="font-name"
 
 #Source file with functions
