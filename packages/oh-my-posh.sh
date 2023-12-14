@@ -25,8 +25,8 @@ hash_extension='sha256'
 #Path to binary based on download (start with ./)
 bin_package="./$package_name"
 
+#Completions for bash/zsh/fish using Cobra completion command
+cobra_completion="new"
+
 #Source file with functions
 . "$repo_dir/.install.sh"
-
-#Add completion file for bash/zsh/fish (completion-location)
-add_completions "new-Cobra"

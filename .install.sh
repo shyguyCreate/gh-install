@@ -45,10 +45,10 @@ sudo touch "$lib_dir/${package_name}-${online_tag}"
 #Clean tmp folder
 sudo rm -rf "$tmp_dir"
 
-#### Section 3 ####
+#Add completion file for each shell
+if [ -n "$bash_completion" ] || [ -n "$zsh_completion" ] || [ -n "$fish_completion" ] || [ -n "$cobra_completion" ]; then
 
-add_completions()
-{
+    #Directory of each shell completion
     bash_completion_dir="/usr/local/share/bash-completion/completions"
     zsh_completion_dir="/usr/local/share/zsh/site-functions"
     fish_completion_dir="/usr/local/share/fish/vendor_completions.d"
@@ -58,45 +58,25 @@ add_completions()
     [ ! -d "$zsh_completion_dir" ] && sudo mkdir -p "$zsh_completion_dir"
     [ ! -d "$fish_completion_dir" ] && sudo mkdir -p "$fish_completion_dir"
 
-    add_completion_file()
-    {
-        #Exit if no argument was passed
-        [ -z "$1" ] && echo "Error: Completion file not specified" && exit 1
+    #Add completion file based on the directory passed
+    [ -n "$bash_completion" ] && [ -f "$intall_dir/${bash_completion#./}" ] && sudo cp "$intall_dir/${bash_completion#./}" "$bash_completion_dir"
+    [ -n "$zsh_completion" ]  && [ -f "$intall_dir/${zsh_completion#./}" ] && sudo cp "$intall_dir/${zsh_completion#./}" "$zsh_completion_dir"
+    [ -n "$fish_completion" ] && [ -f "$intall_dir/${fish_completion#./}" ] && sudo cp "$intall_dir/${fish_completion#./}" "$fish_completion_dir"
 
-        #Add completion file to directory based on shell passed
-        completion_file="$1"
-        completion_dir="$2"
-        sudo cp "$completion_file" "$completion_dir"
-    }
+    #Choose one Cobra completion command
+    if [ "$cobra_completion" = "old" ]; then
+        #Execute completion command and passed it to bash/zsh/fish completion directory
+        eval "$bin_directory/$package_name completion -s bash | sudo tee $bash_completion_dir/$package_name > /dev/null"
+        eval "$bin_directory/$package_name completion -s zsh | sudo tee $zsh_completion_dir/_$package_name > /dev/null"
+        eval "$bin_directory/$package_name completion -s fish | sudo tee $fish_completion_dir/${package_name}.fish > /dev/null"
 
-    add_old_Cobra_completion()
-    {
-        #Add completions for bash/zsh/fish
-        eval "$package_name completion -s bash | sudo tee $bash_completion_dir/$package_name > /dev/null"
-        eval "$package_name completion -s zsh | sudo tee $zsh_completion_dir/_$package_name > /dev/null"
-        eval "$package_name completion -s fish | sudo tee $fish_completion_dir/${package_name}.fish > /dev/null"
-    }
-
-    add_new_Cobra_completion()
-    {
-        #Add completions for bash/zsh/fish
-        eval "$package_name completion bash | sudo tee $bash_completion_dir/$package_name > /dev/null"
-        eval "$package_name completion zsh | sudo tee $zsh_completion_dir/_$package_name > /dev/null"
-        eval "$package_name completion fish | sudo tee $fish_completion_dir/${package_name}.fish > /dev/null"
-    }
-
-    #Exit if no argument was passed
-    [ -z "$1" ] && echo "Error: Completion shell not specified" && exit 1
-
-    #Choose which function to pick
-    case "$1" in
-        "bash") add_completion_file "$2" "$bash_completion_dir" ;;
-        "zsh")  add_completion_file "$2" "$zsh_completion_dir"  ;;
-        "fish") add_completion_file "$2" "$fish_completion_dir" ;;
-        "old-Cobra") add_old_Cobra_completion ;;
-        "new-Cobra") add_new_Cobra_completion ;;
-    esac
-}
+    elif [ "$cobra_completion" = "new" ]; then
+        #Execute completion command and passed it to bash/zsh/fish completion directory
+        eval "$bin_directory/$package_name completion bash | sudo tee $bash_completion_dir/$package_name > /dev/null"
+        eval "$bin_directory/$package_name completion zsh | sudo tee $zsh_completion_dir/_$package_name > /dev/null"
+        eval "$bin_directory/$package_name completion fish | sudo tee $fish_completion_dir/${package_name}.fish > /dev/null"
+    fi
+fi
 
 #### Section 4 ####
 

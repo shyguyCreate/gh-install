@@ -30,16 +30,19 @@ hash_algorithm=''
 strip_components=0
 #Path to binary based on download (start with ./)
 bin_package="install-directory/binary"
+bin_package="./bin/$package_name"
+
+#Path to completion file based on download (start with ./)
+# bash_completion="location-of-completion-file-for-bash"
+# zsh_completion="location-of-completion-file-for-zsh"
+# fish_completion="location-of-completion-file-for-fish"
+
+#Completions for bash/zsh/fish using Cobra completion command
+# cobra_completion="old"
+# cobra_completion="new"
 
 #Source file with functions
 . "$repo_dir/.install.sh"
-
-#Add completion file for bash/zsh/fish (completion-location)
-# add_completions "bash" "location-of-completion-file-for-bash"
-# add_completions "zsh" "location-of-completion-file-for-zsh"
-# add_completions "fish" "location-of-completion-file-for-fish"
-# add_completions "old-Cobra"
-# add_completions "new-Cobra"
 
 #Add image file to system (local|onine) (image-location|url)
 # add_image_file "local" "image-location"
