@@ -2,12 +2,12 @@
 
 #Set the root of the install directory based on type of package
 case "$package_type" in
-    "app") intall_dir="/opt/${package_name}" ;;
-    "font") intall_dir="/usr/local/share/fonts/${package_name}" ;;
+    "app") install_dir="/opt/${package_name}" ;;
+    "font") install_dir="/usr/local/share/fonts/${package_name}" ;;
 esac
 
 #Remove packages installed
-[ -n "$intall_dir" ] && sudo rm -rf "$intall_dir"
+[ -n "$install_dir" ] && sudo rm -rf "$install_dir"
 
 #If online tag  is still not set
 if [ -z "${online_tag}" ]; then
@@ -30,5 +30,5 @@ if [ "$package_type" = "bin" ] || [ "$package_type" = "app" ]; then
 
 elif [ "$package_type" = "font" ]; then
     #Make parent directory for install
-    [ ! -d "$intall_dir" ] && sudo mkdir -p "$intall_dir"
+    [ ! -d "$install_dir" ] && sudo mkdir -p "$install_dir"
 fi

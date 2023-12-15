@@ -25,11 +25,12 @@ hash_file='hashes.sha256'
 #Path to binary based on download (start with ./)
 bin_package="./$package_name"
 
+#Url for application image
+online_image="https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"
+
+#Add desktop file to system
+need_desktop_file=true
+is_terminal=true
+
 #Source file with functions
 . "$repo_dir/.install.sh"
-
-#Add image file to system (local|onine) (image-location|url)
-add_image_file "online" "https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"
-
-#Add desktop file to system (true|false for terminal application)
-add_desktop_file true

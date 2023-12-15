@@ -29,24 +29,26 @@ hash_algorithm=''
 #Remove num of leading folders in tar archive
 strip_components=0
 #Path to binary based on download (start with ./)
-bin_package="install-directory/binary"
-bin_package="./bin/$package_name"
+bin_package="./path/to/bin"
 
 #Path to completion file based on download (start with ./)
-# bash_completion="location-of-completion-file-for-bash"
-# zsh_completion="location-of-completion-file-for-zsh"
-# fish_completion="location-of-completion-file-for-fish"
+# bash_completion="./location-of-completion-file-for-bash"
+# zsh_completion="./location-of-completion-file-for-zsh"
+# fish_completion="./location-of-completion-file-for-fish"
 
 #Completions for bash/zsh/fish using Cobra completion command
 # cobra_completion="old"
 # cobra_completion="new"
 
+#Path to image file based on download (start with ./)
+# local_image="./location-of-image-file"
+
+#Url for application image
+# online_image="url"
+
+#Add desktop file to system
+# need_desktop_file=true
+# is_terminal=false
+
 #Source file with functions
 . "$repo_dir/.install.sh"
-
-#Add image file to system (local|onine) (image-location|url)
-# add_image_file "local" "image-location"
-# add_image_file "online" "url"
-
-#Add desktop file to system (true|false for terminal application)
-# add_desktop_file false

@@ -29,11 +29,12 @@ bin_package="./bin/$package_name"
 bash_completion="./resources/completions/bash/$package_name"
 zsh_completion="./resources/completions/zsh/_$package_name"
 
+#Path to image file based on download (start with ./)
+local_image="./resources/app/resources/linux/code.png"
+
+#Add desktop file to system
+need_desktop_file=true
+is_terminal=false
+
 #Source file with functions
 . "$repo_dir/.install.sh"
-
-#Add image file to system (local|onine) (image-location|url)
-add_image_file "local" "$intall_dir/resources/app/resources/linux/code.png"
-
-#Add desktop file to system (true|false for terminal application)
-add_desktop_file false

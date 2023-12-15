@@ -21,11 +21,11 @@ esac
 case "$package_type" in
     "app")
         #Move tmp folder to install directory
-        sudo mv -f "$tmp_dir" "$intall_dir"
+        sudo mv -f "$tmp_dir" "$install_dir"
         #Make binary executable
-        sudo chmod +x "$intall_dir/${bin_package#./}"
+        sudo chmod +x "$install_dir/${bin_package#./}"
         #Create symbolic link to bin folder
-        sudo ln -sf "$intall_dir/${bin_package#./}" "$bin_directory/$package_name"
+        sudo ln -sf "$install_dir/${bin_package#./}" "$bin_directory/$package_name"
         ;;
     "bin")
         #Copy binary to bin folder
@@ -35,7 +35,7 @@ case "$package_type" in
         ;;
     "font")
         #Specify which fonts should be kept in the system
-        find "$tmp_dir" -maxdepth 1 -mindepth 1 -name "$font_name" -exec sudo mv -f '{}' "$intall_dir" \;
+        find "$tmp_dir" -maxdepth 1 -mindepth 1 -name "$font_name" -exec sudo mv -f '{}' "$install_dir" \;
         ;;
 esac
 
@@ -59,9 +59,9 @@ if [ -n "$bash_completion" ] || [ -n "$zsh_completion" ] || [ -n "$fish_completi
     [ ! -d "$fish_completion_dir" ] && sudo mkdir -p "$fish_completion_dir"
 
     #Add completion file based on the directory passed
-    [ -n "$bash_completion" ] && [ -f "$intall_dir/${bash_completion#./}" ] && sudo cp "$intall_dir/${bash_completion#./}" "$bash_completion_dir"
-    [ -n "$zsh_completion" ]  && [ -f "$intall_dir/${zsh_completion#./}" ] && sudo cp "$intall_dir/${zsh_completion#./}" "$zsh_completion_dir"
-    [ -n "$fish_completion" ] && [ -f "$intall_dir/${fish_completion#./}" ] && sudo cp "$intall_dir/${fish_completion#./}" "$fish_completion_dir"
+    [ -n "$bash_completion" ] && [ -f "$install_dir/${bash_completion#./}" ] && sudo cp "$install_dir/${bash_completion#./}" "$bash_completion_dir"
+    [ -n "$zsh_completion" ]  && [ -f "$install_dir/${zsh_completion#./}" ] && sudo cp "$install_dir/${zsh_completion#./}" "$zsh_completion_dir"
+    [ -n "$fish_completion" ] && [ -f "$install_dir/${fish_completion#./}" ] && sudo cp "$install_dir/${fish_completion#./}" "$fish_completion_dir"
 
     #Choose one Cobra completion command
     if [ "$cobra_completion" = "old" ]; then
@@ -78,78 +78,52 @@ if [ -n "$bash_completion" ] || [ -n "$zsh_completion" ] || [ -n "$fish_completi
     fi
 fi
 
-#### Section 4 ####
+#Add application image file for current package
+if [ -n "$local_image" ] || [ -n "$online_image" ]; then
 
-add_image_file()
-{
-    #Set image directory
+    #Directory of applications image
     image_dir="/usr/local/share/pixmaps"
-    #Save name with extension from image parameter
-    image_name="${package_name}.${2##*.}"
 
-    #Check if pixmaps image file exist
-    if [ -f "$image_dir/$image_name" ] && [ "$force_flag" = false ]; then
-        return
+    #Create image directory if not exists
+    [ ! -d "$image_dir" ] && sudo mkdir -p "$image_dir"
+
+    #Save image name with extension from the image specified
+    [ -n "$local_image" ]  && image_file="$image_dir/${package_name}.${local_image##*.}"
+    [ -n "$online_image" ] && image_file="$image_dir/${package_name}.${online_image##*.}"
+
+    #Check if package image file exist
+    if [ ! -f "$image_file" ]; then
+        [ -n "$local_image" ]  && sudo cp "$install_dir/${local_image#./}" "$image_file"
+        [ -n "$online_image" ] && sudo curl -s "$online_image" -o "$image_file"
     fi
+fi
 
-    add_local_image()
-    {
-        #Exit if no argument was passed
-        [ -z "$1" ] && echo "Error: Image location not specified" && exit 1
-        #Add package image file from computer
-        local_image_dir="$1"
-        sudo mkdir -p "$image_dir"
-        sudo cp "$local_image_dir" "$image_dir/$image_name"
-    }
+#Add .desktop file for current package
+if [ "$need_desktop_file" = true ]; then
 
-    add_online_image()
-    {
-        #Exit if no argument was passed
-        [ -z "$1" ] && echo "Error: Url not specified" && exit 1
-        #Add package image file from internet
-        url="$1"
-        sudo mkdir -p "$image_dir"
-        sudo curl -s "$url" -o "$image_dir/$image_name"
-    }
-
-    #Exit if no argument was passed
-    [ -z "$1" ] && echo "Error: Image type (local|onine) not specified" && exit 1
-
-    #Choose which function to pick
-    case "$1" in
-        "local") add_local_image "$2" ;;
-        "online") add_online_image "$2" ;;
-    esac
-}
-
-#### Section 5 ####
-
-add_desktop_file()
-{
+    #Directory of .desktop applications
     desktop_file="/usr/local/share/applications/${package_name}.desktop"
 
+    #Create applications directory if not exists
+    [ ! -d "$(dirname "$desktop_file")" ] && sudo mkdir -p "$(dirname "$desktop_file")"
+
     #Check if .desktop file exist
-    if [ -f "$desktop_file" ] && [ "$force_flag" = false ]; then
-        return
+    if [ ! -f "$desktop_file" ]; then
+
+        #Set if package should be run on the terminal
+        is_terminal="${is_terminal:-false}"
+
+        #Add package .desktop file
+        echo \
+            "[Desktop Entry]
+            Type=Application
+            Name=$package_name
+            GenericName=$package_name
+            Exec=$bin_directory/$package_name
+            Icon=$image_file
+            Categories=Utility;Development
+            Terminal=$is_terminal" \
+            | sed 's/^[ \t]*//' - \
+            | sudo tee "$desktop_file" > /dev/null
     fi
-
-    #Exit if argument is incorrect
-    [ "$1" != true ] && [ "$1" != false ] && echo "Error: Argument only accepts true or false" && exit 1
-
-    #Set if package should be run on the terminal
-    is_terminal="${1:-false}"
-
-    #Add package .desktop file
-    sudo mkdir -p "$(dirname "$desktop_file")"
-    echo \
-        "[Desktop Entry]
-        Type=Application
-        Name=$package_name
-        GenericName=$package_name
-        Exec=$bin_directory/$package_name
-        Icon=$image_dir/$image_name
-        Categories=Utility;Development
-        Terminal=$is_terminal" \
-        | sed 's/^[ \t]*//' - \
-        | sudo tee "$desktop_file" > /dev/null
-}
+fi
