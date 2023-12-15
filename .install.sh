@@ -32,18 +32,21 @@ case "$package_type" in
         sudo mv -f "$tmp_dir/${bin_package#./}" "$bin_directory/$package_name"
         #Make binary executable
         sudo chmod +x "$bin_directory/$package_name"
+        #Set install directory as tmp since files where only moved
+        install_dir="$tmp_dir"
         ;;
     "font")
+        #Make parent directory for install
+        [ ! -d "$install_dir" ] && sudo mkdir -p "$install_dir"
         #Specify which fonts should be kept in the system
         find "$tmp_dir" -maxdepth 1 -mindepth 1 -name "$font_name" -exec sudo mv -f '{}' "$install_dir" \;
+        #Set install directory as tmp since files where only moved
+        install_dir="$tmp_dir"
         ;;
 esac
 
 #Save package version
 sudo touch "$lib_dir/${package_name}-${online_tag}"
-
-#Clean tmp folder
-sudo rm -rf "$tmp_dir"
 
 #Add completion file for each shell
 if [ -n "$bash_completion" ] || [ -n "$zsh_completion" ] || [ -n "$fish_completion" ] || [ -n "$cobra_completion" ]; then
@@ -122,3 +125,6 @@ if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
             | sudo tee "$desktop_file" > /dev/null
     fi
 fi
+
+#Clean tmp folder
+sudo rm -rf "$tmp_dir"
