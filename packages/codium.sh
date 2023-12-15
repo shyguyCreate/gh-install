@@ -30,10 +30,9 @@ bash_completion="./resources/completions/bash/$package_name"
 zsh_completion="./resources/completions/zsh/_$package_name"
 
 #Path to image file based on download (start with ./)
-local_image="./resources/app/resources/linux/code.png"
+local_desktop_image="./resources/app/resources/linux/code.png"
 
-#Add desktop file to system
-need_desktop_file=true
+#Should package be started in terminal
 is_terminal=false
 
 #Source file with functions

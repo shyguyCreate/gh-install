@@ -41,13 +41,12 @@ bin_package="./path/to/bin"
 # cobra_completion="new"
 
 #Path to image file based on download (start with ./)
-# local_image="./location-of-image-file"
+# local_desktop_image="./location-of-image-file"
 
 #Url for application image
-# online_image="url"
+# online_desktop_image="url"
 
-#Add desktop file to system
-# need_desktop_file=true
+#Should package be started in terminal
 # is_terminal=false
 
 #Source file with functions

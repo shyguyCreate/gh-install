@@ -26,10 +26,9 @@ hash_file='hashes.sha256'
 bin_package="./$package_name"
 
 #Url for application image
-online_image="https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"
+online_desktop_image="https://raw.githubusercontent.com/PowerShell/PowerShell-Snap/master/stable/assets/icon.png"
 
-#Add desktop file to system
-need_desktop_file=true
+#Should package be started in terminal
 is_terminal=true
 
 #Source file with functions

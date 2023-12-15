@@ -22,13 +22,15 @@ fi
 
 #Check if type is bin or app
 if [ "$package_type" = "bin" ] || [ "$package_type" = "app" ]; then
-    #Set directory and create it
+
+    #Set bin directory and create it
     bin_directory="/usr/local/bin"
     [ ! -d "$bin_directory" ] && sudo mkdir -p "$bin_directory"
     #Remove bin packages
     sudo rm -f "$bin_directory/$package_name"
 
 elif [ "$package_type" = "font" ]; then
+
     #Make parent directory for install
     [ ! -d "$install_dir" ] && sudo mkdir -p "$install_dir"
 fi

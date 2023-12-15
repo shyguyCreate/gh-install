@@ -79,33 +79,28 @@ if [ -n "$bash_completion" ] || [ -n "$zsh_completion" ] || [ -n "$fish_completi
 fi
 
 #Add application image file for current package
-if [ -n "$local_image" ] || [ -n "$online_image" ]; then
+if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
 
-    #Directory of applications image
+    #Set directory for applications image and create it
     image_dir="/usr/local/share/pixmaps"
-
-    #Create image directory if not exists
     [ ! -d "$image_dir" ] && sudo mkdir -p "$image_dir"
 
-    #Save image name with extension from the image specified
-    [ -n "$local_image" ]  && image_file="$image_dir/${package_name}.${local_image##*.}"
-    [ -n "$online_image" ] && image_file="$image_dir/${package_name}.${online_image##*.}"
+    #Set image name with extension from the image specified
+    [ -n "$local_desktop_image" ]  && image_file="$image_dir/${package_name}.${local_desktop_image##*.}"
+    [ -n "$online_desktop_image" ] && image_file="$image_dir/${package_name}.${online_desktop_image##*.}"
 
     #Check if package image file exist
     if [ ! -f "$image_file" ]; then
-        [ -n "$local_image" ]  && sudo cp "$install_dir/${local_image#./}" "$image_file"
-        [ -n "$online_image" ] && sudo curl -s "$online_image" -o "$image_file"
+        [ -n "$local_desktop_image" ]  && sudo cp "$install_dir/${local_desktop_image#./}" "$image_file"
+        [ -n "$online_desktop_image" ] && sudo curl -s "$online_desktop_image" -o "$image_file"
     fi
-fi
 
-#Add .desktop file for current package
-if [ "$need_desktop_file" = true ]; then
+    #Set directory for .desktop for current package
+    desktop_dir="/usr/local/share/applications"
+    [ ! -d "$desktop_dir" ] && sudo mkdir -p "$desktop_dir"
 
-    #Directory of .desktop applications
-    desktop_file="/usr/local/share/applications/${package_name}.desktop"
-
-    #Create applications directory if not exists
-    [ ! -d "$(dirname "$desktop_file")" ] && sudo mkdir -p "$(dirname "$desktop_file")"
+    #Set .desktop file name inside applications
+    desktop_file="$desktop_dir/${package_name}.desktop"
 
     #Check if .desktop file exist
     if [ ! -f "$desktop_file" ]; then
