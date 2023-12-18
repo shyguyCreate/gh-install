@@ -1,7 +1,10 @@
 #!/bin/sh
 
-#Uninstall old package version
-. "$repo_dir/.uninstall.sh"
+#Set the root of the install directory based on type of package
+case "$package_type" in
+    "app") install_dir="/opt/${package_name}" ;;
+    "font") install_dir="/usr/local/share/fonts/${package_name}" ;;
+esac
 
 #Create tmp folder for package extraction
 package_dir="/tmp/$package_name"
@@ -19,35 +22,45 @@ esac
 
 #Install package based on type
 case "$package_type" in
-    "app")
+    "app" | "bin")
         #Check if bin file exists
         [ ! -f "$package_dir/${bin_package#./}" ] && echo "Error: Binary not found" && exit 1
+        #Set bin directory and create it
+        bin_directory="/usr/local/bin"
+        [ ! -d "$bin_directory" ] && sudo mkdir -p "$bin_directory"
+        #Make binary executable
+        sudo chmod +x "$package_dir/${bin_package#./}"
+        ;;
+esac
+case "$package_type" in
+    "app")
+        #Remove old version
+        [ -d "$install_dir" ] && sudo rm -rf "$install_dir"
         #Move tmp folder to install directory
         sudo mv -f "$package_dir" "$install_dir"
-        #Set package directory as install since directory was moved
-        package_dir="$install_dir"
-        #Make binary executable
-        sudo chmod +x "$install_dir/${bin_package#./}"
         #Create symbolic link to bin folder
         sudo ln -sf "$install_dir/${bin_package#./}" "$bin_directory/$package_name"
+        #Set package directory as install since directory was moved
+        package_dir="$install_dir"
         ;;
     "bin")
-        #Check if bin file exists
-        [ ! -f "$package_dir/${bin_package#./}" ] && echo "Error: Binary not found" && exit 1
         #Copy binary to bin folder
         sudo mv -f "$package_dir/${bin_package#./}" "$bin_directory/$package_name"
-        #Make binary executable
-        sudo chmod +x "$bin_directory/$package_name"
         ;;
     "font")
         #Check if fonts exists
         [ "$(find "$package_dir" -maxdepth 1 -mindepth 1 -name "$font_name" | wc -l)" = 0 ] && echo "Error: Fonts not found" && exit 1
-        #Make parent directory for install
-        [ ! -d "$install_dir" ] && sudo mkdir -p "$install_dir"
+        #Remove old version
+        [ -d "$install_dir" ] && sudo rm -rf "$install_dir"
+        #Make directory for install
+        sudo mkdir -p "$install_dir"
         #Specify which fonts should be kept in the system
         find "$package_dir" -maxdepth 1 -mindepth 1 -name "$font_name" -exec sudo mv -f '{}' "$install_dir" \;
         ;;
 esac
+
+#Remove package version from lib except the one just set
+find "$lib_dir" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -not -name "${package_name}-${online_tag}" -exec sudo rm -rf '{}' \;
 
 #Save package version
 sudo touch "$lib_dir/${package_name}-${online_tag}"
@@ -73,23 +86,24 @@ if [ -n "$bash_completion" ] || [ -n "$zsh_completion" ] || [ -n "$fish_completi
     #Choose one Cobra completion command
     if [ "$cobra_completion" = "old" ]; then
         #Execute completion command and passed it to bash/zsh/fish completion directory
-        eval "$bin_directory/$package_name completion -s bash | sudo tee $bash_completion_dir/$package_name > /dev/null"
-        eval "$bin_directory/$package_name completion -s zsh | sudo tee $zsh_completion_dir/_$package_name > /dev/null"
+        eval "$bin_directory/$package_name completion -s bash | sudo tee $bash_completion_dir/${package_name} > /dev/null"
+        eval "$bin_directory/$package_name completion -s zsh | sudo tee $zsh_completion_dir/_${package_name} > /dev/null"
         eval "$bin_directory/$package_name completion -s fish | sudo tee $fish_completion_dir/${package_name}.fish > /dev/null"
 
     elif [ "$cobra_completion" = "new" ]; then
         #Execute completion command and passed it to bash/zsh/fish completion directory
-        eval "$bin_directory/$package_name completion bash | sudo tee $bash_completion_dir/$package_name > /dev/null"
-        eval "$bin_directory/$package_name completion zsh | sudo tee $zsh_completion_dir/_$package_name > /dev/null"
+        eval "$bin_directory/$package_name completion bash | sudo tee $bash_completion_dir/${package_name} > /dev/null"
+        eval "$bin_directory/$package_name completion zsh | sudo tee $zsh_completion_dir/_${package_name} > /dev/null"
         eval "$bin_directory/$package_name completion fish | sudo tee $fish_completion_dir/${package_name}.fish > /dev/null"
     fi
 fi
 
-#Add application image file for current package
+#Add application image and .desktop files for current package
 if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
 
-    #Set directory for applications image and create it
+    #Set directory for applications image
     image_dir="/usr/local/share/pixmaps"
+    #Create directory for applications image
     [ ! -d "$image_dir" ] && sudo mkdir -p "$image_dir"
 
     #Set image name with extension from the image specified
@@ -102,8 +116,9 @@ if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
         [ -n "$online_desktop_image" ] && sudo curl -s "$online_desktop_image" -o "$image_file"
     fi
 
-    #Set directory for .desktop for current package
+    #Set directory for .desktop files
     desktop_dir="/usr/local/share/applications"
+    #Create directory for .desktop files
     [ ! -d "$desktop_dir" ] && sudo mkdir -p "$desktop_dir"
 
     #Set .desktop file name inside applications

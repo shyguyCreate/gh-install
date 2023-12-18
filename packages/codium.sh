@@ -26,8 +26,8 @@ hash_extension='sha256'
 bin_package="./bin/$package_name"
 
 #Path to completion file based on download (start with ./)
-bash_completion="./resources/completions/bash/$package_name"
-zsh_completion="./resources/completions/zsh/_$package_name"
+bash_completion="./resources/completions/bash/${package_name}"
+zsh_completion="./resources/completions/zsh/_${package_name}"
 
 #Path to image file based on download (start with ./)
 local_desktop_image="./resources/app/resources/linux/code.png"

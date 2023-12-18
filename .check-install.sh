@@ -42,10 +42,6 @@ done
 #Reset getopts automatic variable
 OPTIND=1
 
-#Set directory to save package version
-lib_dir="/var/lib/gh-install"
-[ ! -d "$lib_dir" ] && sudo mkdir -p "$lib_dir"
-
 #Clean cache if -c flag was passed
 [ "$clean_flag" = true ] && . "$repo_dir/.clean-cache.sh"
 
@@ -54,6 +50,10 @@ lib_dir="/var/lib/gh-install"
 
 #Exit if -c or -r flag was passed
 [ "$clean_flag" = true ] || [ "$remove_flag" = true ] && exit
+
+#Set directory to save package version
+lib_dir="/var/lib/gh-install"
+[ ! -d "$lib_dir" ] && sudo mkdir -p "$lib_dir"
 
 #Get the current version of the package
 local_tag="$(find "$lib_dir" -maxdepth 1 -mindepth 1 -type f -name "${package_name}-*" -printf '%f' -quit | sed "s,${package_name}-,,g")"
