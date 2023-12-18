@@ -93,7 +93,7 @@ if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
     [ -n "$online_desktop_image" ] && image_file="$image_dir/${package_name}.${online_desktop_image##*.}"
 
     #Check if package image file exist
-    if [ ! -f "$image_file" ]; then
+    if [ ! -f "$image_file" ] || [ "$install_flag" = true ]; then
         [ -n "$local_desktop_image" ]  && sudo cp "$install_dir/${local_desktop_image#./}" "$image_file"
         [ -n "$online_desktop_image" ] && sudo curl -s "$online_desktop_image" -o "$image_file"
     fi
@@ -106,7 +106,7 @@ if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
     desktop_file="$desktop_dir/${package_name}.desktop"
 
     #Check if .desktop file exist
-    if [ ! -f "$desktop_file" ]; then
+    if [ ! -f "$desktop_file" ] || [ "$install_flag" = true ]; then
 
         #Set if package should be run on the terminal
         is_terminal="${is_terminal:-false}"

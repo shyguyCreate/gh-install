@@ -4,7 +4,6 @@ usage_flags()
 {
     echo "  -c to clean cache"
     echo "  -d to download only"
-    echo "  -f to force installation"
     echo "  -i to (re)install package"
     echo "  -r to remove package"
     echo "  -u to update package"

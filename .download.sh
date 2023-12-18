@@ -59,8 +59,8 @@ if [ -n "$hash_file" ]; then
     #Set path to download file with the name found in the url
     hash_file="$cache_dir/${hash_url##*/}"
 
-    #Download if hash file does not exists or if force passed
-    if [ ! -f "$hash_file" ] || [ "$force_flag" = true ]; then
+    #Download if hash file does not exists
+    if [ ! -f "$hash_file" ]; then
         #Start download
         sudo curl -Lf --progress-bar "$hash_url" -o "$hash_file"
     fi
@@ -91,8 +91,8 @@ if [ -n "$hash_file" ]; then
     [ -f "$download_file" ] && get_download_file_hash
 fi
 
-#Download if file does not exists or if hashes do not match or if force passed
-if [ ! -f "$download_file" ] || [ "$download_file_hash" != "$download_hash" ] || [ "$force_flag" = true ]; then
+#Download if file does not exists or if hashes do not match
+if [ ! -f "$download_file" ] || [ "$download_file_hash" != "$download_hash" ]; then
     #Start download
     sudo curl -Lf --progress-bar "$download_url" -o  "$download_file"
 fi

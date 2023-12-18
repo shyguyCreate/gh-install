@@ -4,7 +4,6 @@ usage_flags()
 {
     echo "  -c to clean cache"
     echo "  -d to download only"
-    echo "  -f to force installation"
     echo "  -i to (re)install package"
     echo "  -r to remove package"
     echo "  -u to update package"
@@ -22,7 +21,6 @@ usage()
 #Add flags to script
 clean_flag=false
 download_flag=false
-force_flag=false
 hash_flag=false
 install_flag=false
 remove_flag=false
@@ -32,7 +30,6 @@ while getopts ":cdfiruxy" opt; do
     case $opt in
         c) clean_flag=true ;;
         d) download_flag=true ;;
-        f) force_flag=true ;;
         i) install_flag=true ;;
         r) remove_flag=true ;;
         u) update_flag=true ;;
@@ -65,7 +62,7 @@ local_tag="$(find "$lib_dir" -maxdepth 1 -mindepth 1 -type f -name "${package_na
 api_response="/tmp/${package_name}.api.json"
 
 #Get latest release from the github api response
-if [ ! -f "$api_response" ] || [ "$refresh_flag" = true ] || [ "$force_flag" = true ]; then
+if [ ! -f "$api_response" ] || [ "$refresh_flag" = true ]; then
     curl -s "https://api.github.com/repos/$repo/releases/latest" -o "$api_response"
 fi
 
@@ -77,7 +74,7 @@ online_tag="$(grep tag_name "$api_response" | cut -d \" -f 4)"
 if [ "$download_flag" = true ]; then
     echo "Begin $package_name download..."
 
-elif [ "$online_tag" != "$local_tag" ] && [ "$update_flag" = true ] || [ -z "$local_tag" ] || [ "$install_flag" = true ] || [ "$force_flag" = true ]; then
+elif [ "$online_tag" != "$local_tag" ] && [ "$update_flag" = true ] || [ -z "$local_tag" ] || [ "$install_flag" = true ]; then
     echo "Begin $package_name installation..."
 
 elif [ "$update_flag" = false ] && [ "$online_tag" = "$local_tag" ]; then
