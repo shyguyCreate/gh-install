@@ -4,44 +4,48 @@
 . "$repo_dir/.uninstall.sh"
 
 #Create tmp folder for package extraction
-tmp_dir="/tmp/$package_name"
-sudo mkdir -p "$tmp_dir"
+package_dir="/tmp/$package_name"
+sudo mkdir -p "$package_dir"
 
 #Set strip-components to cer if not set
 strip_components=${strip_components:-0}
 
 #Expand tar file to folder installation
 case $download_file in
-    *.tar.gz) eval "sudo tar zxf $download_file -C $tmp_dir --strip-components=$strip_components" ;;
-    *.tar.xz) eval "sudo tar Jxf $download_file -C $tmp_dir --strip-components=$strip_components" ;;
-    *) sudo cp "$download_file" "$tmp_dir/$package_name" ;;
+    *.tar.gz) eval "sudo tar zxf $download_file -C $package_dir --strip-components=$strip_components" ;;
+    *.tar.xz) eval "sudo tar Jxf $download_file -C $package_dir --strip-components=$strip_components" ;;
+    *) sudo cp "$download_file" "$package_dir/$package_name" ;;
 esac
 
 #Install package based on type
 case "$package_type" in
     "app")
+        #Check if bin file exists
+        [ ! -f "$package_dir/${bin_package#./}" ] && echo "Error: Binary not found" && exit 1
         #Move tmp folder to install directory
-        sudo mv -f "$tmp_dir" "$install_dir"
+        sudo mv -f "$package_dir" "$install_dir"
+        #Set package directory as install since directory was moved
+        package_dir="$install_dir"
         #Make binary executable
         sudo chmod +x "$install_dir/${bin_package#./}"
         #Create symbolic link to bin folder
         sudo ln -sf "$install_dir/${bin_package#./}" "$bin_directory/$package_name"
         ;;
     "bin")
+        #Check if bin file exists
+        [ ! -f "$package_dir/${bin_package#./}" ] && echo "Error: Binary not found" && exit 1
         #Copy binary to bin folder
-        sudo mv -f "$tmp_dir/${bin_package#./}" "$bin_directory/$package_name"
+        sudo mv -f "$package_dir/${bin_package#./}" "$bin_directory/$package_name"
         #Make binary executable
         sudo chmod +x "$bin_directory/$package_name"
-        #Set install directory as tmp since files where only moved
-        install_dir="$tmp_dir"
         ;;
     "font")
+        #Check if fonts exists
+        [ "$(find "$package_dir" -maxdepth 1 -mindepth 1 -name "$font_name" | wc -l)" = 0 ] && echo "Error: Fonts not found" && exit 1
         #Make parent directory for install
         [ ! -d "$install_dir" ] && sudo mkdir -p "$install_dir"
         #Specify which fonts should be kept in the system
-        find "$tmp_dir" -maxdepth 1 -mindepth 1 -name "$font_name" -exec sudo mv -f '{}' "$install_dir" \;
-        #Set install directory as tmp since files where only moved
-        install_dir="$tmp_dir"
+        find "$package_dir" -maxdepth 1 -mindepth 1 -name "$font_name" -exec sudo mv -f '{}' "$install_dir" \;
         ;;
 esac
 
@@ -62,9 +66,9 @@ if [ -n "$bash_completion" ] || [ -n "$zsh_completion" ] || [ -n "$fish_completi
     [ ! -d "$fish_completion_dir" ] && sudo mkdir -p "$fish_completion_dir"
 
     #Add completion file based on the directory passed
-    [ -n "$bash_completion" ] && [ -f "$install_dir/${bash_completion#./}" ] && sudo cp "$install_dir/${bash_completion#./}" "$bash_completion_dir"
-    [ -n "$zsh_completion" ]  && [ -f "$install_dir/${zsh_completion#./}" ] && sudo cp "$install_dir/${zsh_completion#./}" "$zsh_completion_dir"
-    [ -n "$fish_completion" ] && [ -f "$install_dir/${fish_completion#./}" ] && sudo cp "$install_dir/${fish_completion#./}" "$fish_completion_dir"
+    [ -n "$bash_completion" ] && [ -f "$package_dir/${bash_completion#./}" ] && sudo cp "$package_dir/${bash_completion#./}" "$bash_completion_dir"
+    [ -n "$zsh_completion" ]  && [ -f "$package_dir/${zsh_completion#./}" ] && sudo cp "$package_dir/${zsh_completion#./}" "$zsh_completion_dir"
+    [ -n "$fish_completion" ] && [ -f "$package_dir/${fish_completion#./}" ] && sudo cp "$package_dir/${fish_completion#./}" "$fish_completion_dir"
 
     #Choose one Cobra completion command
     if [ "$cobra_completion" = "old" ]; then
@@ -94,7 +98,7 @@ if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
 
     #Check if package image file exist
     if [ ! -f "$image_file" ] || [ "$install_flag" = true ]; then
-        [ -n "$local_desktop_image" ]  && sudo cp "$install_dir/${local_desktop_image#./}" "$image_file"
+        [ -n "$local_desktop_image" ]  && sudo cp "$package_dir/${local_desktop_image#./}" "$image_file"
         [ -n "$online_desktop_image" ] && sudo curl -s "$online_desktop_image" -o "$image_file"
     fi
 
@@ -127,4 +131,4 @@ if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
 fi
 
 #Clean tmp folder
-sudo rm -rf "$tmp_dir"
+sudo rm -rf "/tmp/$package_name"
