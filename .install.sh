@@ -1,5 +1,8 @@
 #!/bin/sh
 
+#Download release file
+. "$installer_dir/.download.sh"
+
 #Set the root of the install directory based on type of package
 case "$package_type" in
     "app") install_dir="/opt/${package_name}" ;;

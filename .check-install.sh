@@ -43,10 +43,10 @@ done
 OPTIND=1
 
 #Clean cache if -c flag was passed
-[ "$clean_flag" = true ] && . "$repo_dir/.clean-cache.sh"
+[ "$clean_flag" = true ] && . "$installer_dir/.clean-cache.sh"
 
 #Test if -r flag was passed
-[ "$remove_flag" = true ] && . "$repo_dir/.uninstall.sh"
+[ "$remove_flag" = true ] && . "$installer_dir/.uninstall.sh"
 
 #Exit if -c or -r flag was passed
 [ "$clean_flag" = true ] || [ "$remove_flag" = true ] && exit

@@ -1,7 +1,10 @@
 #!/bin/sh
 
+#Check if should install
+. "$installer_dir/.check-install.sh"
+
 #Clean cache with folder excluded
-. "$repo_dir/.clean-cache.sh"
+. "$installer_dir/.clean-cache.sh"
 
 #Set cache directory for downloaded files
 cache_dir="$cache_dir/${package_name}-${online_tag}"

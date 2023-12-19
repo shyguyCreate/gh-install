@@ -5,10 +5,7 @@ repo="owner/repo-name"
 package_type="bin"
 
 #Save path to root of the repo
-repo_dir="$(dirname "$(dirname "$0")")"
-
-#Check if should install
-. "$repo_dir/.check-install.sh"
+installer_dir="$(dirname "$(dirname "$0")")"
 
 #Regex match by architecture
 download_x64=''
@@ -17,17 +14,15 @@ download_arm64=''
 download_x32=''
 
 #Specify that file has checksums with same filename
-hash_extension=''
+# hash_extension=''
 #Specify filename with checksums
-hash_file=''
+# hash_file=''
 #Specify hash algorithm when not found in extension
-hash_algorithm=''
-
-#Download release file
-. "$repo_dir/.download.sh"
+# hash_algorithm=''
 
 #Remove num of leading folders in tar archive
 strip_components=0
+
 #Path to binary based on download (start with ./)
 bin_package="./path/to/bin"
 
@@ -50,4 +45,4 @@ bin_package="./path/to/bin"
 # is_terminal=false
 
 #Source file with functions
-. "$repo_dir/.install.sh"
+. "$installer_dir/.install.sh"
