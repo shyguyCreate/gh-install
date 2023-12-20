@@ -4,7 +4,7 @@
 installer_dir="$(dirname "$0")"
 
 #Set directory to save package version
-lib_dir="/var/lib/gh-install"
+lib_dir="/var/lib/gh-installer"
 [ ! -d "$lib_dir" ] && sudo mkdir -p "$lib_dir"
 
 usage_flags()
@@ -21,11 +21,11 @@ usage_flags()
 usage()
 {
     echo "Usage:"
-    echo "  gh-install download <packages>"
-    echo "  gh-install list [<packages>]"
-    echo "  gh-install search [<packages>]"
-    echo "  gh-install update [<packages>]"
-    echo "  gh-install [<flags>] [<packages>]"
+    echo "  gh-installer download <packages>"
+    echo "  gh-installer list [<packages>]"
+    echo "  gh-installer search [<packages>]"
+    echo "  gh-installer update [<packages>]"
+    echo "  gh-installer [<flags>] [<packages>]"
     echo ""
     echo "Flags:"
     usage_flags
@@ -70,12 +70,42 @@ search_matching_installed_packages()
     done
 }
 
+clean_cache()
+{
+    shift 1
+    #Print usage if arguments are empty
+    if [ $# = 0 ]; then
+        . "$installer_dir/.clean-cache.sh"
+    else
+        #Execute based on package match
+        for package in $(search_matching_installed_packages "$@"); do
+            [ -f "$installer_dir/packages/${package}.sh" ] && "$installer_dir/packages/${package}.sh"
+        done
+    fi
+    exit
+}
+
 download_packages()
 {
     shift 1
     #Print usage if arguments are empty
     if [ $# = 0 ]; then
-        echo "Usage: gh-install download <packages>"
+        echo "Usage: gh-installer download <packages>"
+    else
+        #Execute based on package match
+        for package in $(search_matching_packages "$@"); do
+            [ -f "$installer_dir/packages/${package}.sh" ] && "$installer_dir/packages/${package}.sh"
+        done
+    fi
+    exit
+}
+
+install_packages()
+{
+    shift 1
+    #Print usage if arguments are empty
+    if [ $# = 0 ]; then
+        echo "Usage: gh-installer install <packages>"
     else
         #Execute based on package match
         for package in $(search_matching_packages "$@"); do
@@ -128,12 +158,30 @@ update_packages()
     exit
 }
 
+uninstall_packages()
+{
+    shift 1
+    #Print usage if arguments are empty
+    if [ $# = 0 ]; then
+        echo "Usage: gh-installer uninstall <packages>"
+    else
+        #Execute based on package match
+        for package in $(search_matching_installed_packages "$@"); do
+            [ -f "$installer_dir/packages/${package}.sh" ] && "$installer_dir/packages/${package}.sh"
+        done
+    fi
+    exit
+}
+
 #Check for command match
 case "$1" in
+    "clean") clean_cache "$@" ;;
     "download") download_packages "$@" ;;
+    "install") install_packages "$@" ;;
     "list") list_packages "$@" ;;
     "search") search_packages "$@" ;;
     "update") update_packages "$@" ;;
+    "uninstall") uninstall_packages "$@" ;;
 esac
 
 #Check for flag match
@@ -165,7 +213,7 @@ if [ "$package_flags" = "-" ] && [ $# = 0 ]; then
 fi
 #Print usage if flag is passed but no package
 if [ "$package_flags" != "-" ] && [ $# = 0 ]; then
-    echo "Usage: gh-install [<flags>] [<packages>]"
+    echo "Usage: gh-installer [<flags>] [<packages>]"
     exit
 fi
 

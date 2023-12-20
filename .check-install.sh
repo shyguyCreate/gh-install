@@ -52,7 +52,7 @@ OPTIND=1
 [ "$clean_flag" = true ] || [ "$remove_flag" = true ] && exit
 
 #Set directory to save package version
-lib_dir="/var/lib/gh-install"
+lib_dir="/var/lib/gh-installer"
 [ ! -d "$lib_dir" ] && sudo mkdir -p "$lib_dir"
 
 #Get the current version of the package

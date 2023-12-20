@@ -1,8 +1,8 @@
 # Github Release Installer
 
-`gh-install` is a shell script that installs packages from the *Github Releases* section inro Linux systems. Either package binaries or fonts can be installed, updated and removed with this script.
+`gh-installer` is a shell script that installs packages from the *Github Releases* section inro Linux systems. Either package binaries or fonts can be installed, updated and removed with this script.
 
-![gh-install](gh-install.gif)
+![gh-installer](gh-installer.gif)
 
 Only some packages are available for install, refer to the [packages folder](./packages) to see which are currently available.
 

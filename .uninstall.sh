@@ -20,7 +20,7 @@ if [ "$package_type" = "bin" ] || [ "$package_type" = "app" ]; then
 fi
 
 #Remove package version from lib if already set
-lib_dir="/var/lib/gh-install"
+lib_dir="/var/lib/gh-installer"
 find "$lib_dir" -maxdepth 1 -mindepth 1 -type f -name "${package_name}-*" -exec sudo rm -rf '{}' \;
 
 #Remove completion file for each shell

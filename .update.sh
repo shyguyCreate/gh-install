@@ -4,7 +4,7 @@
 [ -z "$repo" ] && echo "Error: github repo not specified" && exit 1
 
 #Set directory to save package version
-lib_dir="/var/lib/gh-install"
+lib_dir="/var/lib/gh-installer"
 [ ! -d "$lib_dir" ] && sudo mkdir -p "$lib_dir"
 
 #Get the current version of the package
