@@ -3,6 +3,9 @@
 #Download release file
 . "$installer_dir/.download.sh"
 
+#Set install dir to empty
+install_dir=""
+
 #Set the root of the install directory based on type of package
 case "$package_type" in
     "app") install_dir="/opt/${package_name}" ;;
@@ -13,7 +16,7 @@ esac
 package_dir="/tmp/$package_name"
 sudo mkdir -p "$package_dir"
 
-#Set strip-components to cer if not set
+#Set strip-components to cero if not set
 strip_components=${strip_components:-0}
 
 #Expand tar file to folder installation
@@ -22,6 +25,9 @@ case $download_file in
     *.tar.xz) eval "sudo tar Jxf $download_file -C $package_dir --strip-components=$strip_components" ;;
     *) sudo cp "$download_file" "$package_dir/$package_name" ;;
 esac
+
+#Unset tar strip components
+unset strip_components
 
 #Install package based on type
 case "$package_type" in
@@ -63,7 +69,7 @@ case "$package_type" in
 esac
 
 #Remove package version from lib except the one just set
-find "$lib_dir" -maxdepth 1 -mindepth 1 -type d -name "${package_name}-*" -not -name "${package_name}-${online_tag}" -exec sudo rm -rf '{}' \;
+find "$lib_dir" -maxdepth 1 -mindepth 1 -type f -name "${package_name}-*" -not -name "${package_name}-${online_tag}" -exec sudo rm -rf '{}' \;
 
 #Save package version
 sudo touch "$lib_dir/${package_name}-${online_tag}"
@@ -99,6 +105,9 @@ if [ -n "$bash_completion" ] || [ -n "$zsh_completion" ] || [ -n "$fish_completi
         eval "$bin_directory/$package_name completion zsh | sudo tee $zsh_completion_dir/_${package_name} > /dev/null"
         eval "$bin_directory/$package_name completion fish | sudo tee $fish_completion_dir/${package_name}.fish > /dev/null"
     fi
+
+    #Unset completion variables
+    unset bash_completion zsh_completion fish_completion cobra_completion
 fi
 
 #Add application image and .desktop files for current package
@@ -118,6 +127,9 @@ if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
         [ -n "$local_desktop_image" ]  && sudo cp "$package_dir/${local_desktop_image#./}" "$image_file"
         [ -n "$online_desktop_image" ] && sudo curl -s "$online_desktop_image" -o "$image_file"
     fi
+
+    #Unset application image variables
+    unset local_desktop_image online_desktop_image
 
     #Set directory for .desktop files
     desktop_dir="/usr/local/share/applications"
@@ -145,6 +157,9 @@ if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
             Terminal=$is_terminal" \
             | sed 's/^[ \t]*//' - \
             | sudo tee "$desktop_file" > /dev/null
+
+        #Unset .desktop file variable
+        unset is_terminal
     fi
 fi
 

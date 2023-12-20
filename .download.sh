@@ -42,6 +42,9 @@ else
     [ -z "$download_match" ] && echo "Error: Download match not available for $system_arch" && exit 1
 fi
 
+#Unset match variables
+unset download_all_arch download_x64 download_arm32 download_arm64 download_x32
+
 #Get the download url by opening the .api.json file and searching with regex
 download_url=$(grep "\"browser_download_url.*/$download_match\"" "$api_response" | cut -d \" -f 4)
 
@@ -52,7 +55,7 @@ download_url=$(grep "\"browser_download_url.*/$download_match\"" "$api_response"
 download_file="$cache_dir/${download_url##*/}"
 
 #Append hash extension to download file if set
-[ -n "$hash_extension" ] && hash_file="$(basename "$download_file").${hash_extension}"
+[ -n "$hash_extension" ] && hash_file="$(basename "$download_file").${hash_extension}" && unset hash_extension
 
 #Empty hash file if ignore hash is passed
 [ "$hash_flag" = true ] && hash_file=""
@@ -123,6 +126,10 @@ if [ -n "$hash_file" ]; then
         exit 1
     fi
 fi
+
+#Unset current hash
+[ -n "$hash_algorithm" ] && unset hash_algorithm
+[ -n "$hash_file" ] && unset hash_file
 
 #Exit if -d flag is passed
 [ "$download_flag" = true ] && exit
