@@ -63,7 +63,7 @@ api_response="/tmp/${package_name}.api.json"
 
 #Get latest release from the github api response
 if [ ! -f "$api_response" ] || [ "$refresh_flag" = true ]; then
-    curl -s "https://api.github.com/repos/$repo/releases/latest" -o "$api_response"
+    curl -s "https://api.github.com/repos/$package_repo/releases/latest" -o "$api_response"
 fi
 
 #Save tag_name to variable

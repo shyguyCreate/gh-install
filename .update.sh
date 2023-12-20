@@ -1,7 +1,7 @@
 #!/bin/sh
 
 [ -z "$package_name" ] && echo "Error: package name not specified" && exit 1
-[ -z "$repo" ] && echo "Error: github repo not specified" && exit 1
+[ -z "$package_repo" ] && echo "Error: github repo not specified" && exit 1
 
 #Set directory to save package version
 lib_dir="/var/lib/gh-installer"
@@ -15,7 +15,7 @@ api_response="/tmp/${package_name}.api.json"
 
 #Get latest release from the github api response
 if [ ! -f "$api_response" ] || [ "$refresh_flag" = true ]; then
-    curl -s "https://api.github.com/repos/$repo/releases/latest" -o "$api_response"
+    curl -s "https://api.github.com/repos/$package_repo/releases/latest" -o "$api_response"
 fi
 
 #Save tag_name to variable

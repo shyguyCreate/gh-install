@@ -73,13 +73,19 @@ search_matching_installed_packages()
 clean_cache()
 {
     shift 1
-    #Print usage if arguments are empty
     if [ $# = 0 ]; then
+        #Run clean cache script
         . "$installer_dir/.clean-cache.sh"
     else
         #Execute based on package match
         for package in $(search_matching_installed_packages "$@"); do
-            [ -f "$installer_dir/packages/${package}.sh" ] && "$installer_dir/packages/${package}.sh"
+            #Check that script for package exists
+            if [ -f "$installer_dir/packages/${package}.sh" ]; then
+                (   
+                    . "$installer_dir/packages/${package}.sh"
+                    . "$installer_dir/.clean-cache.sh"
+                )
+            fi
         done
     fi
     exit

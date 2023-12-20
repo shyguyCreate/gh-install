@@ -7,8 +7,8 @@
 . "$installer_dir/.clean-cache.sh"
 
 #Set cache directory for downloaded files
-cache_dir="$cache_dir/${package_name}-${online_tag}"
-[ ! -d "$cache_dir" ] && sudo mkdir -p "$cache_dir"
+package_cache="$cache_dir/${package_name}-${online_tag}"
+[ ! -d "$package_cache" ] && sudo mkdir -p "$package_cache"
 
 #Set hashes empty
 download_file_hash=""
@@ -52,7 +52,7 @@ download_url=$(grep "\"browser_download_url.*/$download_match\"" "$api_response"
 [ -z "$download_url" ] && echo "Error: Download match did not match any release file" && exit 1
 
 #Set path to download file with the name found in the url
-download_file="$cache_dir/${download_url##*/}"
+download_file="$package_cache/${download_url##*/}"
 
 #Append hash extension to download file if set
 [ -n "$hash_extension" ] && hash_file="$(basename "$download_file").${hash_extension}" && unset hash_extension
@@ -70,7 +70,7 @@ if [ -n "$hash_file" ]; then
     [ -z "$hash_url" ] && echo "Error: Hash file did not match any release file" && exit 1
 
     #Set path to download file with the name found in the url
-    hash_file="$cache_dir/${hash_url##*/}"
+    hash_file="$package_cache/${hash_url##*/}"
 
     #Download if hash file does not exists
     if [ ! -f "$hash_file" ]; then

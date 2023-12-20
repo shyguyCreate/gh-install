@@ -1,17 +1,16 @@
 #!/bin/sh
 
+#Name to identify package
 package_name="mesloLGS"
-repo="ryanoasis/nerd-fonts"
+
+#Specify github repo like this 'owner/repo-name'
+package_repo="ryanoasis/nerd-fonts"
+
+#Specify type of package (app|bin|font)
 package_type="font"
 
-#Save path to root of the repo
-installer_dir="$(dirname "$(dirname "$0")")"
-
-#Regex match for all architectures
+#Regex match for package for all architectures
 download_all_arch='Meslo\.tar\.xz'
 
 #Specify font to keep (wildcards allowed)
 font_name="MesloLGSNerdFont-*.ttf"
-
-#Source file with functions
-. "$installer_dir/.install.sh"
