@@ -21,10 +21,11 @@ usage_flags()
 usage()
 {
     echo "Usage:"
-    echo "  gh-install all [FLAGS]"
-    echo "  gh-install list"
-    echo "  gh-install search [PACKAGES]"
-    echo "  gh-install [FLAGS] [PACKAGES]"
+    echo "  gh-install download <packages>"
+    echo "  gh-install list [<packages>]"
+    echo "  gh-install search [<packages>]"
+    echo "  gh-install update [<packages>]"
+    echo "  gh-install [<flags>] [<packages>]"
     echo ""
     echo "Flags:"
     usage_flags
@@ -63,39 +64,35 @@ search_matching_installed_packages()
         #Get argument match from lib directory
         for file in "$lib_dir/$argument-"*; do
             [ -f "$file" ] \
-                && echo "$argument" \
+                && echo "$argument" && break \
                 || echo "No package installed with name '$argument'" >&2
         done
     done
 }
 
-#Iterate over all packages scripts
-all_command()
+download_packages()
 {
-    #Check that flags passed are valid
-    while getopts ":cdfiruxy" opt; do
-        case $opt in
-            c | d | f | i | r | u | x | y) ;;
-            *)
-                echo "Usage: gh-install all [FLAGS]"
-                usage_flags
-                exit
-                ;;
-        esac
-    done
-    #Execute all package scripts
-    for script in "$installer_dir"/packages/*.sh; do
-        $script "$@"
-    done
+    shift 1
+    #Print usage if arguments are empty
+    if [ $# = 0 ]; then
+        echo "Usage: gh-install download <packages>"
+    else
+        #Execute based on package match
+        for package in $(search_matching_packages "$@"); do
+            [ -f "$installer_dir/packages/${package}.sh" ] && "$installer_dir/packages/${package}.sh"
+        done
+    fi
     exit
 }
 
 list_packages()
 {
-    #Print usage if arguments are empty
+    shift 1
     if [ $# = 0 ]; then
+        #Print installed packages
         get_installed_packages
     else
+        #Print installed packages based on match
         search_matching_installed_packages "$@"
     fi
     exit
@@ -103,40 +100,40 @@ list_packages()
 
 search_packages()
 {
-    #Print usage if arguments are empty
+    shift 1
     if [ $# = 0 ]; then
+        #Print available packages
         get_packages
     else
+        #Print available packages based on match
         search_matching_packages "$@"
+    fi
+    exit
+}
+
+update_packages()
+{
+    shift 1
+    if [ $# = 0 ]; then
+        #Execute for all installed packages
+        for package in $(get_installed_packages); do
+            [ -f "$installer_dir/packages/${package}.sh" ] && "$installer_dir/packages/${package}.sh"
+        done
+    else
+        #Execute based on installed package match
+        for package in $(search_matching_installed_packages "$@"); do
+            [ -f "$installer_dir/packages/${package}.sh" ] && "$installer_dir/packages/${package}.sh"
+        done
     fi
     exit
 }
 
 #Check for command match
 case "$1" in
-    "all")
-        shift 1
-        all_command "$@"
-        ;;
-    "download")
-        shift 1
-        for package in $(search_matching_packages "$@"); do
-            "$installer_dir/packages/${package}.sh"
-        done
-        ;;
-    "list")
-        shift 1
-        list_packages "$@"
-        ;;
-    "search")
-        shift 1
-        search_packages "$@"
-        ;;
-    "update")
-        for package in $(get_installed_packages); do
-            [ -f "$installer_dir/packages/${package}.sh" ] && "$installer_dir/packages/${package}.sh"
-        done
-        ;;
+    "download") download_packages "$@" ;;
+    "list") list_packages "$@" ;;
+    "search") search_packages "$@" ;;
+    "update") update_packages "$@" ;;
 esac
 
 #Check for flag match
@@ -168,7 +165,7 @@ if [ "$package_flags" = "-" ] && [ $# = 0 ]; then
 fi
 #Print usage if flag is passed but no package
 if [ "$package_flags" != "-" ] && [ $# = 0 ]; then
-    echo "Usage: gh-install [FLAGS] [PACKAGES]"
+    echo "Usage: gh-install [<flags>] [<packages>]"
     exit
 fi
 
