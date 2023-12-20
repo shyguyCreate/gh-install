@@ -1,10 +1,15 @@
 #!/bin/sh
 
+#Checks to prevent failure
+[ -z "$installer_dir" ] && echo "Error: script run independently" && exit 1
+
 #Download release file
 . "$installer_dir/.download.sh"
 
-#Set install dir to empty
-install_dir=""
+#Checks to prevent failure
+[ -z "$package_name" ] && echo "Error: package name not specified" && exit 1
+[ -z "$package_type" ] && echo "Error: package type not specified" && exit 1
+[ -z "$lib_dir" ] && echo "Error: script run independently" && exit 1
 
 #Set the root of the install directory based on type of package
 case "$package_type" in
@@ -25,9 +30,6 @@ case $download_file in
     *.tar.xz) eval "sudo tar Jxf $download_file -C $package_dir --strip-components=$strip_components" ;;
     *) sudo cp "$download_file" "$package_dir/$package_name" ;;
 esac
-
-#Unset tar strip components
-unset strip_components
 
 #Install package based on type
 case "$package_type" in
@@ -105,13 +107,10 @@ if [ -n "$bash_completion" ] || [ -n "$zsh_completion" ] || [ -n "$fish_completi
         eval "$bin_directory/$package_name completion zsh | sudo tee $zsh_completion_dir/_${package_name} > /dev/null"
         eval "$bin_directory/$package_name completion fish | sudo tee $fish_completion_dir/${package_name}.fish > /dev/null"
     fi
-
-    #Unset completion variables
-    unset bash_completion zsh_completion fish_completion cobra_completion
 fi
 
 #Add application image and .desktop files for current package
-if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
+if [ "$install_command" = true ] && [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
 
     #Set directory for applications image
     image_dir="/usr/local/share/pixmaps"
@@ -123,13 +122,10 @@ if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
     [ -n "$online_desktop_image" ] && image_file="$image_dir/${package_name}.${online_desktop_image##*.}"
 
     #Check if package image file exist
-    if [ ! -f "$image_file" ] || [ "$install_flag" = true ]; then
+    if [ ! -f "$image_file" ]; then
         [ -n "$local_desktop_image" ]  && sudo cp "$package_dir/${local_desktop_image#./}" "$image_file"
         [ -n "$online_desktop_image" ] && sudo curl -s "$online_desktop_image" -o "$image_file"
     fi
-
-    #Unset application image variables
-    unset local_desktop_image online_desktop_image
 
     #Set directory for .desktop files
     desktop_dir="/usr/local/share/applications"
@@ -140,7 +136,7 @@ if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
     desktop_file="$desktop_dir/${package_name}.desktop"
 
     #Check if .desktop file exist
-    if [ ! -f "$desktop_file" ] || [ "$install_flag" = true ]; then
+    if [ ! -f "$desktop_file" ]; then
 
         #Set if package should be run on the terminal
         is_terminal="${is_terminal:-false}"
@@ -157,9 +153,6 @@ if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
             Terminal=$is_terminal" \
             | sed 's/^[ \t]*//' - \
             | sudo tee "$desktop_file" > /dev/null
-
-        #Unset .desktop file variable
-        unset is_terminal
     fi
 fi
 

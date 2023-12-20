@@ -7,28 +7,24 @@ installer_dir="$(dirname "$0")"
 lib_dir="/var/lib/gh-installer"
 [ ! -d "$lib_dir" ] && sudo mkdir -p "$lib_dir"
 
-usage_flags()
-{
-    echo "  -c to clean cache"
-    echo "  -d to download only"
-    echo "  -i to (re)install package"
-    echo "  -r to remove package"
-    echo "  -u to update package"
-    echo "  -x to ignore hashes"
-    echo "  -y to refresh github api response"
-}
+#Save boolean for script calls
+install_command=false
+update_command=false
 
 usage()
 {
     echo "Usage:"
+    echo "  gh-installer clean [<packages>]"
     echo "  gh-installer download <packages>"
+    echo "  gh-installer install <packages>"
     echo "  gh-installer list [<packages>]"
     echo "  gh-installer search [<packages>]"
     echo "  gh-installer update [<packages>]"
-    echo "  gh-installer [<flags>] [<packages>]"
+    echo "  gh-installer uninstall <packages>"
     echo ""
     echo "Flags:"
-    usage_flags
+    echo "  -x to ignore hashes"
+    echo "  -y to refresh github api response"
     exit
 }
 
@@ -83,6 +79,7 @@ clean_cache()
             if [ -f "$installer_dir/packages/${package}.sh" ]; then
                 (   
                     . "$installer_dir/packages/${package}.sh"
+                    echo "Clean cache for $package_name..."
                     . "$installer_dir/.clean-cache.sh"
                 )
             fi
@@ -100,7 +97,14 @@ download_packages()
     else
         #Execute based on package match
         for package in $(search_matching_packages "$@"); do
-            [ -f "$installer_dir/packages/${package}.sh" ] && "$installer_dir/packages/${package}.sh"
+            #Check that script for package exists
+            if [ -f "$installer_dir/packages/${package}.sh" ]; then
+                (   
+                    . "$installer_dir/packages/${package}.sh"
+                    echo "Start $package_name download..."
+                    . "$installer_dir/.download.sh"
+                )
+            fi
         done
     fi
     exit
@@ -109,13 +113,21 @@ download_packages()
 install_packages()
 {
     shift 1
+    install_command=true
     #Print usage if arguments are empty
     if [ $# = 0 ]; then
         echo "Usage: gh-installer install <packages>"
     else
         #Execute based on package match
         for package in $(search_matching_packages "$@"); do
-            [ -f "$installer_dir/packages/${package}.sh" ] && "$installer_dir/packages/${package}.sh"
+            #Check that script for package exists
+            if [ -f "$installer_dir/packages/${package}.sh" ]; then
+                (   
+                    . "$installer_dir/packages/${package}.sh"
+                    echo "Start $package_name installation..."
+                    . "$installer_dir/.install.sh"
+                )
+            fi
         done
     fi
     exit
@@ -150,15 +162,28 @@ search_packages()
 update_packages()
 {
     shift 1
+    update_command=true
     if [ $# = 0 ]; then
         #Execute for all installed packages
         for package in $(get_installed_packages); do
-            [ -f "$installer_dir/packages/${package}.sh" ] && "$installer_dir/packages/${package}.sh"
+            #Check that script for package exists
+            if [ -f "$installer_dir/packages/${package}.sh" ]; then
+                (   
+                    . "$installer_dir/packages/${package}.sh"
+                    . "$installer_dir/.install.sh"
+                )
+            fi
         done
     else
         #Execute based on installed package match
         for package in $(search_matching_installed_packages "$@"); do
-            [ -f "$installer_dir/packages/${package}.sh" ] && "$installer_dir/packages/${package}.sh"
+            #Check that script for package exists
+            if [ -f "$installer_dir/packages/${package}.sh" ]; then
+                (   
+                    . "$installer_dir/packages/${package}.sh"
+                    . "$installer_dir/.install.sh"
+                )
+            fi
         done
     fi
     exit
@@ -173,7 +198,14 @@ uninstall_packages()
     else
         #Execute based on package match
         for package in $(search_matching_installed_packages "$@"); do
-            [ -f "$installer_dir/packages/${package}.sh" ] && "$installer_dir/packages/${package}.sh"
+            #Check that script for package exists
+            if [ -f "$installer_dir/packages/${package}.sh" ]; then
+                (   
+                    . "$installer_dir/packages/${package}.sh"
+                    echo "Start $package_name uninstallation..."
+                    . "$installer_dir/.uninstall.sh"
+                )
+            fi
         done
     fi
     exit
@@ -191,18 +223,12 @@ case "$1" in
 esac
 
 #Check for flag match
-#Save flags that are needed for the packages script
-package_flags="-"
-while getopts ":cdfiruxy" opt; do
+hash_flag=false
+refresh_flag=false
+while getopts ":xy" opt; do
     case $opt in
-        c) package_flags="${package_flags}c" ;;
-        d) package_flags="${package_flags}d" ;;
-        f) package_flags="${package_flags}f" ;;
-        i) package_flags="${package_flags}i" ;;
-        r) package_flags="${package_flags}r" ;;
-        u) package_flags="${package_flags}u" ;;
-        x) package_flags="${package_flags}x" ;;
-        y) package_flags="${package_flags}y" ;;
+        x) hash_flag=true ;;
+        y) refresh_flag=true ;;
         *) usage ;;
     esac
 done
@@ -212,32 +238,3 @@ shift "$((OPTIND - 1))"
 
 #Reset getopts automatic variable
 OPTIND=1
-
-#Print usage if flag and package are not passed
-if [ "$package_flags" = "-" ] && [ $# = 0 ]; then
-    usage
-fi
-#Print usage if flag is passed but no package
-if [ "$package_flags" != "-" ] && [ $# = 0 ]; then
-    echo "Usage: gh-installer [<flags>] [<packages>]"
-    exit
-fi
-
-#Pass arguments placed after flags
-#And execute script if argument match with script name
-for argument in "$@"; do
-    did_match=false
-    #Get argument match from packages folder
-    for script in "$installer_dir"/packages/*.sh; do
-        #Check if argument and package are the same
-        if [ "$argument" = "$(basename "$script" .sh)" ]; then
-            $script "$package_flags"
-            did_match=true
-            break
-        fi
-    done
-    #Print if argument and package matched
-    if [ "$did_match" = false ]; then
-        echo "'$argument' is not available"
-    fi
-done

@@ -1,7 +1,9 @@
 #!/bin/sh
 
-#Set install dir to empty
-install_dir=""
+#Checks to prevent failure
+[ -z "$package_name" ] && echo "Error: package name not specified" && exit 1
+[ -z "$package_type" ] && echo "Error: package type not specified" && exit 1
+[ -z "$lib_dir" ] && echo "Error: script run independently" && exit 1
 
 #Set the root of the install directory based on type of package
 case "$package_type" in
@@ -20,7 +22,6 @@ if [ "$package_type" = "bin" ] || [ "$package_type" = "app" ]; then
 fi
 
 #Remove package version from lib if already set
-lib_dir="/var/lib/gh-installer"
 find "$lib_dir" -maxdepth 1 -mindepth 1 -type f -name "${package_name}-*" -exec sudo rm -rf '{}' \;
 
 #Remove completion file for each shell
@@ -42,9 +43,6 @@ if [ -n "$bash_completion" ] || [ -n "$zsh_completion" ] || [ -n "$fish_completi
         sudo rm -f "$zsh_completion_dir/_${package_name}"
         sudo rm -f "$fish_completion_dir/${package_name}.fish"
     fi
-
-    #Unset completion variables
-    unset bash_completion zsh_completion fish_completion cobra_completion
 fi
 
 #Remove application image file for current package
@@ -62,7 +60,4 @@ if [ -n "$local_desktop_image" ] || [ -n "$online_desktop_image" ]; then
 
     #Remove .desktop file name inside applications
     sudo rm -f "$desktop_dir/${package_name}.desktop"
-
-    #Unset application image variables
-    unset local_desktop_image online_desktop_image
 fi
