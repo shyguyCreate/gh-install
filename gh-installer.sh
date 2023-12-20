@@ -11,20 +11,53 @@ lib_dir="/var/lib/gh-installer"
 install_command=false
 update_command=false
 
-usage()
+usage_flags()
 {
-    echo "Usage:"
-    echo "  gh-installer clean [<packages>]"
-    echo "  gh-installer download <packages>"
-    echo "  gh-installer install <packages>"
-    echo "  gh-installer list [<packages>]"
-    echo "  gh-installer search [<packages>]"
-    echo "  gh-installer update [<packages>]"
-    echo "  gh-installer uninstall <packages>"
     echo ""
     echo "Flags:"
     echo "  -x to ignore hashes"
     echo "  -y to refresh github api response"
+}
+
+usage()
+{
+    case "$command" in
+        "clean")
+            echo "Usage: gh-installer clean [<packages>]"
+            ;;
+        "download")
+            echo "Usage: gh-installer download [<flags>] <packages>"
+            usage_flags
+            ;;
+        "install")
+            echo "Usage: gh-installer install [<flags>] <packages>"
+            usage_flags
+            ;;
+        "list")
+            echo "Usage: gh-installer list [<packages>]"
+            ;;
+        "search")
+            echo "Usage: gh-installer search [<packages>]"
+            ;;
+        "update")
+            echo "Usage: gh-installer update [<flags>] [<packages>]"
+            usage_flags
+            ;;
+        "uninstall")
+            echo "Usage: gh-installer uninstall <packages>"
+            ;;
+        *)
+            echo "Usage:"
+            echo "  gh-installer clean [<packages>]"
+            echo "  gh-installer download <packages>"
+            echo "  gh-installer install <packages>"
+            echo "  gh-installer list [<packages>]"
+            echo "  gh-installer search [<packages>]"
+            echo "  gh-installer update [<packages>]"
+            echo "  gh-installer uninstall <packages>"
+            usage_flags
+            ;;
+    esac
     exit
 }
 
@@ -68,7 +101,6 @@ search_matching_installed_packages()
 
 clean_cache()
 {
-    shift 1
     if [ $# = 0 ]; then
         #Run clean cache script
         . "$installer_dir/.clean-cache.sh"
@@ -85,15 +117,13 @@ clean_cache()
             fi
         done
     fi
-    exit
 }
 
 download_packages()
 {
-    shift 1
     #Print usage if arguments are empty
     if [ $# = 0 ]; then
-        echo "Usage: gh-installer download <packages>"
+        usage
     else
         #Execute based on package match
         for package in $(search_matching_packages "$@"); do
@@ -107,16 +137,14 @@ download_packages()
             fi
         done
     fi
-    exit
 }
 
 install_packages()
 {
-    shift 1
     install_command=true
     #Print usage if arguments are empty
     if [ $# = 0 ]; then
-        echo "Usage: gh-installer install <packages>"
+        usage
     else
         #Execute based on package match
         for package in $(search_matching_packages "$@"); do
@@ -130,12 +158,10 @@ install_packages()
             fi
         done
     fi
-    exit
 }
 
 list_packages()
 {
-    shift 1
     if [ $# = 0 ]; then
         #Print installed packages
         get_installed_packages
@@ -143,12 +169,10 @@ list_packages()
         #Print installed packages based on match
         search_matching_installed_packages "$@"
     fi
-    exit
 }
 
 search_packages()
 {
-    shift 1
     if [ $# = 0 ]; then
         #Print available packages
         get_packages
@@ -156,12 +180,10 @@ search_packages()
         #Print available packages based on match
         search_matching_packages "$@"
     fi
-    exit
 }
 
 update_packages()
 {
-    shift 1
     update_command=true
     if [ $# = 0 ]; then
         #Execute for all installed packages
@@ -186,15 +208,13 @@ update_packages()
             fi
         done
     fi
-    exit
 }
 
 uninstall_packages()
 {
-    shift 1
     #Print usage if arguments are empty
     if [ $# = 0 ]; then
-        echo "Usage: gh-installer uninstall <packages>"
+        usage
     else
         #Execute based on package match
         for package in $(search_matching_installed_packages "$@"); do
@@ -208,19 +228,13 @@ uninstall_packages()
             fi
         done
     fi
-    exit
 }
 
-#Check for command match
-case "$1" in
-    "clean") clean_cache "$@" ;;
-    "download") download_packages "$@" ;;
-    "install") install_packages "$@" ;;
-    "list") list_packages "$@" ;;
-    "search") search_packages "$@" ;;
-    "update") update_packages "$@" ;;
-    "uninstall") uninstall_packages "$@" ;;
-esac
+#Save first argument
+command="$1"
+
+#Skip first argument
+shift 1
 
 #Check for flag match
 hash_flag=false
@@ -238,3 +252,15 @@ shift "$((OPTIND - 1))"
 
 #Reset getopts automatic variable
 OPTIND=1
+
+#Check for command match
+case "$command" in
+    "clean") clean_cache "$@" ;;
+    "download") download_packages "$@" ;;
+    "install") install_packages "$@" ;;
+    "list") list_packages "$@" ;;
+    "search") search_packages "$@" ;;
+    "update") update_packages "$@" ;;
+    "uninstall") uninstall_packages "$@" ;;
+    *) usage ;;
+esac
