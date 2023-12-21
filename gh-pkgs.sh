@@ -39,12 +39,12 @@ usage()
         "search")
             echo "Usage: gh-pkgs search [<packages>]"
             ;;
+        "uninstall")
+            echo "Usage: gh-pkgs uninstall <packages>"
+            ;;
         "update")
             echo "Usage: gh-pkgs update [<flags>] [<packages>]"
             usage_flags
-            ;;
-        "uninstall")
-            echo "Usage: gh-pkgs uninstall <packages>"
             ;;
         *)
             echo "Usage: gh-pkgs <command> [<flags>] [<packages>]"
@@ -55,8 +55,8 @@ usage()
             echo "  install     install package"
             echo "  list        list all packages installed"
             echo "  search      search across available packages"
-            echo "  update      update package"
             echo "  uninstall   uninstall package"
+            echo "  update      update package"
             usage_flags
             ;;
     esac
@@ -108,7 +108,7 @@ clean_cache()
         . "$installer_dir/.clean-cache.sh"
     else
         #Execute based on package match
-        for package in $(search_matching_installed_packages "$@"); do
+        for package in $(search_matching_packages "$@"); do
             #Check that script for package exists
             if [ -f "$installer_dir/packages/${package}.sh" ]; then
                 (   
@@ -184,6 +184,26 @@ search_packages()
     fi
 }
 
+uninstall_packages()
+{
+    #Print usage if arguments are empty
+    if [ $# = 0 ]; then
+        usage
+    else
+        #Execute based on package match
+        for package in $(search_matching_installed_packages "$@"); do
+            #Check that script for package exists
+            if [ -f "$installer_dir/packages/${package}.sh" ]; then
+                (   
+                    . "$installer_dir/packages/${package}.sh"
+                    echo "Start $package_name uninstallation..."
+                    . "$installer_dir/.uninstall.sh"
+                )
+            fi
+        done
+    fi
+}
+
 update_packages()
 {
     update_command=true
@@ -206,26 +226,6 @@ update_packages()
                 (   
                     . "$installer_dir/packages/${package}.sh"
                     . "$installer_dir/.install.sh"
-                )
-            fi
-        done
-    fi
-}
-
-uninstall_packages()
-{
-    #Print usage if arguments are empty
-    if [ $# = 0 ]; then
-        usage
-    else
-        #Execute based on package match
-        for package in $(search_matching_installed_packages "$@"); do
-            #Check that script for package exists
-            if [ -f "$installer_dir/packages/${package}.sh" ]; then
-                (   
-                    . "$installer_dir/packages/${package}.sh"
-                    echo "Start $package_name uninstallation..."
-                    . "$installer_dir/.uninstall.sh"
                 )
             fi
         done
@@ -265,7 +265,7 @@ case "$command" in
     "install") install_packages "$@" ;;
     "list") list_packages "$@" ;;
     "search") search_packages "$@" ;;
-    "update") update_packages "$@" ;;
     "uninstall") uninstall_packages "$@" ;;
+    "update") update_packages "$@" ;;
     *) usage ;;
 esac

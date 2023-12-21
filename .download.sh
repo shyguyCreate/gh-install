@@ -17,10 +17,10 @@
     && [ -z "$package_for_arm64" ] \
     && [ -z "$package_for_arm32" ] \
     && [ -z "$package_for_x32" ] \
-    && echo "Error: download match not specified" && exit 1
+    && echo "Error: package match not specified" && exit 1
 [ -z "$ignore_hash_flag" ] && echo "Error: script run independently" && exit 1
 
-#Set cache directory for downloaded files
+#Set cache directory for files download
 package_cache="$cache_dir/${package_name}-${online_tag}"
 [ ! -d "$package_cache" ] && sudo mkdir -p "$package_cache"
 
@@ -44,7 +44,7 @@ else
         i?86) system_arch="x32" ;;
     esac
 
-    #Set download match based on architecture
+    #Set package match based on architecture
     case $system_arch in
         "x64") package_match="$package_for_x64" ;;
         "arm64") package_match="$package_for_arm64" ;;
@@ -52,23 +52,23 @@ else
         "x32") package_match="$package_for_x32" ;;
     esac
 
-    #Exit if download match is empty
-    [ -z "$package_match" ] && echo "Error: Download match not available for $system_arch" && exit 1
+    #Exit if package match is empty
+    [ -z "$package_match" ] && echo "Error: Package match not available for $system_arch" && exit 1
 fi
 
-#Get the download url by opening the .api.json file and searching with regex
+#Get the package url by opening the .api.json file and searching with regex
 package_url="$(grep "\"browser_download_url.*/$package_match\"" "$api_response" | cut -d \" -f 4)"
 
-#Exit if download url is empty
-[ -z "$package_url" ] && echo "Error: Download match did not match any release file" && exit 1
+#Exit if package url is empty
+[ -z "$package_url" ] && echo "Error: Package match did not match any release file" && exit 1
 
-#Set path to download file with the name found in the url
+#Set path to cache with the name found in the url
 package_file="$package_cache/${package_url##*/}"
 
-#Append hash extension to download file if set
+#If hash extension is set append to package file
 [ -n "$hash_extension" ] && hash_file="$(basename "$package_file").${hash_extension}"
 
-#Check if hash file is set
+#Check if hash file is set and should be ignore
 if [ -n "$hash_file" ] && [ "$ignore_hash_flag" = false ]; then
 
     #Get the hash url by opening the .api.json file and searching with regex
@@ -77,7 +77,7 @@ if [ -n "$hash_file" ] && [ "$ignore_hash_flag" = false ]; then
     #Exit if hash url is empty
     [ -z "$hash_url" ] && echo "Error: Hash file did not match any release file" && exit 1
 
-    #Set path to download file with the name found in the url
+    #Set path to cache with the name found in the url
     hash_file="$package_cache/${hash_url##*/}"
 
     #Download if hash file does not exists
@@ -89,31 +89,34 @@ if [ -n "$hash_file" ] && [ "$ignore_hash_flag" = false ]; then
     #Exit if hash file does not exists after download
     [ ! -f "$hash_file" ] && echo "Error: Hash file was not downloaded" && exit 1
 
-    #Get hash inside of the download hash file
+    #Get hash inside of the hash file
     hash_expected="$(grep "$(basename "$package_file")" "$hash_file" || cat "$hash_file")"
 
     #Remove filename from hash and set lo lowercase
     hash_expected="$(echo "$hash_expected" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')"
 
+    #If hash algorithm is not set, use hash file extension
+    [ -z "$hash_algorithm" ] && hash_algorithm="${hash_file##*.}"
+
     get_package_hash()
     {
-        #Get hash of the download file
-        case "$hash_file" in
-            *.b2) package_hash="$(b2sum "$package_file")" ;;
-            *.sha1) package_hash="$(sha1sum "$package_file")" ;;
-            *.sha224) package_hash="$(sha224sum "$package_file")" ;;
-            *.sha256) package_hash="$(sha256sum "$package_file")" ;;
-            *.sha384) package_hash="$(sha384sum "$package_file")" ;;
-            *.sha512) package_hash="$(sha512sum "$package_file")" ;;
-            *.md5) package_hash="$(md5sum "$package_file")" ;;
-            *) [ -n "$hash_algorithm" ] && package_hash="$(eval "${hash_algorithm}sum $package_file")" ;;
+        #Get hash of the package file
+        case "$hash_algorithm" in
+            b2) package_hash="$(b2sum "$package_file")" ;;
+            sha1) package_hash="$(sha1sum "$package_file")" ;;
+            sha224) package_hash="$(sha224sum "$package_file")" ;;
+            sha256) package_hash="$(sha256sum "$package_file")" ;;
+            sha384) package_hash="$(sha384sum "$package_file")" ;;
+            sha512) package_hash="$(sha512sum "$package_file")" ;;
+            md5) package_hash="$(md5sum "$package_file")" ;;
+            *) echo "Error: Hash algorithm not specified" && exit 1 ;;
         esac
 
         #Remove filename from hash and set lo lowercase
         package_hash="$(echo "$package_hash" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')"
     }
 
-    #Get hashes if download file is already installed
+    #Get hashes if package file is already downloaded
     [ -f "$package_file" ] && get_package_hash
 fi
 
@@ -123,12 +126,12 @@ if [ ! -f "$package_file" ] || [ "$package_hash" != "$hash_expected" ]; then
     sudo curl -Lf --progress-bar "$package_url" -o  "$package_file"
 fi
 
-#Exit if file does not exists after download
+#Exit if package file does not exists after download
 [ ! -f "$package_file" ] && echo "Error: File was not downloaded" && exit 1
 
-#Compare hashes after downloading file
+#Compare hashes after downloading package file
 if [ -n "$hash_expected" ]; then
-    #Get hash of download file
+    #Get hash of package file
     get_package_hash
 
     #Exit if hashes do not match

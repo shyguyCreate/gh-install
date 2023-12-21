@@ -67,7 +67,7 @@ case "$package_type" in
         #Make directory for install
         sudo mkdir -p "$install_dir"
         #Specify which fonts should be kept in the system
-        find "$package_dir" -maxdepth 1 -mindepth 1 -path "$package_dir${font_name#./}" -exec sudo mv -f '{}' "$install_dir" \;
+        find "$package_dir" -maxdepth 1 -mindepth 1 -path "${package_dir}/${font_name#./}" -exec sudo mv -f '{}' "$install_dir" \;
         ;;
 esac
 
