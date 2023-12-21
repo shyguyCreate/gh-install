@@ -11,9 +11,9 @@ package_type="bin"
 
 #Regex match for package for specific architecture
 download_x64='shfmt_.*_linux_amd64'
-download_arm32='shfmt_.*_linux_arm'
 download_arm64='shfmt_.*_linux_arm64'
 download_x32='shfmt_.*_linux_386'
+download_arm32='shfmt_.*_linux_arm'
 
 #Path to binary based on download (start with ./)
 bin_package="./$package_name"

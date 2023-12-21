@@ -1,8 +1,6 @@
 #!/bin/sh
 
 #Checks to prevent failure
-[ -z "$package_name" ] && echo "Error: package name not specified" && exit 1
-[ -z "$package_repo" ] && echo "Error: github repo not specified" && exit 1
 [ -z "$installer_dir" ] && echo "Error: script run independently" && exit 1
 
 #Get online tag
@@ -10,6 +8,17 @@
 
 #Clean cache with folder excluded
 . "$installer_dir/.clean-cache.sh"
+
+#Checks to prevent failure
+[ -z "$package_name" ] && echo "Error: package name not specified" && exit 1
+[ -z "$package_repo" ] && echo "Error: github repo not specified" && exit 1
+[ -z "$download_all_arch" ] \
+    && [ -z "$download_x64" ] \
+    && [ -z "$download_arm64" ] \
+    && [ -z "$download_x32" ] \
+    && [ -z "$download_arm32" ] \
+    && echo "Error: download match not specified" && exit 1
+[ -z "$hash_flag" ] && echo "Error: script run independently" && exit 1
 
 #Set cache directory for downloaded files
 package_cache="$cache_dir/${package_name}-${online_tag}"
@@ -30,17 +39,17 @@ else
     #Change to more readable form
     case "$system_arch" in
         x86_64) system_arch="x64" ;;
-        armv*) system_arch="arm32" ;;
         arm64 | aarch64) system_arch="arm64" ;;
         i?86) system_arch="x32" ;;
+        armv*) system_arch="arm32" ;;
     esac
 
     #Set download match based on architecture
     case $system_arch in
         "x64") download_match="$download_x64" ;;
-        "arm32") download_match="$download_arm32" ;;
         "arm64") download_match="$download_arm64" ;;
         "x32") download_match="$download_x32" ;;
+        "arm32") download_match="$download_arm32" ;;
     esac
 
     #Exit if download match is empty

@@ -11,9 +11,9 @@ package_type="app"
 
 #Regex match for package for specific architecture
 download_x64='powershell-.*-linux-x64\.tar\.gz'
-download_arm32='powershell-.*-linux-arm32\.tar\.gz'
 download_arm64='powershell-.*-linux-arm64\.tar\.gz'
 download_x32=''
+download_arm32='powershell-.*-linux-arm32\.tar\.gz'
 
 #Regex match for filename with hash
 hash_file='hashes.sha256'

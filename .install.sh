@@ -10,6 +10,7 @@
 [ -z "$package_name" ] && echo "Error: package name not specified" && exit 1
 [ -z "$package_type" ] && echo "Error: package type not specified" && exit 1
 [ -z "$lib_dir" ] && echo "Error: script run independently" && exit 1
+[ -z "$install_command" ] && echo "Error: script run independently" && exit 1
 
 #Set the root of the install directory based on type of package
 case "$package_type" in
@@ -35,7 +36,7 @@ esac
 case "$package_type" in
     "app" | "bin")
         #Check if bin file exists
-        [ ! -f "$package_dir/${bin_package#./}" ] && echo "Error: Binary not found" && exit 1
+        [ -z "$bin_package" ] && [ ! -f "$package_dir/${bin_package#./}" ] && echo "Error: Binary not found" && exit 1
         #Set bin directory and create it
         bin_directory="/usr/local/bin"
         [ ! -d "$bin_directory" ] && sudo mkdir -p "$bin_directory"
@@ -60,7 +61,7 @@ case "$package_type" in
         ;;
     "font")
         #Check if fonts exists
-        [ "$(find "$package_dir" -maxdepth 1 -mindepth 1 -name "$font_name" | wc -l)" = 0 ] && echo "Error: Fonts not found" && exit 1
+        [ -z "$font_name" ] && [ "$(find "$package_dir" -maxdepth 1 -mindepth 1 -name "$font_name" | wc -l)" = 0 ] && echo "Error: Fonts not found" && exit 1
         #Remove old version
         [ -d "$install_dir" ] && sudo rm -rf "$install_dir"
         #Make directory for install

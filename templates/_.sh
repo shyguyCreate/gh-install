@@ -13,9 +13,9 @@ package_type=""
 download_all_arch=''
 #Regex match for package for specific architecture
 download_x64=''
-download_arm32=''
 download_arm64=''
 download_x32=''
+download_arm32=''
 
 #Hashes are in same filename as download match plus extension
 hash_extension=''

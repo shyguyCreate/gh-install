@@ -11,9 +11,9 @@ package_type="bin"
 
 #Regex match for package for specific architecture
 download_x64='gh_.*_linux_amd64\.tar\.gz'
-download_arm32='gh_.*_linux_armv6\.tar\.gz'
 download_arm64='gh_.*_linux_arm64\.tar\.gz'
 download_x32='gh_.*_linux_386\.tar\.gz'
+download_arm32='gh_.*_linux_armv6\.tar\.gz'
 
 #Regex match for filename with hash
 hash_file='gh_.*_checksums.txt'

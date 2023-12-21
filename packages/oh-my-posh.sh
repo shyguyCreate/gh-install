@@ -11,9 +11,9 @@ package_type="bin"
 
 #Regex match for package for specific architecture
 download_x64='posh-linux-amd64'
-download_arm32='posh-linux-arm'
 download_arm64='posh-linux-arm64'
 download_x32='posh-linux-386'
+download_arm32='posh-linux-arm'
 
 #Hashes are in same filename as download match plus extension
 hash_extension='sha256'

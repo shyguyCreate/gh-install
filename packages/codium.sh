@@ -11,9 +11,9 @@ package_type="app"
 
 #Regex match for package for specific architecture
 download_x64='VSCodium-linux-x64-.*\.tar\.gz'
-download_arm32='VSCodium-linux-armhf-.*\.tar\.gz'
 download_arm64='VSCodium-linux-arm64-.*\.tar\.gz'
 download_x32=''
+download_arm32='VSCodium-linux-armhf-.*\.tar\.gz'
 
 #Hashes are in same filename as download match plus extension
 hash_extension='sha256'

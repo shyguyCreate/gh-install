@@ -3,6 +3,8 @@
 #Checks to prevent failure
 [ -z "$package_name" ] && echo "Error: package name not specified" && exit 1
 [ -z "$package_repo" ] && echo "Error: github repo not specified" && exit 1
+[ -z "$refresh_flag" ] && echo "Error: script run independently" && exit 1
+[ -z "$update_command" ] && echo "Error: script run independently" && exit 1
 
 #File to save the tag_name
 api_response="/tmp/${package_name}.api.json"

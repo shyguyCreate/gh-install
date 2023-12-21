@@ -11,9 +11,9 @@ package_type="bin"
 
 #Regex match for package for specific architecture
 download_x64='shellcheck-.*linux\.x86_64\.tar\.xz'
-download_arm32='shellcheck-.*linux\.armv6hf\.tar\.xz'
 download_arm64='shellcheck-.*linux\.aarch64\.tar\.xz'
 download_x32=''
+download_arm32='shellcheck-.*linux\.armv6hf\.tar\.xz'
 
 #Remove num of leading folders in tar archive
 strip_components=1
