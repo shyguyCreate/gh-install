@@ -4,7 +4,7 @@
 installer_dir="$(dirname "$0")"
 
 #Set directory to save package version
-lib_dir="/var/lib/gh-installer"
+lib_dir="/var/lib/gh-pkgs"
 [ ! -d "$lib_dir" ] && sudo mkdir -p "$lib_dir"
 
 #Save boolean for script calls
@@ -23,38 +23,40 @@ usage()
 {
     case "$command" in
         "clean")
-            echo "Usage: gh-installer clean [<packages>]"
+            echo "Usage: gh-pkgs clean [<packages>]"
             ;;
         "download")
-            echo "Usage: gh-installer download [<flags>] <packages>"
+            echo "Usage: gh-pkgs download [<flags>] <packages>"
             usage_flags
             ;;
         "install")
-            echo "Usage: gh-installer install [<flags>] <packages>"
+            echo "Usage: gh-pkgs install [<flags>] <packages>"
             usage_flags
             ;;
         "list")
-            echo "Usage: gh-installer list [<packages>]"
+            echo "Usage: gh-pkgs list [<packages>]"
             ;;
         "search")
-            echo "Usage: gh-installer search [<packages>]"
+            echo "Usage: gh-pkgs search [<packages>]"
             ;;
         "update")
-            echo "Usage: gh-installer update [<flags>] [<packages>]"
+            echo "Usage: gh-pkgs update [<flags>] [<packages>]"
             usage_flags
             ;;
         "uninstall")
-            echo "Usage: gh-installer uninstall <packages>"
+            echo "Usage: gh-pkgs uninstall <packages>"
             ;;
         *)
-            echo "Usage:"
-            echo "  gh-installer clean [<packages>]"
-            echo "  gh-installer download <packages>"
-            echo "  gh-installer install <packages>"
-            echo "  gh-installer list [<packages>]"
-            echo "  gh-installer search [<packages>]"
-            echo "  gh-installer update [<packages>]"
-            echo "  gh-installer uninstall <packages>"
+            echo "Usage: gh-pkgs <command> [<flags>] [<packages>]"
+            echo ""
+            echo "Commands:"
+            echo "  clean       clean cache directory"
+            echo "  download    download package without installing"
+            echo "  install     install package"
+            echo "  list        list all packages installed"
+            echo "  search      search across available packages"
+            echo "  update      update package"
+            echo "  uninstall   uninstall package"
             usage_flags
             ;;
     esac
@@ -230,18 +232,21 @@ uninstall_packages()
     fi
 }
 
-#Save first argument
-command="$1"
+#Check that there are arguments
+if [ $# != 0 ]; then
+    #Save first argument
+    command="$1"
 
-#Skip first argument
-shift 1
+    #Skip first argument
+    shift 1
+fi
 
 #Check for flag match
-hash_flag=false
+ignore_hash_flag=false
 refresh_flag=false
 while getopts ":xy" opt; do
     case $opt in
-        x) hash_flag=true ;;
+        x) ignore_hash_flag=true ;;
         y) refresh_flag=true ;;
         *) usage ;;
     esac

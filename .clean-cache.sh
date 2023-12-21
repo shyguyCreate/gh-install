@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #Set the root of the cache directory to clean
-cache_dir="/var/cache/gh-installer"
+cache_dir="/var/cache/gh-pkgs"
 [ ! -d "$cache_dir" ] && sudo mkdir -p "$cache_dir"
 
 #If package name is still not set

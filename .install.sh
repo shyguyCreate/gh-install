@@ -26,10 +26,10 @@ sudo mkdir -p "$package_dir"
 strip_components=${strip_components:-0}
 
 #Expand tar file to folder installation
-case $download_file in
-    *.tar.gz) eval "sudo tar zxf $download_file -C $package_dir --strip-components=$strip_components" ;;
-    *.tar.xz) eval "sudo tar Jxf $download_file -C $package_dir --strip-components=$strip_components" ;;
-    *) sudo cp "$download_file" "$package_dir/$package_name" ;;
+case $package_file in
+    *.tar.gz) eval "sudo tar zxf $package_file -C $package_dir --strip-components=$strip_components" ;;
+    *.tar.xz) eval "sudo tar Jxf $package_file -C $package_dir --strip-components=$strip_components" ;;
+    *) sudo cp "$package_file" "$package_dir/$package_name" ;;
 esac
 
 #Install package based on type
@@ -67,7 +67,7 @@ case "$package_type" in
         #Make directory for install
         sudo mkdir -p "$install_dir"
         #Specify which fonts should be kept in the system
-        find "$package_dir" -maxdepth 1 -mindepth 1 -name "$font_name" -exec sudo mv -f '{}' "$install_dir" \;
+        find "$package_dir" -maxdepth 1 -mindepth 1 -path "$package_dir${font_name#./}" -exec sudo mv -f '{}' "$install_dir" \;
         ;;
 esac
 
