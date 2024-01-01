@@ -3,8 +3,7 @@
 #Checks to prevent failure
 [ -z "$package_name" ] && echo "Error: package name not specified" && exit 1
 [ -z "$package_repo" ] && echo "Error: github repo not specified" && exit 1
-[ -z "$refresh_flag" ] && echo "Error: script run independently" && exit 1
-[ -z "$update_command" ] && echo "Error: script run independently" && exit 1
+[ -z "$refresh_flag" ] || [ -z "$update_command" ] && echo "Error: script run independently" && exit 1
 
 #File to save the tag_name
 api_response="/tmp/${package_name}.api.json"
@@ -23,7 +22,7 @@ if [ "$update_command" = false ]; then
 fi
 
 #Checks to prevent failure
-[ -z "$lib_dir" ] && echo "Error: script run independently" && exit 1
+[ -z "$lib_dir" ] || [ -z "$no_install_flag" ] && echo "Error: script run independently" && exit 1
 
 #Get the current version of the package
 local_tag="$(find "$lib_dir" -maxdepth 1 -mindepth 1 -type f -name "${package_name}-*" -printf '%f' -quit | sed "s,${package_name}-,,g")"
@@ -36,3 +35,6 @@ fi
 
 echo "Update found for"
 echo "  $package_name  $local_tag => $online_tag"
+
+#Do not install if flag passed
+[ "$no_install_flag" = true ] && exit

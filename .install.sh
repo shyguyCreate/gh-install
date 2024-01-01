@@ -9,8 +9,7 @@
 #Checks to prevent failure
 [ -z "$package_name" ] && echo "Error: package name not specified" && exit 1
 [ -z "$package_type" ] && echo "Error: package type not specified" && exit 1
-[ -z "$lib_dir" ] && echo "Error: script run independently" && exit 1
-[ -z "$install_command" ] && echo "Error: script run independently" && exit 1
+[ -z "$lib_dir" ] || [ -z "$install_command" ] && echo "Error: script run independently" && exit 1
 
 #Set the root of the install directory based on type of package
 case "$package_type" in

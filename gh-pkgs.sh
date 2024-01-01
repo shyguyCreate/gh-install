@@ -15,8 +15,8 @@ usage_flags()
 {
     echo ""
     echo "Flags:"
-    echo "  -x to ignore hashes"
-    echo "  -y to refresh github api response"
+    echo "  -x   ignore hashes"
+    echo "  -y   refresh github api response"
 }
 
 usage()
@@ -45,6 +45,7 @@ usage()
         "update")
             echo "Usage: gh-pkgs update [<flags>] [<packages>]"
             usage_flags
+            echo "  -z   print found update, no install"
             ;;
         *)
             echo "Usage: gh-pkgs <command> [<flags>] [<packages>]"
@@ -58,6 +59,7 @@ usage()
             echo "  uninstall   uninstall package"
             echo "  update      update package"
             usage_flags
+            echo "  -z   (update) print found update, no install"
             ;;
     esac
     exit
@@ -239,15 +241,20 @@ if [ $# != 0 ]; then
 
     #Skip first argument
     shift 1
+else
+    #Print usage if arguments are empty
+    usage
 fi
 
 #Check for flag match
 ignore_hash_flag=false
 refresh_flag=false
-while getopts ":xy" opt; do
+no_install_flag=false
+while getopts ":xyz" opt; do
     case $opt in
         x) ignore_hash_flag=true ;;
         y) refresh_flag=true ;;
+        z) no_install_flag=true ;;
         *) usage ;;
     esac
 done
