@@ -33,9 +33,9 @@ if [ -n "$bash_completion" ] || [ -n "$zsh_completion" ] || [ -n "$fish_completi
     fish_completion_dir="/usr/local/share/fish/vendor_completions.d"
 
     #Remove completion file based on the directory passed
-    [ -n "$bash_completion" ] && sudo rm -f "$bash_completion_dir/$(basename "$bash_completion")"
-    [ -n "$zsh_completion" ] && sudo rm -f "$zsh_completion_dir/$(basename "$zsh_completion")"
-    [ -n "$fish_completion" ] && sudo rm -f "$fish_completion_dir/$(basename "$fish_completion")"
+    [ -n "$bash_completion" ] && sudo rm -f "$bash_completion_dir/${package_name}"
+    [ -n "$zsh_completion" ] && sudo rm -f "$zsh_completion_dir/_${package_name}"
+    [ -n "$fish_completion" ] && sudo rm -f "$fish_completion_dir/${package_name}.fish"
 
     #Remove bash/zsh/fish completion
     if [ "$cobra_completion" = "old" ] || [ "$cobra_completion" = "new" ]; then

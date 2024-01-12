@@ -90,9 +90,9 @@ if [ -n "$bash_completion" ] || [ -n "$zsh_completion" ] || [ -n "$fish_completi
     [ ! -d "$fish_completion_dir" ] && sudo mkdir -p "$fish_completion_dir"
 
     #Add completion file based on the directory passed
-    [ -n "$bash_completion" ] && [ -f "$package_dir/${bash_completion#./}" ] && sudo cp "$package_dir/${bash_completion#./}" "$bash_completion_dir"
-    [ -n "$zsh_completion" ]  && [ -f "$package_dir/${zsh_completion#./}" ] && sudo cp "$package_dir/${zsh_completion#./}" "$zsh_completion_dir"
-    [ -n "$fish_completion" ] && [ -f "$package_dir/${fish_completion#./}" ] && sudo cp "$package_dir/${fish_completion#./}" "$fish_completion_dir"
+    [ -n "$bash_completion" ] && [ -f "$package_dir/${bash_completion#./}" ] && sudo cp "$package_dir/${bash_completion#./}" "$bash_completion_dir/${package_name}"
+    [ -n "$zsh_completion" ]  && [ -f "$package_dir/${zsh_completion#./}" ] && sudo cp "$package_dir/${zsh_completion#./}" "$zsh_completion_dir/_${package_name}"
+    [ -n "$fish_completion" ] && [ -f "$package_dir/${fish_completion#./}" ] && sudo cp "$package_dir/${fish_completion#./}" "$fish_completion_dir/${package_name}.fish"
 
     #Choose one Cobra completion command
     if [ "$cobra_completion" = "old" ]; then
