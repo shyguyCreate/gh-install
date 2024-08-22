@@ -1,6 +1,6 @@
 # Github Package Manager
 
-`gh-pkgs` is a shell script that installs packages from the *Github Releases* section into Linux systems. Either package applications, binaries, or fonts can be installed, updated and uninstalled with this script.
+`gh-pkgs` is a shell script that installs packages from the _Github Releases_ section into Linux systems. Either package applications, binaries, or fonts can be installed, updated and uninstalled with this script.
 
 ![gh-pkgs](gh-pkgs.gif)
 

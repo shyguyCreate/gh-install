@@ -98,8 +98,7 @@ if [ -n "$hash_file" ] && [ "$ignore_hash_flag" = false ]; then
     #If hash algorithm is not set, use hash file extension
     [ -z "$hash_algorithm" ] && hash_algorithm="${hash_file##*.}"
 
-    get_package_hash()
-    {
+    get_package_hash() {
         #Get hash of the package file
         case "$hash_algorithm" in
             b2) package_hash="$(b2sum "$package_file")" ;;

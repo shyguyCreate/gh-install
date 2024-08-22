@@ -11,16 +11,14 @@ lib_dir="/var/lib/gh-pkgs"
 install_command=false
 update_command=false
 
-usage_flags()
-{
+usage_flags() {
     echo ""
     echo "Flags:"
     echo "  -x   ignore hashes"
     echo "  -y   refresh github api response"
 }
 
-usage()
-{
+usage() {
     case "$command" in
         "clean")
             echo "Usage: gh-pkgs clean [<packages>]"
@@ -65,16 +63,14 @@ usage()
     exit
 }
 
-get_packages()
-{
+get_packages() {
     #Get the all packages from packages folder
     for script in "$installer_dir"/packages/*.sh; do
         basename "$script" .sh
     done
 }
 
-search_matching_packages()
-{
+search_matching_packages() {
     #Repeat for each argument
     for argument in "$@"; do
         #Get argument match from packages folder
@@ -84,14 +80,12 @@ search_matching_packages()
     done
 }
 
-get_installed_packages()
-{
+get_installed_packages() {
     #Get the all packages in lib directory
     find "$lib_dir" -maxdepth 1 -mindepth 1 -type f -printf '%f\n' | sed "s,-[^-]*$,,g" | sort -u
 }
 
-search_matching_installed_packages()
-{
+search_matching_installed_packages() {
     #Repeat for each argument
     for argument in "$@"; do
         #Get argument match from lib directory
@@ -103,8 +97,7 @@ search_matching_installed_packages()
     done
 }
 
-clean_cache()
-{
+clean_cache() {
     if [ $# = 0 ]; then
         #Run clean cache script
         . "$installer_dir/.clean-cache.sh"
@@ -123,8 +116,7 @@ clean_cache()
     fi
 }
 
-download_packages()
-{
+download_packages() {
     #Print usage if arguments are empty
     if [ $# = 0 ]; then
         usage
@@ -143,8 +135,7 @@ download_packages()
     fi
 }
 
-install_packages()
-{
+install_packages() {
     install_command=true
     #Print usage if arguments are empty
     if [ $# = 0 ]; then
@@ -164,8 +155,7 @@ install_packages()
     fi
 }
 
-list_packages()
-{
+list_packages() {
     if [ $# = 0 ]; then
         #Print installed packages
         get_installed_packages
@@ -175,8 +165,7 @@ list_packages()
     fi
 }
 
-search_packages()
-{
+search_packages() {
     if [ $# = 0 ]; then
         #Print available packages
         get_packages
@@ -186,8 +175,7 @@ search_packages()
     fi
 }
 
-uninstall_packages()
-{
+uninstall_packages() {
     #Print usage if arguments are empty
     if [ $# = 0 ]; then
         usage
@@ -206,8 +194,7 @@ uninstall_packages()
     fi
 }
 
-update_packages()
-{
+update_packages() {
     update_command=true
     if [ $# = 0 ]; then
         #Execute for all installed packages
