@@ -122,7 +122,7 @@ fi
 #Download if file does not exists or if hashes do not match
 if [ ! -f "$package_file" ] || [ "$package_hash" != "$hash_expected" ]; then
     #Start download
-    sudo curl -Lf --progress-bar "$package_url" -o  "$package_file"
+    sudo curl -Lf --progress-bar "$package_url" -o "$package_file"
 fi
 
 #Exit if package file does not exists after download

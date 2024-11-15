@@ -106,7 +106,7 @@ clean_cache() {
         for package in $(search_matching_packages "$@"); do
             #Check that script for package exists
             if [ -f "$installer_dir/packages/${package}.sh" ]; then
-                (   
+                (
                     . "$installer_dir/packages/${package}.sh"
                     echo "Clean cache for $package_name..."
                     . "$installer_dir/.clean-cache.sh"
@@ -125,7 +125,7 @@ download_packages() {
         for package in $(search_matching_packages "$@"); do
             #Check that script for package exists
             if [ -f "$installer_dir/packages/${package}.sh" ]; then
-                (   
+                (
                     . "$installer_dir/packages/${package}.sh"
                     echo "Start $package_name download..."
                     . "$installer_dir/.download.sh"
@@ -145,7 +145,7 @@ install_packages() {
         for package in $(search_matching_packages "$@"); do
             #Check that script for package exists
             if [ -f "$installer_dir/packages/${package}.sh" ]; then
-                (   
+                (
                     . "$installer_dir/packages/${package}.sh"
                     echo "Start $package_name installation..."
                     . "$installer_dir/.install.sh"
@@ -184,7 +184,7 @@ uninstall_packages() {
         for package in $(search_matching_installed_packages "$@"); do
             #Check that script for package exists
             if [ -f "$installer_dir/packages/${package}.sh" ]; then
-                (   
+                (
                     . "$installer_dir/packages/${package}.sh"
                     echo "Start $package_name uninstallation..."
                     . "$installer_dir/.uninstall.sh"
@@ -201,7 +201,7 @@ update_packages() {
         for package in $(get_installed_packages); do
             #Check that script for package exists
             if [ -f "$installer_dir/packages/${package}.sh" ]; then
-                (   
+                (
                     . "$installer_dir/packages/${package}.sh"
                     . "$installer_dir/.install.sh"
                 )
@@ -212,7 +212,7 @@ update_packages() {
         for package in $(search_matching_installed_packages "$@"); do
             #Check that script for package exists
             if [ -f "$installer_dir/packages/${package}.sh" ]; then
-                (   
+                (
                     . "$installer_dir/packages/${package}.sh"
                     . "$installer_dir/.install.sh"
                 )

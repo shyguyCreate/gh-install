@@ -91,7 +91,7 @@ if [ -n "$bash_completion" ] || [ -n "$zsh_completion" ] || [ -n "$fish_completi
 
     #Add completion file based on the directory passed
     [ -n "$bash_completion" ] && [ -f "$package_dir/${bash_completion#./}" ] && sudo cp "$package_dir/${bash_completion#./}" "$bash_completion_dir/${package_name}"
-    [ -n "$zsh_completion" ]  && [ -f "$package_dir/${zsh_completion#./}" ] && sudo cp "$package_dir/${zsh_completion#./}" "$zsh_completion_dir/_${package_name}"
+    [ -n "$zsh_completion" ] && [ -f "$package_dir/${zsh_completion#./}" ] && sudo cp "$package_dir/${zsh_completion#./}" "$zsh_completion_dir/_${package_name}"
     [ -n "$fish_completion" ] && [ -f "$package_dir/${fish_completion#./}" ] && sudo cp "$package_dir/${fish_completion#./}" "$fish_completion_dir/${package_name}.fish"
 
     #Choose one Cobra completion command
@@ -118,12 +118,12 @@ if [ "$install_command" = true ] && [ -n "$local_desktop_image" ] || [ -n "$onli
     [ ! -d "$image_dir" ] && sudo mkdir -p "$image_dir"
 
     #Set image name with extension from the image specified
-    [ -n "$local_desktop_image" ]  && image_file="$image_dir/${package_name}.${local_desktop_image##*.}"
+    [ -n "$local_desktop_image" ] && image_file="$image_dir/${package_name}.${local_desktop_image##*.}"
     [ -n "$online_desktop_image" ] && image_file="$image_dir/${package_name}.${online_desktop_image##*.}"
 
     #Check if package image file exist
     if [ ! -f "$image_file" ]; then
-        [ -n "$local_desktop_image" ]  && sudo cp "$package_dir/${local_desktop_image#./}" "$image_file"
+        [ -n "$local_desktop_image" ] && sudo cp "$package_dir/${local_desktop_image#./}" "$image_file"
         [ -n "$online_desktop_image" ] && sudo curl -s "$online_desktop_image" -o "$image_file"
     fi
 
